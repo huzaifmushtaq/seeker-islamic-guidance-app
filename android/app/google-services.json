@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "512308725569",
+    "project_id": "seeker-1a492",
+    "storage_bucket": "seeker-1a492.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:512308725569:android:7f92e82c74256d35edc3c0",
+        "android_client_info": {
+          "package_name": "com.seeker.guidance"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAyeZau-cvSuzuqppl9HWca9F5ph0PIPeU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
