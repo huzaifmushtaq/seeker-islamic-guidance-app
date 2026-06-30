@@ -17,30 +17,19 @@ class QuranScreen extends StatelessWidget {
 
         title: const Text(
           "Al-Quran",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
 
-        iconTheme: const IconThemeData(
-          color: Colors.white,
-        ),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
 
-    body: SingleChildScrollView(
-  padding: const EdgeInsets.all(18),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(18),
 
-  child: Column(
-    children: const [
-
-      LastReadCard(),
-const SizedBox(height: 18),
-
-const GuidanceCarousel(),
-    ],
-  ),
-),
+        child: const Column(
+          children: [LastReadCard(), SizedBox(height: 18), GuidanceCarousel()],
+        ),
+      ),
     );
   }
 }

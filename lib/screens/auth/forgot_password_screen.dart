@@ -5,17 +5,13 @@ class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
 
   @override
-  State<ForgotPasswordScreen> createState() =>
-      _ForgotPasswordScreenState();
+  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
 }
 
-class _ForgotPasswordScreenState
-    extends State<ForgotPasswordScreen> {
-
+class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController emailController =
-      TextEditingController();
+  final TextEditingController emailController = TextEditingController();
 
   final AuthService _authService = AuthService();
 
@@ -29,9 +25,7 @@ class _ForgotPasswordScreenState
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-
       backgroundColor: const Color(0xFFF7F6F2),
 
       appBar: AppBar(
@@ -41,20 +35,15 @@ class _ForgotPasswordScreenState
       ),
 
       body: Padding(
-
         padding: const EdgeInsets.all(20),
 
         child: Form(
-
           key: _formKey,
 
           child: Column(
-
-            crossAxisAlignment:
-                CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
 
             children: [
-
               const Text(
                 "Forgot Password",
                 style: TextStyle(
@@ -68,22 +57,16 @@ class _ForgotPasswordScreenState
 
               const Text(
                 "Enter your registered email address and we'll send you a password reset link.",
-                style: TextStyle(
-                  color: Colors.grey,
-                  height: 1.5,
-                ),
+                style: TextStyle(color: Colors.grey, height: 1.5),
               ),
 
               const SizedBox(height: 35),
 
               TextFormField(
-
                 controller: emailController,
 
                 validator: (value) {
-
-                  if (value == null ||
-                      value.trim().isEmpty) {
+                  if (value == null || value.trim().isEmpty) {
                     return "Please enter your email";
                   }
 
@@ -91,8 +74,7 @@ class _ForgotPasswordScreenState
                     r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$',
                   );
 
-                  if (!emailRegex.hasMatch(
-                      value.trim())) {
+                  if (!emailRegex.hasMatch(value.trim())) {
                     return "Please enter a valid email";
                   }
 
@@ -100,32 +82,22 @@ class _ForgotPasswordScreenState
                 },
 
                 decoration: InputDecoration(
-
                   hintText: "Email Address",
 
-                  prefixIcon: const Icon(
-                    Icons.email_outlined,
-                  ),
+                  prefixIcon: const Icon(Icons.email_outlined),
 
                   border: OutlineInputBorder(
-                    borderRadius:
-                        BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(16),
                   ),
 
-                  enabledBorder:
-                      OutlineInputBorder(
-                    borderRadius:
-                        BorderRadius.circular(16),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
 
-                    borderSide: const BorderSide(
-                      color: Color(0x220B4B4B),
-                    ),
+                    borderSide: const BorderSide(color: Color(0x220B4B4B)),
                   ),
 
-                  focusedBorder:
-                      OutlineInputBorder(
-                    borderRadius:
-                        BorderRadius.circular(16),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
 
                     borderSide: const BorderSide(
                       color: Color(0xFF0B4B4B),
@@ -138,86 +110,56 @@ class _ForgotPasswordScreenState
               const SizedBox(height: 30),
 
               SizedBox(
-
                 width: double.infinity,
                 height: 56,
 
                 child: ElevatedButton(
-
                   onPressed: isLoading
                       ? null
                       : () async {
-
-                          if (!_formKey
-                              .currentState!
-                              .validate()) {
+                          if (!_formKey.currentState!.validate()) {
                             return;
                           }
+
+                          final messenger = ScaffoldMessenger.of(context);
+                          final navigator = Navigator.of(context);
 
                           setState(() {
                             isLoading = true;
                           });
 
-                          final error =
-                              await _authService
-                                  .resetPassword(
-                            emailController.text
-                                .trim()
-                                .toLowerCase(),
+                          final error = await _authService.resetPassword(
+                            emailController.text.trim().toLowerCase(),
                           );
+
+                          if (!mounted) return;
 
                           setState(() {
                             isLoading = false;
                           });
 
                           if (error == null) {
-
-                            ScaffoldMessenger.of(
-                                    context)
-                                .showSnackBar(
-
+                            messenger.showSnackBar(
                               const SnackBar(
-                                content: Text(
-                                  "Password reset link sent.",
-                                ),
+                                content: Text("Password reset link sent."),
                               ),
-
                             );
 
-                            Future.delayed(
-                              const Duration(
-                                  seconds: 2),
-                              () {
-                                Navigator.pop(
-                                    context);
-                              },
-                            );
-
+                            Future.delayed(const Duration(seconds: 2), () {
+                              if (!mounted) return;
+                              navigator.pop();
+                            });
                           } else {
-
-                            ScaffoldMessenger.of(
-                                    context)
-                                .showSnackBar(
-
-                              SnackBar(
-                                content:
-                                    Text(error),
-                              ),
-
+                            messenger.showSnackBar(
+                              SnackBar(content: Text(error)),
                             );
                           }
                         },
 
-                  style:
-                      ElevatedButton.styleFrom(
-                    backgroundColor:
-                        const Color(
-                            0xFF0B4B4B),
-                    shape:
-                        RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(
-                              16),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0B4B4B),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
                     ),
                   ),
 
@@ -225,8 +167,7 @@ class _ForgotPasswordScreenState
                       ? const SizedBox(
                           width: 24,
                           height: 24,
-                          child:
-                              CircularProgressIndicator(
+                          child: CircularProgressIndicator(
                             strokeWidth: 2,
                             color: Colors.white,
                           ),
@@ -235,8 +176,7 @@ class _ForgotPasswordScreenState
                           "Send Reset Link",
                           style: TextStyle(
                             fontSize: 16,
-                            fontWeight:
-                                FontWeight.bold,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                 ),

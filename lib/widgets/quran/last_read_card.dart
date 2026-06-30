@@ -12,10 +12,7 @@ class LastReadCard extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
         gradient: const LinearGradient(
-          colors: [
-            Color(0xFF0B4B4B),
-            Color(0xFF166B6B),
-          ],
+          colors: [Color(0xFF0B4B4B), Color(0xFF166B6B)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -23,7 +20,6 @@ class LastReadCard extends StatelessWidget {
 
       child: Stack(
         children: [
-
           Positioned(
             right: -20,
             top: -20,
@@ -32,7 +28,7 @@ class LastReadCard extends StatelessWidget {
               height: 132,
 
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(.05),
+                color: Colors.white.withValues(alpha: .05),
                 shape: BoxShape.circle,
               ),
             ),
@@ -42,17 +38,12 @@ class LastReadCard extends StatelessWidget {
             padding: const EdgeInsets.all(20),
 
             child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
 
               children: [
-
                 const Text(
                   "Last Read",
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: Colors.white70, fontSize: 14),
                 ),
 
                 const SizedBox(height: 6),
@@ -66,30 +57,17 @@ class LastReadCard extends StatelessWidget {
                   ),
                 ),
 
-                
-
-                const Text(
-                  "Ayah 52",
-                  style: TextStyle(
-                    color: Colors.white70,
-                  ),
-                ),
+                const Text("Ayah 52", style: TextStyle(color: Colors.white70)),
 
                 const Spacer(),
 
                 Row(
                   children: [
-
                     Container(
-                      padding:
-                          const EdgeInsets.symmetric(
+                      padding: const EdgeInsets.symmetric(
                         horizontal: 14,
                         vertical: 7,
                       ),
-
-                    
-
-                     
                     ),
 
                     const Spacer(),
