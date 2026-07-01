@@ -12,6 +12,7 @@ import 'prayer_times_screen.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:seeker/screens/quran/quran_screen.dart';
 
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -175,27 +176,34 @@ class _HomeScreenState extends State<HomeScreen> {
           navigator.pop();
         },
 
-        onAllow: () async {
-          Navigator.pop(context);
+      onAllow: () async {
+  try {
+    final position = await _locationService.getCurrentLocation();
 
-          try {
-            final position = await _locationService.getCurrentLocation();
+    final city =
+        await _locationService.getCityName(position);
 
-            final city = await _locationService.getCityName(position);
+    await _locationService.saveLocation(
+      latitude: position.latitude,
+      longitude: position.longitude,
+      city: city,
+    );
 
-            await _locationService.saveLocation(
-              latitude: position.latitude,
-              longitude: position.longitude,
-              city: city,
-            );
+    await _locationService.setLocationConfigured();
 
-            await _locationService.setLocationConfigured();
+    if (!mounted) return;
 
-            await _loadPrayerTimes();
-          } catch (e) {
-            debugPrint(e.toString());
-          }
-        },
+    Navigator.pop(context);
+
+    await _loadPrayerTimes();
+  } catch (e) {
+    if (!mounted) return;
+
+    Navigator.pop(context);
+
+    debugPrint(e.toString());
+  }
+},
       ),
     );
   }
