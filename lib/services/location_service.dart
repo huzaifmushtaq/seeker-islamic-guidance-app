@@ -1,33 +1,45 @@
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:location/location.dart' as loc;
 
 class LocationService {
+  final loc.Location _location = loc.Location();
+  
   Future<Position> getCurrentLocation() async {
-    final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  // 1. Check app permission
+  var permission = await Geolocator.checkPermission();
+
+  if (permission == LocationPermission.denied) {
+    permission = await Geolocator.requestPermission();
+
+    if (permission == LocationPermission.denied) {
+      throw Exception("Location permission denied.");
+    }
+  }
+
+  if (permission == LocationPermission.deniedForever) {
+    throw Exception("Location permission permanently denied.");
+  }
+
+  // 2. Check if GPS is ON
+  bool serviceEnabled = await _location.serviceEnabled();
+
+  if (!serviceEnabled) {
+    serviceEnabled = await _location.requestService();
 
     if (!serviceEnabled) {
       throw Exception("Location services are disabled.");
     }
-
-    var permission = await Geolocator.checkPermission();
-
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-
-      if (permission == LocationPermission.denied) {
-        throw Exception("Location permission denied.");
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      throw Exception("Location permission permanently denied.");
-    }
-
-    return Geolocator.getCurrentPosition(
-      locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
-    );
   }
+
+  // 3. Finally get coordinates
+  return await Geolocator.getCurrentPosition(
+    locationSettings: const LocationSettings(
+      accuracy: LocationAccuracy.high,
+    ),
+  );
+}
 
   Future<String> getCityName(Position position) async {
     try {
@@ -57,6 +69,16 @@ class LocationService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool("location_configured", true);
   }
+
+  Future<bool> hasAskedLocationPermission() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getBool("asked_location_permission") ?? false;
+}
+
+Future<void> setAskedLocationPermission() async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setBool("asked_location_permission", true);
+}
 
   Future<void> saveLocation({
     required double latitude,

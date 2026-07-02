@@ -11,7 +11,7 @@ import 'dart:async';
 import 'prayer_times_screen.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:seeker/screens/quran/quran_screen.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -27,9 +27,11 @@ class _HomeScreenState extends State<HomeScreen> {
   PrayerModel? prayerModel;
   Timer? _countdownTimer;
   String cityName = "Loading...";
-
+bool locationUnavailable = false;
   bool isLoadingPrayer = true;
   String? prayerError;
+
+  
   String getHijriDate() {
     HijriCalendar.setLocal("en");
 
@@ -146,17 +148,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
       if (!mounted) return;
 
-      setState(() {
-        prayerError = e.toString();
-        isLoadingPrayer = false;
-      });
+     setState(() {
+  prayerError = e.toString();
+  isLoadingPrayer = false;
+  locationUnavailable = true;
+});
     }
   }
 
   Future<void> _checkLocationSetup() async {
-    final configured = await _locationService.isLocationConfigured();
+    final asked =
+    await _locationService.hasAskedLocationPermission();
 
-    if (configured || !mounted) return;
+if (asked || !mounted) return;
 
     await Future.delayed(const Duration(milliseconds: 700));
 
@@ -166,17 +170,21 @@ class _HomeScreenState extends State<HomeScreen> {
       context: context,
       barrierDismissible: false,
       builder: (_) => LocationPermissionDialog(
-        onLater: () async {
-          final navigator = Navigator.of(context);
+       onLater: () async {
+  await _locationService.setAskedLocationPermission();
 
-          await _locationService.setLocationConfigured();
+  if (!mounted) return;
 
-          if (!mounted) return;
+  Navigator.pop(context);
 
-          navigator.pop();
-        },
+  setState(() {
+    isLoadingPrayer = false;
+    locationUnavailable = true;
+  });
+},
 
       onAllow: () async {
+        await _locationService.setAskedLocationPermission();
   try {
     final position = await _locationService.getCurrentLocation();
 
@@ -189,25 +197,43 @@ class _HomeScreenState extends State<HomeScreen> {
       city: city,
     );
 
-    await _locationService.setLocationConfigured();
+    
 
     if (!mounted) return;
 
     Navigator.pop(context);
 
     await _loadPrayerTimes();
-  } catch (e) {
-    if (!mounted) return;
+ } catch (e) {
+  if (!mounted) return;
 
-    Navigator.pop(context);
+  Navigator.pop(context);
 
-    debugPrint(e.toString());
-  }
+  setState(() {
+    isLoadingPrayer = false;
+    locationUnavailable = true;
+  });
+
+  debugPrint(e.toString());
+}
 },
       ),
     );
   }
+Future<void> _requestLocationAgain() async {
+  // Allow the permission flow to run again
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.remove("asked_location_permission");
 
+  if (!mounted) return;
+
+  setState(() {
+    locationUnavailable = false;
+    isLoadingPrayer = true;
+  });
+
+  await _checkLocationSetup();
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -323,7 +349,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              const SizedBox(height: 4),
+                              const SizedBox(height: 5),
                               Text(
                                 prayerModel?.currentPrayer == "morning"
                                     ? "MORNING"
@@ -336,44 +362,71 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               ),
 
-                              const SizedBox(height: 4),
+                              const SizedBox(height: 6),
 
                               Text(
-                                prayerModel == null
-                                    ? "Loading..."
-                                    : prayerModel!.currentPrayer == "morning"
-                                    ? "No Prayer"
-                                    : "${prayerModel!.currentPrayer[0].toUpperCase()}${prayerModel!.currentPrayer.substring(1)}",
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 32,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+  prayerModel == null
+      ? (locationUnavailable
+          ? "Prayer Times\nUnavailable"
+          : "Loading...")
+      : prayerModel!.currentPrayer == "morning"
+          ? "No Prayer"
+          : "${prayerModel!.currentPrayer[0].toUpperCase()}${prayerModel!.currentPrayer.substring(1)}",
+  style: TextStyle(
+    color: Colors.white,
+    fontSize: prayerModel == null && locationUnavailable ? 20 : 32,
+    fontWeight: FontWeight.bold,
+    height: 1.2,
+  ),
+),
+                             Text(
+  prayerModel == null
+      ? (locationUnavailable
+          ? "Display prayer times."
+          : "--:--:--")
+      : _formatDuration(
+          prayerModel!.remainingDuration,
+        ),
+  style: TextStyle(
+    color: Colors.white,
+    fontSize: prayerModel == null && locationUnavailable ? 18 : 32,
+    fontWeight: FontWeight.bold,
+    height: 1.3,
+  ),
+),
+    const SizedBox(height: 10),
+                            locationUnavailable
+    ? GestureDetector(
+        onTap: _requestLocationAgain,
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 14,
+            vertical: 6,
+          ),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF4D17D),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: const Text(
+            "Enable Location",
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+            ),
+          ),
+        ),
+      )
+    : const Text(
+        "Next Prayer Time",
+        style: TextStyle(
+          color: Colors.white70,
+          fontSize: 13,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
 
-                              Text(
-                                prayerModel == null
-                                    ? "--:--:--"
-                                    : _formatDuration(
-                                        prayerModel!.remainingDuration,
-                                      ),
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 32,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 5),
-                              const Text(
-                                "Next Prayer Time",
-                                style: TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-
-                              const Spacer(),
+                             const SizedBox(height: 6),
 
                               Row(
                                 children: [

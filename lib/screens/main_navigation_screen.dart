@@ -40,8 +40,10 @@ class _MainNavigationScreenState
 
     return Scaffold(
 
-      body: screens[currentIndex],
-
+     body: IndexedStack(
+  index: currentIndex,
+  children: screens,
+),
       bottomNavigationBar: BottomNavigationBar(
 
         currentIndex: currentIndex,
