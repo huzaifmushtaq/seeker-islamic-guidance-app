@@ -12,7 +12,7 @@ class LastReadCard extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
         gradient: const LinearGradient(
-          colors: [Color(0xFF0B4B4B), Color(0xFF166B6B)],
+          colors: [Color.fromARGB(255, 238, 227, 127), Color(0xFF166B6B)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -43,7 +43,10 @@ class LastReadCard extends StatelessWidget {
               children: [
                 const Text(
                   "Last Read",
-                  style: TextStyle(color: Colors.white70, fontSize: 14),
+                  style: TextStyle(color: Colors.white70, fontSize: 14,
+                  fontWeight: FontWeight.bold
+                  ),
+                  
                 ),
 
                 const SizedBox(height: 6),
@@ -57,7 +60,10 @@ class LastReadCard extends StatelessWidget {
                   ),
                 ),
 
-                const Text("Ayah 52", style: TextStyle(color: Colors.white70)),
+                const Text("Ayah 52", style: TextStyle(color: Colors.white70,
+                fontWeight: FontWeight.bold
+                )
+                ),
 
                 const Spacer(),
 

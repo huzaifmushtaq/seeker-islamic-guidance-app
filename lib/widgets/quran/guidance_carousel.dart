@@ -49,7 +49,7 @@ class _GuidanceCarouselState extends State<GuidanceCarousel> {
     ),
     GuidanceModel(
       title: "Seeking Forgiveness",
-      subtitle: "Turn back to Allah with verses encouraging repentance.",
+      subtitle: "Turn back to Allah with sincere repentance.",
       image: "assets/images/guidance/quranbg.png",
       buttonText: "Repent Today",
     ),
