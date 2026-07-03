@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../screens/quran/surah_details_screen.dart';
 
 class SurahTile extends StatelessWidget {
   final int number;
@@ -21,7 +22,20 @@ class SurahTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       borderRadius: BorderRadius.circular(14),
-      onTap: () {},
+      onTap: () {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => SurahDetailsScreen(
+        surahNumber: number,
+        englishName: englishName,
+        arabicName: arabicName,
+        revelationType: revelationType,
+        verses: verses,
+      ),
+    ),
+  );
+},
 
       child: Padding(
         padding: const EdgeInsets.symmetric(

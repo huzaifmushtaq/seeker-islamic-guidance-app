@@ -7,6 +7,7 @@ import '../../widgets/quran/guidance_carousel.dart';
 import '../../widgets/quran/last_read_card.dart';
 import '../../widgets/quran/quran_search_bar.dart';
 import '../../widgets/quran/surah_tile.dart';
+// ignore: unused_import
 import '../../widgets/quran/surah_toggle.dart';
 
 class QuranScreen extends StatefulWidget {
@@ -62,19 +63,37 @@ class _QuranScreenState extends State<QuranScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7F7),
 
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF0B4B4B),
-        elevation: 0,
-        centerTitle: true,
-        title: const Text(
-          "Al-Quran",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
+     appBar: AppBar(
+  backgroundColor: const Color.fromARGB(255, 154, 222, 111),
+  elevation: 0,
+  toolbarHeight: 60,
+  centerTitle: true,
+
+  shape: const RoundedRectangleBorder(
+    borderRadius: BorderRadius.vertical(
+      bottom: Radius.circular(20),
+    ),
+  ),
+
+  title: const Text(
+    "Al-Quran",
+    style: TextStyle(
+      color: Colors.white,
+      fontSize: 24,
+      fontWeight: FontWeight.w700,
+      letterSpacing: 0.4,
+    ),
+  ),
+
+  iconTheme: const IconThemeData(
+    color: Colors.white,
+    size: 22,
+  ),
+
+  actions: const [
+    SizedBox(width: 12),
+  ],
+),
 
       body: isLoading
           ? const Center(
@@ -112,7 +131,7 @@ class _QuranScreenState extends State<QuranScreen> {
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: filteredSurahs.length,
 
-                    separatorBuilder: (_, __) =>
+                    separatorBuilder: (_, _) =>
                         const Divider(height: 1),
 
                     itemBuilder: (context, index) {
