@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:qcf_quran/qcf_quran.dart';
 import 'package:seeker/widgets/quran/seeker_qcf_page.dart';
+import 'package:seeker/services/translation_service.dart';
+import 'package:seeker/widgets/quran/translation_view.dart';
+
 class SurahDetailsScreen extends StatefulWidget {
   final int surahNumber;
   final String englishName;
@@ -43,7 +46,10 @@ void initState() {
     widget.surahNumber,
     widget.verses,
   );
+
 }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -206,17 +212,20 @@ appBar: PreferredSize(
             );
           },
         )
-      : Center(
-          child: Text(
-            selectedTab == 1
-                ? "Translation Coming Soon"
-                : "Tafsir Coming Soon",
-            style: const TextStyle(
-              fontSize: 18,
-              color: Colors.grey,
-            ),
+      : selectedTab == 1
+    ? TranslationView(
+  surahNumber: widget.surahNumber,
+  verses: widget.verses,
+)
+    : const Center(
+        child: Text(
+          "Tafsir Coming Soon",
+          style: TextStyle(
+            fontSize: 18,
+            color: Colors.grey,
           ),
         ),
+      ),
 ),
         ],
       ),

@@ -75,6 +75,11 @@ flutter:
     - assets/icons/
     - assets/images/guidance/
     - assets/quran/metadata/
+    - assets/quran/kashmiri.json
+    - assets/quran/uthmani.json
+    - assets/quran/bayanulqurantranslation.json
+    - assets/quran/ibnkaseer.json
+    - assets/quran/bayanulquran.json
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

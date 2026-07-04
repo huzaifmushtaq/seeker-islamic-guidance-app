@@ -2,24 +2,19 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 
 class TranslationService {
-  static final TranslationService instance =
-      TranslationService._();
+  Map<String, dynamic>? _translations;
 
-  TranslationService._();
-
-  Map<String, dynamic>? _data;
-
-  Future<void> load() async {
-    if (_data != null) return;
+  Future<Map<String, dynamic>> load() async {
+    if (_translations != null) {
+      return _translations!;
+    }
 
     final jsonString = await rootBundle.loadString(
-      'assets/quran/translation_en.json',
+      'assets/quran/kashmiri.json',
     );
 
-    _data = json.decode(jsonString);
-  }
+    _translations = json.decode(jsonString);
 
-  String verse(int surah, int ayah) {
-    return _data?["$surah:$ayah"] ?? "";
+    return _translations!;
   }
 }
