@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:seeker/models/verse_model.dart';
 import 'package:seeker/repositories/quran_repository.dart';
 
-class TranslationView extends StatelessWidget {
+class TafsirView extends StatelessWidget {
   final int surahNumber;
   final int verses;
 
-  TranslationView({
+  TafsirView({
     super.key,
     required this.surahNumber,
     required this.verses,
@@ -30,20 +30,22 @@ class TranslationView extends StatelessWidget {
 
         if (snapshot.hasError) {
           return Center(
-            child: Text(snapshot.error.toString()),
+            child: Text(
+              snapshot.error.toString(),
+            ),
           );
         }
 
-        final versesList = snapshot.data!;
+        final data = snapshot.data!;
 
         return ListView.builder(
           padding: const EdgeInsets.symmetric(
             horizontal: 18,
             vertical: 16,
           ),
-          itemCount: versesList.length,
+          itemCount: data.length,
           itemBuilder: (context, index) {
-            final verse = versesList[index];
+            final verse = data[index];
 
             return Card(
               margin: const EdgeInsets.only(bottom: 18),
@@ -83,27 +85,13 @@ class TranslationView extends StatelessWidget {
                     const SizedBox(height: 18),
 
                     Text(
-                      verse.kashmiriTranslation,
+                      verse.bayanulFurqanTafsir,
                       textAlign: TextAlign.right,
                       style: const TextStyle(
                         fontSize: 17,
-                        height: 1.7,
+                        height: 1.8,
                       ),
                     ),
-
-                    // Uncomment later when you add a translation selector
-                    /*
-                    const Divider(height: 32),
-
-                    Text(
-                      verse.bayanulFurqanTranslation,
-                      textAlign: TextAlign.right,
-                      style: const TextStyle(
-                        fontSize: 17,
-                        height: 1.7,
-                      ),
-                    ),
-                    */
                   ],
                 ),
               ),

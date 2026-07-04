@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../models/surah_model.dart';
 import '../../services/quran_service.dart';
 
-import '../../widgets/quran/guidance_carousel.dart';
 import '../../widgets/quran/last_read_card.dart';
 import '../../widgets/quran/quran_search_bar.dart';
 import '../../widgets/quran/surah_tile.dart';
@@ -108,7 +107,7 @@ class _QuranScreenState extends State<QuranScreen> {
 
                   const SizedBox(height: 18),
 
-                  const GuidanceCarousel(),
+                  
 
                   const SizedBox(height: 16),
 

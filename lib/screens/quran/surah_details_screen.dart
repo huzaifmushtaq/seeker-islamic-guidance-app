@@ -3,7 +3,7 @@ import 'package:qcf_quran/qcf_quran.dart';
 import 'package:seeker/widgets/quran/seeker_qcf_page.dart';
 import 'package:seeker/services/translation_service.dart';
 import 'package:seeker/widgets/quran/translation_view.dart';
-
+import 'package:seeker/widgets/quran/tafsir_view.dart';
 class SurahDetailsScreen extends StatefulWidget {
   final int surahNumber;
   final String englishName;
@@ -217,15 +217,10 @@ appBar: PreferredSize(
   surahNumber: widget.surahNumber,
   verses: widget.verses,
 )
-    : const Center(
-        child: Text(
-          "Tafsir Coming Soon",
-          style: TextStyle(
-            fontSize: 18,
-            color: Colors.grey,
-          ),
-        ),
-      ),
+   : TafsirView(
+    surahNumber: widget.surahNumber,
+    verses: widget.verses,
+  ),
 ),
         ],
       ),

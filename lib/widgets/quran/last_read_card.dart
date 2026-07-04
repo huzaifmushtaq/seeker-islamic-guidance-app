@@ -42,7 +42,7 @@ class LastReadCard extends StatelessWidget {
 
               children: [
                 const Text(
-                  "Last Read",
+                  "Continue Reading",
                   style: TextStyle(color: Colors.white70, fontSize: 14,
                   fontWeight: FontWeight.bold
                   ),
