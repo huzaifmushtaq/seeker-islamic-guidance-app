@@ -1,26 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:seeker/models/verse_model.dart';
 import 'package:seeker/repositories/quran_repository.dart';
-
-class TranslationView extends StatelessWidget {
+import 'package:seeker/services/translation_preferences_service.dart';
+class TranslationView extends StatefulWidget {
   final int surahNumber;
   final int verses;
+final TranslationType selectedTranslation;
 
-  TranslationView({
+  const TranslationView({
     super.key,
     required this.surahNumber,
     required this.verses,
+    required this.selectedTranslation,
   });
 
-  final QuranRepository _repository = QuranRepository();
+  @override
+  State<TranslationView> createState() =>
+      _TranslationViewState();
+}
+class _TranslationViewState
+    extends State<TranslationView> {
+      final QuranRepository _repository = QuranRepository();
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<VerseModel>>(
-      future: _repository.loadSurah(
-        surahNumber,
-        verses,
-      ),
+     future: _repository.loadSurah(
+  widget.surahNumber,
+  widget.verses,
+),
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
           return const Center(
@@ -83,7 +91,7 @@ class TranslationView extends StatelessWidget {
                     const SizedBox(height: 18),
 
                     Text(
-                      verse.kashmiriTranslation,
+                     verse.translation(widget.selectedTranslation),
                       textAlign: TextAlign.right,
                       style: const TextStyle(
                         fontSize: 17,

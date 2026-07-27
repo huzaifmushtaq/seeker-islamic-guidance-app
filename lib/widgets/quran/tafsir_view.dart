@@ -1,25 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:seeker/models/verse_model.dart';
 import 'package:seeker/repositories/quran_repository.dart';
-
-class TafsirView extends StatelessWidget {
+import 'package:seeker/services/tafsir_preferences_service.dart';
+class TafsirView extends StatefulWidget {
   final int surahNumber;
   final int verses;
+  final TafsirType selectedTafsir;
 
-  TafsirView({
+  const TafsirView({
     super.key,
     required this.surahNumber,
     required this.verses,
+    required this.selectedTafsir,
   });
 
+  @override
+  State<TafsirView> createState() =>
+      _TafsirViewState();
+}
+class _TafsirViewState extends State<TafsirView> {
   final QuranRepository _repository = QuranRepository();
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<VerseModel>>(
       future: _repository.loadSurah(
-        surahNumber,
-        verses,
+  widget.surahNumber,
+  widget.verses,
       ),
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
@@ -85,7 +92,7 @@ class TafsirView extends StatelessWidget {
                     const SizedBox(height: 18),
 
                     Text(
-                      verse.bayanulFurqanTafsir,
+                     verse.tafsir(widget.selectedTafsir),
                       textAlign: TextAlign.right,
                       style: const TextStyle(
                         fontSize: 17,

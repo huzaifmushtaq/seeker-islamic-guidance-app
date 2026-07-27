@@ -11,35 +11,57 @@ class QuranSearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 50,
+      height: 55,
 
       decoration: BoxDecoration(
-        color: const Color(0xFFF4D17D),
-        borderRadius: BorderRadius.circular(18),
+        color: const Color.fromARGB(255, 243, 219, 167),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: const Color.fromARGB(255, 23, 22, 22).withOpacity(.06),
+          
+        ),
       ),
 
       child: TextField(
         onChanged: onChanged,
-
-        decoration: const InputDecoration(
-          hintText: "Search Surah...",
-
-          hintStyle: TextStyle(
-            color: Color.fromARGB(255, 123, 33, 128),
-            fontSize: 15,
-          ),
-
-          prefixIcon: Icon(
-            Icons.search,
-            color: Color(0xFF0B4B4B),
-          ),
-
-          border: InputBorder.none,
-
-          contentPadding: EdgeInsets.symmetric(
-            vertical: 16,
-          ),
+        cursorColor: const Color(0xFFD4AF37),
+        textAlignVertical: TextAlignVertical.center,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 15,
         ),
+decoration: InputDecoration(
+  border: InputBorder.none,
+
+  isCollapsed: true,
+
+  hintText: "Search Surah, Ayah...",
+
+  hintStyle: const TextStyle(
+    color: Color.fromARGB(255, 10, 19, 35),
+    fontSize: 15,
+  ),
+
+  prefixIcon: const Center(
+  widthFactor: 1,
+  child: Icon(
+    Icons.search_rounded,
+    color: Color(0xFFD4AF37),
+    size: 24,
+  ),
+),
+  suffixIcon: IconButton(
+    onPressed: () {},
+    icon: const Icon(
+      Icons.tune_rounded,
+      color: Color(0xFFD4AF37),
+    ),
+  ),
+
+  contentPadding: const EdgeInsets.symmetric(
+    vertical: 15,
+  ),
+),
       ),
     );
   }

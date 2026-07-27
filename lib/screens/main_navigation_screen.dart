@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'home_screen.dart';
 import 'classes_screen.dart';
 import 'search_screen.dart';
-import 'library_screen.dart';
+import 'package:seeker/screens/quran/quran_screen.dart';
 import 'profile_screen.dart';
 
 import '../services/guest_service.dart';
@@ -24,16 +24,16 @@ class _MainNavigationScreenState
 
   final List<Widget> screens = [
 
-    const HomeScreen(),
+  const HomeScreen(),
 
-    const ClassesScreen(),
+  const QuranScreen(),
 
-    const SearchScreen(),
+  const ClassesScreen(),
 
-    const LibraryScreen(),
+  const SearchScreen(),
 
-    const ProfileScreen(),
-  ];
+  const ProfileScreen(),
+];
 
   @override
   Widget build(BuildContext context) {
@@ -86,30 +86,30 @@ class _MainNavigationScreenState
 
         items: const [
 
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: "Home",
-          ),
+  BottomNavigationBarItem(
+    icon: Icon(Icons.home),
+    label: "Home",
+  ),
 
-          BottomNavigationBarItem(
-            icon: Icon(Icons.video_library),
-            label: "Classes",
-          ),
+  BottomNavigationBarItem(
+    icon: Icon(Icons.menu_book_rounded),
+    label: "Al Quran",
+  ),
 
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: "Search",
-          ),
+  BottomNavigationBarItem(
+    icon: Icon(Icons.video_library),
+    label: "Classes",
+  ),
 
-          BottomNavigationBarItem(
-            icon: Icon(Icons.menu_book),
-            label: "Library",
-          ),
+  BottomNavigationBarItem(
+    icon: Icon(Icons.search),
+    label: "Search",
+  ),
 
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: "Profile",
-          ),
+  BottomNavigationBarItem(
+    icon: Icon(Icons.person),
+    label: "Profile",
+  ),
         ],
         
       ),

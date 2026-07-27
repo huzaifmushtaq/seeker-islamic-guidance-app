@@ -695,7 +695,7 @@ Future<void> _requestLocationAgain() async {
 
                             children: [
                               const Text(
-                                "TODAY'S DHIKR",
+                                "Daily Azkar",
                                 style: TextStyle(
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold,

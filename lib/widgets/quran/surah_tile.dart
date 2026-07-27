@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+// ignore: unused_import
 import '../../screens/quran/surah_details_screen.dart';
 
 class SurahTile extends StatelessWidget {
@@ -8,6 +9,7 @@ class SurahTile extends StatelessWidget {
   final String arabicName;
   final int verses;
   final String revelationType;
+  final VoidCallback? onTap;
   const SurahTile({
     super.key,
     required this.number,
@@ -15,103 +17,103 @@ class SurahTile extends StatelessWidget {
     required this.meaning,
     required this.arabicName,
     required this.revelationType,
-    required this.verses
+    required this.verses,
+      this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(14),
-      onTap: () {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (_) => SurahDetailsScreen(
-        surahNumber: number,
-        englishName: englishName,
-        arabicName: arabicName,
-        revelationType: revelationType,
-        verses: verses,
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 20,
+        vertical: 6,
       ),
-    ),
-  );
-},
-
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          vertical: 14,
-          horizontal: 4,
-        ),
-
-        child: Row(
-          children: [
-
-            /// Number
-            Container(
-              width: 42,
-              height: 42,
-
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: const Color(0xFF0B4B4B),
-                  width: 1.5,
-                ),
-                shape: BoxShape.circle,
-              ),
-
-              child: Center(
-                child: Text(
-                  number.toString(),
-                  style: const TextStyle(
-                    color: Color(0xFF0B4B4B),
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+      child: Material(
+        color: const Color.fromARGB(255, 235, 233, 152),
+        borderRadius: BorderRadius.circular(22),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(22),
+         onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 12,
             ),
+            child: Row(
+              children: [
 
-            const SizedBox(width: 16),
-
-            /// English
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-
-                children: [
-
-                  Text(
-                    englishName,
+                /// Number
+                SizedBox(
+                  width: 34,
+                  child: Text(
+                    number.toString().padLeft(2, '0'),
                     style: const TextStyle(
+                      color: Color(0xFFD4AF37),
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF0B4B4B),
                     ),
                   ),
+                ),
 
-                  const SizedBox(height: 2),
+                const SizedBox(width: 18),
 
-                 Text(
-  "$revelationType • $verses Verses",
-  style: TextStyle(
-    color: Colors.grey.shade600,
-    fontSize: 13,
-    fontWeight: FontWeight.w500,
-  ),
-),
-                ],
-              ),
+                /// English
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+
+                      Text(
+                        englishName,
+                        style: const TextStyle(
+                          color: Color.fromARGB(255, 67, 89, 146),
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+
+                      const SizedBox(height: 5),
+
+                      Text(
+                        "$revelationType • $verses Verses",
+                        style: const TextStyle(
+                          color: Color.fromARGB(255, 78, 104, 149),
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(width: 16),
+
+                /// Arabic
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+
+                    Text(
+                      arabicName,
+                      style: const TextStyle(
+                        color: Color(0xFFD4AF37),
+                        fontSize: 28,
+                        fontFamily: 'Amiri',
+                      ),
+                    ),
+
+                    const SizedBox(height: 8),
+
+                    const Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      color: Color(0xFFD4AF37),
+                      size: 16,
+                    ),
+                  ],
+                ),
+              ],
             ),
-
-            /// Arabic
-            Text(
-              arabicName,
-              style: const TextStyle(
-                fontSize: 28,
-                color: Color(0xFF0B4B4B),
-                fontFamily: 'Amiri',
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
