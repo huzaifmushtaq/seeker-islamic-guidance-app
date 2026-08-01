@@ -11,57 +11,65 @@ class QuranSearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 55,
-
+      height: 58,
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 243, 219, 167),
-        borderRadius: BorderRadius.circular(20),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(.05),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+        ],
         border: Border.all(
-          color: const Color.fromARGB(255, 23, 22, 22).withOpacity(.06),
-          
+          color: const Color(0xffE7E2D8),
         ),
       ),
-
       child: TextField(
         onChanged: onChanged,
-        cursorColor: const Color(0xFFD4AF37),
-        textAlignVertical: TextAlignVertical.center,
+        cursorColor: const Color(0xff0E5A56),
         style: const TextStyle(
-          color: Colors.white,
+          color: Color(0xff1D3D3A),
           fontSize: 15,
+          fontWeight: FontWeight.w500,
         ),
-decoration: InputDecoration(
-  border: InputBorder.none,
+        textAlignVertical: TextAlignVertical.center,
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          hintText: "Search Surah, Ayah...",
+          hintStyle: TextStyle(
+            color: Colors.grey.shade500,
+            fontSize: 15,
+          ),
 
-  isCollapsed: true,
+          prefixIcon: const Icon(
+            Icons.search_rounded,
+            color: Color(0xff0E5A56),
+            size: 24,
+          ),
 
-  hintText: "Search Surah, Ayah...",
+          suffixIcon: Container(
+            margin: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: const Color(0xffF6EFD9),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: IconButton(
+              onPressed: () {},
+              icon: const Icon(
+                Icons.tune_rounded,
+                color: Color(0xff0E5A56),
+                size: 20,
+              ),
+            ),
+          ),
 
-  hintStyle: const TextStyle(
-    color: Color.fromARGB(255, 10, 19, 35),
-    fontSize: 15,
-  ),
-
-  prefixIcon: const Center(
-  widthFactor: 1,
-  child: Icon(
-    Icons.search_rounded,
-    color: Color(0xFFD4AF37),
-    size: 24,
-  ),
-),
-  suffixIcon: IconButton(
-    onPressed: () {},
-    icon: const Icon(
-      Icons.tune_rounded,
-      color: Color(0xFFD4AF37),
-    ),
-  ),
-
-  contentPadding: const EdgeInsets.symmetric(
-    vertical: 15,
-  ),
-),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 4,
+            vertical: 18,
+          ),
+        ),
       ),
     );
   }

@@ -35,59 +35,60 @@ class LastReadCard extends StatelessWidget {
   borderRadius: BorderRadius.circular(30),
   onTap: onTap,
   child: Container(
-      height: 235,
+      height: 220,
       width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 77, 101, 45),
+        gradient: const LinearGradient(
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
+  colors: [
+    Color(0xff0E5A56),
+    Color(0xff16756F),
+  ],
+),
         borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(.18),
-            blurRadius: 30,
-            offset: const Offset(0, 14),
+            color: const Color(0xff0E5A56).withOpacity(.25),
+           blurRadius: 26,
+spreadRadius: 1,
+offset: Offset(0,12),
           ),
         ],
       ),
       child: Stack(
         children: [
           Positioned(
-            right: -25,
-            top: -25,
-            child: Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(.03),
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
+  right: -30,
+  top: -20,
+  child: Icon(
+    Icons.auto_awesome_rounded,
+    size: 140,
+    color: Colors.white.withOpacity(.05),
+  ),
+),
 
           Positioned(
-            right: 25,
-            bottom: -35,
-            child: Container(
-              width: 90,
-              height: 90,
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(.02),
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-
+  right: -30,
+  top: -20,
+  child: Icon(
+    Icons.auto_awesome_rounded,
+    size: 140,
+    color: Colors.white.withOpacity(.05),
+  ),
+),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
                   Container(
-                    width: 46,
-                    height: 46,
+                    width: 54,
+                    height: 52,
                     decoration: BoxDecoration(
                       color: const Color(0xFFD4AF37).withOpacity(.15),
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(18),
                     ),
                     child: const Icon(
                       Icons.menu_book_rounded,
@@ -101,15 +102,25 @@ class LastReadCard extends StatelessWidget {
                   const Text(
                     "Continue Reading",
                     style: TextStyle(
-                      color: Color(0xFFB9C6E0),
-                      fontSize: 14,
+                      color: Color.fromARGB(255, 217, 223, 235),
+                      fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                 ],
               ),
+              
+const SizedBox(height: 12),
 
-              const Spacer(),
+Container(
+  width: 55,
+  height: 2,
+  decoration: BoxDecoration(
+    color: Color(0xffE8C76A),
+    borderRadius: BorderRadius.circular(20),
+  ),
+),
+              const SizedBox(height: 6),
 
               Text(
                 surahName,
@@ -117,19 +128,19 @@ class LastReadCard extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                   color: Colors.white,
-                  fontSize: 30,
+                  fontSize: 24,
                   fontWeight: FontWeight.bold,
                   letterSpacing: .3,
                 ),
               ),
 
-              const SizedBox(height: 6),
+              const SizedBox(height: 4),
 
               Text(
                 ayahText,
                 style: const TextStyle(
-                  color: Color(0xFF8FA8D4),
-                  fontSize: 15,
+                  color: Color.fromARGB(255, 201, 208, 220),
+                  fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -140,13 +151,13 @@ class LastReadCard extends StatelessWidget {
                 alignment: Alignment.bottomRight,
                 child: Container(
                   width: 52,
-                  height: 52,
+                  height: 42,
                   decoration: const BoxDecoration(
                     color: Color(0xFFD4AF37),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
-                    Icons.arrow_forward_rounded,
+                    Icons.play_arrow_rounded,
                     color: Color(0xFF0B1730),
                     size: 24,
                   ),

@@ -72,198 +72,202 @@ Future<void> _loadLastRead() async {
           surah.nameArabic.contains(searchQuery);
     }).toList();
   }
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    backgroundColor: const Color(0xffFBF8F1),
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 247, 247, 248),
-
-
-      body: SingleChildScrollView(
+    body: SafeArea(
+      child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-          SafeArea(
-  child: Padding(
-    padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-    child: Column(
-      children: [
-        LastReadCard(
-  lastRead: lastRead,
-  surahs: surahs,
-  onTap: () async {
-    if (lastRead == null) return;
 
-    final surah = surahs.firstWhere(
-      (s) => s.id == lastRead!.surah,
-    );
+            const SizedBox(height: 18),
 
-   await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => SurahDetailsScreen(
-          surahNumber: surah.id,
-          englishName: surah.nameSimple,
-          arabicName: surah.nameArabic,
-          revelationType:
-              "${surah.revelationPlace[0].toUpperCase()}${surah.revelationPlace.substring(1)}",
-          verses: surah.versesCount,
+            
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: LastReadCard(
+                lastRead: lastRead,
+                surahs: surahs,
+                onTap: () async {
+                  if (lastRead == null) return;
 
-          initialPage: lastRead!.page,
-        ),
-      ),
-    );
-    await _loadLastRead();
-  },
-),
-      ],
-    ),
-  ),
-),
-    const SizedBox(height: 10),
-                 
+                  final surah = surahs.firstWhere(
+                    (s) => s.id == lastRead!.surah,
+                  );
 
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => SurahDetailsScreen(
+                        surahNumber: surah.id,
+                        englishName: surah.nameSimple,
+                        arabicName: surah.nameArabic,
+                        revelationType:
+                            "${surah.revelationPlace[0].toUpperCase()}${surah.revelationPlace.substring(1)}",
+                        verses: surah.versesCount,
+                        initialPage: lastRead!.page,
+                      ),
+                    ),
+                  );
 
-                 Padding(
-  padding: const EdgeInsets.symmetric(horizontal: 20),
-  child: QuranSearchBar(
-    onChanged: (value) {
-      setState(() {
-        searchQuery = value;
-      });
-    },
-  ),
-),
-                  const SizedBox(height: 18),
-Padding(
-  padding: const EdgeInsets.symmetric(horizontal: 20),
-  child: Row(
-    children: [
-      Expanded(
-        child: _quickAction(
-          icon: Icons.bookmark_rounded,
-          title: "Bookmarks",
-          onTap: () {},
-        ),
-      ),
+                  await _loadLastRead();
+                },
+              ),
+            ),
 
-      const SizedBox(width: 12),
+            const SizedBox(height: 22),
 
-      Expanded(
-        child: _quickAction(
-          icon: Icons.history_rounded,
-          title: "History",
-          onTap: () {},
-        ),
-      ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: QuranSearchBar(
+                onChanged: (value) {
+                  setState(() {
+                    searchQuery = value;
+                  });
+                },
+              ),
+            ),
 
-      const SizedBox(width: 12),
+            const SizedBox(height: 20),
 
-      Expanded(
-        child: _quickAction(
-          icon: Icons.headphones_rounded,
-          title: "Audio",
-          onTap: () {},
-        ),
-      ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                children: [
 
-      const SizedBox(width: 12),
+                  Expanded(
+                    child: _quickAction(
+                      icon: Icons.bookmark_rounded,
+                      title: "Bookmarks",
+                      onTap: () {},
+                    ),
+                  ),
 
-      Expanded(
-        child: _quickAction(
-          icon: Icons.mosque_rounded,
-          title: "Juz",
-          onTap: () {},
-        ),
-      ),
-    ],
-  ),
-),
+                  const SizedBox(width: 12),
 
-                  Padding(
-  padding: const EdgeInsets.fromLTRB(24, 28, 24, 18),
-  child: Row(
-    children: [
+                  Expanded(
+                    child: _quickAction(
+                      icon: Icons.history_rounded,
+                      title: "History",
+                      onTap: () {},
+                    ),
+                  ),
 
-      const Text(
-        "All Surahs",
-        style: TextStyle(
-          color: Color.fromARGB(255, 33, 41, 57),
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
+                  const SizedBox(width: 12),
 
-      const Spacer(),
+                  Expanded(
+                    child: _quickAction(
+                      icon: Icons.headphones_rounded,
+                      title: "Audio",
+                      onTap: () {},
+                    ),
+                  ),
 
-      Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 12,
-          vertical: 6,
-        ),
-        decoration: BoxDecoration(
-          color: const Color(0xFFD4AF37),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Text(
-          "${surahs.length}",
-          style: const TextStyle(
-            color: Color(0xFF0B1730),
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-    ],
-  ),
-),
+                  const SizedBox(width: 12),
 
-
-                 
-
-                  ListView.separated(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: filteredSurahs.length,
-
-                    separatorBuilder: (_, _) =>
-                        const Divider(height: 1),
-
-                    itemBuilder: (context, index) {
-                      final surah = filteredSurahs[index];
-
-                     return SurahTile(
-  number: surah.id,
-  englishName: surah.nameSimple,
-  meaning: surah.name,
-  arabicName: surah.nameArabic,
-  verses: surah.versesCount,
-  revelationType:
-      "${surah.revelationPlace[0].toUpperCase()}${surah.revelationPlace.substring(1)}",
-
-  onTap: () async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => SurahDetailsScreen(
-          surahNumber: surah.id,
-          englishName: surah.nameSimple,
-          arabicName: surah.nameArabic,
-          revelationType:
-              "${surah.revelationPlace[0].toUpperCase()}${surah.revelationPlace.substring(1)}",
-          verses: surah.versesCount,
-        ),
-      ),
-    );
-
-    await _loadLastRead();
-  },
-);
-                    },
+                  Expanded(
+                    child: _quickAction(
+                      icon: Icons.mosque_rounded,
+                      title: "Juz",
+                      onTap: () {},
+                    ),
                   ),
                 ],
               ),
             ),
-    );
-  }
+
+            const SizedBox(height: 26),
+
+                              Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+              child: Row(
+                children: [
+
+                  const Text(
+                    "All Surahs",
+                    style: TextStyle(
+                      color: Color(0xff1D3D3A),
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+
+                  const Spacer(),
+
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xffF6EFD9),
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: Text(
+                      "${filteredSurahs.length}",
+                      style: const TextStyle(
+                        color: Color(0xff0E5A56),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: filteredSurahs.length,
+
+              separatorBuilder: (_, __) =>
+                  const SizedBox(height: 10),
+
+              itemBuilder: (context, index) {
+                final surah = filteredSurahs[index];
+
+                return SurahTile(
+                  number: surah.id,
+                  englishName: surah.nameSimple,
+                  meaning: surah.name,
+                  arabicName: surah.nameArabic,
+                  verses: surah.versesCount,
+                  revelationType:
+                      "${surah.revelationPlace[0].toUpperCase()}${surah.revelationPlace.substring(1)}",
+
+                  onTap: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => SurahDetailsScreen(
+                          surahNumber: surah.id,
+                          englishName: surah.nameSimple,
+                          arabicName: surah.nameArabic,
+                          revelationType:
+                              "${surah.revelationPlace[0].toUpperCase()}${surah.revelationPlace.substring(1)}",
+                          verses: surah.versesCount,
+                        ),
+                      ),
+                    );
+
+                    await _loadLastRead();
+                  },
+                );
+              },
+            ),
+
+            const SizedBox(height: 28),
+          ],
+        ),
+      ),
+    ),
+  );
+}
 }
 Widget _quickAction({
   required IconData icon,
@@ -271,38 +275,39 @@ Widget _quickAction({
   required VoidCallback onTap,
 }) {
   return InkWell(
-    borderRadius: BorderRadius.circular(20),
     onTap: onTap,
+    borderRadius: BorderRadius.circular(20),
     child: Container(
-      height: 82,
-
+      height: 78,
       decoration: BoxDecoration(
-        color: const Color(0xFF13213A),
+        color: const Color(0xff0E5A56),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: Colors.white.withOpacity(.05),
-        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xff0E5A56).withOpacity(.12),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
-
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
 
           Icon(
             icon,
-            color: const Color(0xFFD4AF37),
-            size: 26,
+            color: const Color(0xffE8C76A),
+            size: 24,
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 8),
 
           Text(
             title,
-            textAlign: TextAlign.center,
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 12,
               fontWeight: FontWeight.w600,
+              fontSize: 12,
             ),
           ),
         ],

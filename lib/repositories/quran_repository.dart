@@ -3,23 +3,20 @@ import '../services/arabic_service.dart';
 import '../services/translation_service.dart';
 import '../services/bayanul_furqan_translation_service.dart';
 import '../services/bayanul_furqan_tafsir_service.dart';
+import '../utils/quran_constants.dart';
 
 class QuranRepository {
   QuranRepository._();
 
-  static final QuranRepository _instance =
-      QuranRepository._();
+  static final QuranRepository _instance = QuranRepository._();
 
   factory QuranRepository() => _instance;
 
   final ArabicService _arabic = ArabicService();
   final TranslationService _translation = TranslationService();
-  final BayanulFurqanTranslationService
-      _bayanTranslation =
+  final BayanulFurqanTranslationService _bayanTranslation =
       BayanulFurqanTranslationService();
-
-  final BayanulFurqanTafsirService
-      _bayanTafsir =
+  final BayanulFurqanTafsirService _bayanTafsir =
       BayanulFurqanTafsirService();
 
   final Map<int, List<VerseModel>> _cache = {};
@@ -34,10 +31,8 @@ class QuranRepository {
 
     final arabic = await _arabic.load();
     final translation = await _translation.load();
-    final bayanTranslation =
-        await _bayanTranslation.load();
-    final bayanTafsir =
-        await _bayanTafsir.load();
+    final bayanTranslation = await _bayanTranslation.load();
+    final bayanTafsir = await _bayanTafsir.load();
 
     final List<VerseModel> result = [];
 
@@ -63,8 +58,7 @@ class QuranRepository {
           surah: surah,
           ayah: ayah,
           arabic: arabic[key]?["text"] ?? "",
-          kashmiriTranslation:
-              translation[key]?["t"] ?? "",
+          kashmiriTranslation: translation[key]?["t"] ?? "",
           bayanulFurqanTranslation:
               bayanTranslation[key]?["t"] ?? "",
           bayanulFurqanTafsir: tafsir,
@@ -77,4 +71,21 @@ class QuranRepository {
 
     return result;
   }
+
+  Future<VerseModel?> loadVerse(
+    int surah,
+    int ayah,
+  ) async {
+    final verses = await loadSurah(
+      surah,
+      surahVerseCounts[surah - 1],
+    );
+
+    if (ayah < 1 || ayah > verses.length) {
+      return null;
+    }
+
+    return verses[ayah - 1];
+  }
+  
 }

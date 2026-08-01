@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-// ignore: unused_import
-import '../../screens/quran/surah_details_screen.dart';
 
 class SurahTile extends StatelessWidget {
   final int number;
@@ -10,6 +8,7 @@ class SurahTile extends StatelessWidget {
   final int verses;
   final String revelationType;
   final VoidCallback? onTap;
+
   const SurahTile({
     super.key,
     required this.number,
@@ -18,7 +17,7 @@ class SurahTile extends StatelessWidget {
     required this.arabicName,
     required this.revelationType,
     required this.verses,
-      this.onTap,
+    this.onTap,
   });
 
   @override
@@ -26,49 +25,59 @@ class SurahTile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: 20,
-        vertical: 6,
+        vertical: 7,
       ),
       child: Material(
-        color: const Color.fromARGB(255, 235, 233, 152),
-        borderRadius: BorderRadius.circular(22),
+        color: Colors.white,
+        elevation: 1.0,
+        shadowColor: Colors.black12,
+        borderRadius: BorderRadius.circular(24),
         child: InkWell(
-          borderRadius: BorderRadius.circular(22),
-         onTap: onTap,
+          borderRadius: BorderRadius.circular(24),
+          onTap: onTap,
           child: Padding(
             padding: const EdgeInsets.symmetric(
-              horizontal: 20,
-              vertical: 12,
+              horizontal: 18,
+              vertical: 14,
             ),
             child: Row(
               children: [
-
-                /// Number
-                SizedBox(
-                  width: 34,
+                /// Surah Number
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: const Color(0xffF6EFD9),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  alignment: Alignment.center,
                   child: Text(
-                    number.toString().padLeft(2, '0'),
+                    number.toString(),
                     style: const TextStyle(
-                      color: Color(0xFFD4AF37),
-                      fontSize: 18,
+                      color: Color(0xff0E5A56),
                       fontWeight: FontWeight.bold,
+                      fontSize: 16,
                     ),
                   ),
                 ),
 
-                const SizedBox(width: 18),
+                const SizedBox(width: 16),
 
-                /// English
+                /// English Details
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                     
 
                       Text(
-                        englishName,
+                        meaning,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                          color: Color.fromARGB(255, 67, 89, 146),
+                          color: Color(0xffB28A2E),
                           fontSize: 18,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
 
@@ -77,8 +86,8 @@ class SurahTile extends StatelessWidget {
                       Text(
                         "$revelationType • $verses Verses",
                         style: const TextStyle(
-                          color: Color.fromARGB(255, 78, 104, 149),
-                          fontSize: 13,
+                          color: Color.fromARGB(137, 15, 12, 12),
+                          fontSize: 14,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -88,26 +97,33 @@ class SurahTile extends StatelessWidget {
 
                 const SizedBox(width: 16),
 
-                /// Arabic
+                /// Arabic + Arrow
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-
                     Text(
                       arabicName,
                       style: const TextStyle(
-                        color: Color(0xFFD4AF37),
-                        fontSize: 28,
+                        color: Color(0xff0E5A56),
+                        fontSize: 26,
                         fontFamily: 'Amiri',
                       ),
                     ),
 
                     const SizedBox(height: 8),
 
-                    const Icon(
-                      Icons.arrow_forward_ios_rounded,
-                      color: Color(0xFFD4AF37),
-                      size: 16,
+                    Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: const Color(0xffF6EFD9),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        size: 14,
+                        color: Color(0xff0E5A56),
+                      ),
                     ),
                   ],
                 ),

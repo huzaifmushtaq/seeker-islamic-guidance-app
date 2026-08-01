@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'home_screen.dart';
 import 'classes_screen.dart';
-import 'search_screen.dart';
+import 'hadith_screen.dart';
 import 'package:seeker/screens/quran/quran_screen.dart';
 import 'profile_screen.dart';
 
@@ -30,7 +30,7 @@ class _MainNavigationScreenState
 
   const ClassesScreen(),
 
-  const SearchScreen(),
+  const HadithScreen(),
 
   const ProfileScreen(),
 ];
