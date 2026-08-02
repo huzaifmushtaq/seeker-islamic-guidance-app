@@ -87,5 +87,18 @@ class QuranRepository {
 
     return verses[ayah - 1];
   }
-  
+  Future<List<VerseModel>> loadAllVerses() async {
+  final List<VerseModel> allVerses = [];
+
+  for (int surah = 1; surah <= 114; surah++) {
+    final verses = await loadSurah(
+      surah,
+      surahVerseCounts[surah - 1],
+    );
+
+    allVerses.addAll(verses);
+  }
+
+  return allVerses;
+}
 }

@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import '../../widgets/hadith/continue_hadith_card.dart';
 import '../../widgets/hadith/hadith_collection_card.dart';
 import '../../widgets/hadith/hadith_search_bar.dart';
+import '../../models/hadith_collection_model.dart';
+import '../../repositories/hadith_library_repository.dart';
+import 'hadith_books_screen.dart';
 
 class HadithScreen extends StatefulWidget {
   const HadithScreen({super.key});
@@ -13,53 +16,32 @@ class HadithScreen extends StatefulWidget {
 
 class _HadithScreenState extends State<HadithScreen> {
   String searchQuery = "";
+final HadithLibraryRepository _repository =
+    HadithLibraryRepository();
+    List<HadithCollectionModel> collections = [];
+    bool isLoading = true;
+  
 
-  final List<Map<String, dynamic>> collections = [
-    {
-      "title": "Sahih al-Bukhari",
-      "subtitle": "Authentic Collection",
-      "count": 7563,
-      "cover": "assets/images/hadith/Book1.png",
-    },
-    {
-      "title": "Sahih Muslim",
-      "subtitle": "Authentic Collection",
-      "count": 5362,
-      "cover": "assets/images/hadith/Book2.png",
-    },
-    {
-      "title": "Sunan Abu Dawud",
-      "subtitle": "Collection of Sunnah",
-      "count": 5274,
-      "cover": "assets/images/hadith/Book3.png",
-    },
-    {
-      "title": "Jami' at-Tirmidhi",
-      "subtitle": "Collection of Hadith",
-      "count": 3956,
-      "cover": "assets/images/hadith/Book4.png",
-    },
-    {
-      "title": "Sunan an-Nasa'i",
-      "subtitle": "Collection of Sunnah",
-      "count": 5758,
-      "cover": "assets/images/hadith/Book5.png",
-    },
-    {
-      "title": "Sunan Ibn Majah",
-      "subtitle": "Collection of Hadith",
-      "count": 4341,
-      "cover": "assets/images/hadith/Book6.png",
-    },
-  ];
+  @override
+void initState() {
+  super.initState();
+  _loadCollections();
+}
+
+Future<void> _loadCollections() async {
+  final loaded = await _repository.loadCollections();
+
+  if (!mounted) return;
+
+  setState(() {
+    collections = loaded;
+    isLoading = false;
+  });
+}
 
   @override
   Widget build(BuildContext context) {
-    final filtered = collections.where((book) {
-      final q = searchQuery.toLowerCase();
-      return book["title"].toLowerCase().contains(q) ||
-          book["subtitle"].toLowerCase().contains(q);
-    }).toList();
+   final filtered = collections;
 
     return Scaffold(
       backgroundColor: const Color(0xffFBF8F1),
@@ -149,17 +131,26 @@ class _HadithScreenState extends State<HadithScreen> {
                   mainAxisSpacing: 22,
                   childAspectRatio: .67,
                 ),
-                itemBuilder: (context, index) {
-                  final item = filtered[index];
+               itemBuilder: (context, index) {
+  final item = filtered[index];
 
-                  return HadithCollectionCard(
-  title: item["title"],
-  subtitle: item["subtitle"],
-  totalHadith: item["count"],
-  coverImage: item["cover"],
-                    onTap: () {},
-                  );
-                },
+  return HadithCollectionCard(
+    title: item.title,
+    subtitle: item.introduction,
+    totalHadith: item.totalHadith,
+    coverImage: item.coverAsset,
+    onTap: () {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => HadithBooksScreen(
+        collection: item,
+      ),
+    ),
+  );
+},
+  );
+},
               ),
 
               const SizedBox(height: 40),

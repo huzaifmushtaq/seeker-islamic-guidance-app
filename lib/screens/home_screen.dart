@@ -11,9 +11,8 @@ import 'prayer_times_screen.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/verse_model.dart';
-import '../repositories/quran_repository.dart';
-import '../services/verse_of_day_service.dart';
-import '../utils/quran_constants.dart';
+import '../services/daily_verse_service.dart';
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -34,7 +33,8 @@ bool locationUnavailable = false;
   String? prayerError;
 VerseModel? _verseOfTheDay;
 bool _isLoadingVerse = true;
-  
+  final DailyVerseService _dailyVerseService =
+    DailyVerseService();
   String getHijriDate() {
     HijriCalendar.setLocal("en");
 
@@ -161,21 +161,8 @@ bool _isLoadingVerse = true;
 
 Future<void> _loadVerseOfTheDay() async {
   try {
-    final config = await VerseOfDayService().getVerseOfTheDay();
-
-    if (config == null || !config.enabled) {
-      if (!mounted) return;
-
-      setState(() {
-        _isLoadingVerse = false;
-      });
-      return;
-    }
-
-    final verse = await QuranRepository().loadVerse(
-      config.surah,
-      config.ayah,
-    );
+    final verse =
+        await _dailyVerseService.getTodaysVerse();
 
     if (!mounted) return;
 
@@ -184,9 +171,9 @@ Future<void> _loadVerseOfTheDay() async {
       _isLoadingVerse = false;
     });
   } catch (e) {
-    if (!mounted) return;
-
     debugPrint(e.toString());
+
+    if (!mounted) return;
 
     setState(() {
       _isLoadingVerse = false;
@@ -560,7 +547,7 @@ Future<void> _requestLocationAgain() async {
         _verseOfTheDay?.arabic ?? "",
         textAlign: TextAlign.right,
         style: const TextStyle(
-          fontSize: 26,
+          fontSize: 18,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -578,11 +565,41 @@ Future<void> _requestLocationAgain() async {
 
                 Text(
   _verseOfTheDay?.kashmiriTranslation ?? "",
+  maxLines: 5,
+  overflow: TextOverflow.ellipsis,
   style: const TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.w600,
+    height: 1.45,
   ),
 ),
+const SizedBox(height: 12),
+/*
+InkWell(
+  onTap: () {
+    // We'll connect this next
+  },
+  borderRadius: BorderRadius.circular(20),
+  child: Row(
+    mainAxisSize: MainAxisSize.min,
+    children: const [
+      Text(
+        "Read Full Verse",
+        style: TextStyle(
+          color: Color(0xff0E5A56),
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+      SizedBox(width: 6),
+      Icon(
+        Icons.arrow_forward_rounded,
+        color: Color(0xff0E5A56),
+        size: 18,
+      ),
+    ],
+  ),
+),
+ */
                   ],
                 ),
               ),

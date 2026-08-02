@@ -4,7 +4,7 @@ class HadithCollectionCard extends StatelessWidget {
   final String title;
   final String subtitle;
   final int totalHadith;
- final String coverImage;
+  final String coverImage;
   final VoidCallback? onTap;
 
   const HadithCollectionCard({
@@ -20,22 +20,21 @@ class HadithCollectionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: Colors.transparent,
-      borderRadius: BorderRadius.circular(26),
+      borderRadius: BorderRadius.circular(24),
       child: InkWell(
-        borderRadius: BorderRadius.circular(26),
         onTap: onTap,
+        borderRadius: BorderRadius.circular(24),
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(26),
+            borderRadius: BorderRadius.circular(24),
             border: Border.all(
               color: const Color(0xffE7DCC1),
-              width: 1.2,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(.05),
-                blurRadius: 18,
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 16,
                 offset: const Offset(0, 8),
               ),
             ],
@@ -46,21 +45,43 @@ class HadithCollectionCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
 
-                /// BOOK COVER PLACEHOLDER
+                /// BOOK IMAGE
                 Expanded(
                   flex: 7,
-                  child: ClipRRect(
-  borderRadius: BorderRadius.circular(18),
-  child: Image.asset(
-    coverImage,
-    width: double.infinity,
-    fit: BoxFit.contain,
-  ),
-),
+                  child: Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(18),
+                      child: Image.asset(
+                        coverImage,
+                        fit: BoxFit.contain,
+                        errorBuilder: (
+                          context,
+                          error,
+                          stackTrace,
+                        ) {
+                          return Container(
+                            color: const Color(0xffF8F5ED),
+                            child: const Center(
+                              child: Icon(
+                                Icons.menu_book_rounded,
+                                size: 50,
+                                color: Color(0xff0E5A56),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
                 ),
 
                 const SizedBox(height: 14),
 
+                /// TITLE
                 Text(
                   title,
                   maxLines: 2,
@@ -69,12 +90,13 @@ class HadithCollectionCard extends StatelessWidget {
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
                     color: Color(0xff12372A),
-                    height: 1.2,
+                    height: 1.25,
                   ),
                 ),
 
                 const SizedBox(height: 5),
 
+                /// SUBTITLE
                 Text(
                   subtitle,
                   maxLines: 1,
@@ -86,11 +108,11 @@ class HadithCollectionCard extends StatelessWidget {
                   ),
                 ),
 
-                const Spacer(),
+                const SizedBox(height: 10),
 
+                /// FOOTER
                 Row(
                   children: [
-
                     Container(
                       width: 28,
                       height: 28,
@@ -109,7 +131,9 @@ class HadithCollectionCard extends StatelessWidget {
 
                     Expanded(
                       child: Text(
-                        "$totalHadith",
+                        totalHadith == 0
+                            ? "--"
+                            : totalHadith.toString(),
                         style: const TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
