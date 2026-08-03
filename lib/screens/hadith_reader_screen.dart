@@ -2,18 +2,23 @@ import 'package:flutter/material.dart';
 
 import '../../models/hadith_model.dart';
 import '../../repositories/hadith_reader_repository.dart';
-
+import '../../services/hadith_progress_service.dart';
+import '../../services/hadith_bookmark_service.dart';
+import '../../models/hadith_bookmark_model.dart';
+import 'package:flutter/services.dart';
 class HadithReaderScreen extends StatefulWidget {
   final String collection;
-  final int chapterId;
-  final String title;
+final int chapterId;
+final String title;
+final int initialIndex;
 
   const HadithReaderScreen({
-    super.key,
-    required this.collection,
-    required this.chapterId,
-    required this.title,
-  });
+  super.key,
+  required this.collection,
+  required this.chapterId,
+  required this.title,
+  this.initialIndex = 0,
+});
 
   @override
   State<HadithReaderScreen> createState() =>
@@ -24,10 +29,14 @@ class _HadithReaderScreenState
     extends State<HadithReaderScreen> {
   final HadithReaderRepository _repository =
       HadithReaderRepository();
-
+final HadithProgressService _progress =
+    HadithProgressService();
   final PageController _pageController =
       PageController();
+final HadithBookmarkService _bookmarkService =
+    HadithBookmarkService();
 
+bool isBookmarked = false;
   List<HadithModel> hadiths = [];
 
   bool isLoading = true;
@@ -48,18 +57,39 @@ class _HadithReaderScreenState
     if (!mounted) return;
 
     setState(() {
-      hadiths = loaded;
-      isLoading = false;
+  hadiths = loaded;
+  isLoading = false;
+});
+
+WidgetsBinding.instance.addPostFrameCallback((_) {
+  if (widget.initialIndex < hadiths.length) {
+    _pageController.jumpToPage(widget.initialIndex);
+
+    setState(() {
+      currentPage = widget.initialIndex;
     });
   }
+});
+
+await _saveProgress();
+await _loadBookmark();
+  }
+  String formatTitle(String title) {
+  final words = title.trim().split(RegExp(r'\s+'));
+
+  if (words.length <= 5) return title;
+
+  return "${words.take(5).join(' ')}\n${words.skip(5).join(' ')}";
+}
 Widget _action(
   IconData icon,
   String label,
-) {
+  VoidCallback? onTap,
+)  {
   return InkWell(
     borderRadius:
         BorderRadius.circular(16),
-    onTap: () {},
+    onTap: onTap,
     child: Padding(
       padding: const EdgeInsets.all(8),
       child: Column(
@@ -85,6 +115,27 @@ Widget _action(
       ),
     ),
   );
+}
+Future<void> _saveProgress() async {
+  if (hadiths.isEmpty) return;
+
+  await _progress.saveProgress(
+    collection: widget.collection,
+    chapterId: widget.chapterId,
+    index: currentPage,
+    title: widget.title,
+  );
+}
+
+Future<void> _loadBookmark() async {
+  if (hadiths.isEmpty) return;
+
+  isBookmarked =
+      await _bookmarkService.isBookmarked(
+    hadiths[currentPage].id,
+  );
+
+  if (mounted) setState(() {});
 }
   @override
   Widget build(BuildContext context) {
@@ -139,36 +190,22 @@ body: SafeArea(
 
             const Spacer(),
 
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.bookmark_border,
-                color: Color(0xff12372A),
-              ),
-            ),
-
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.more_vert,
-                color: Color(0xff12372A),
-              ),
-            ),
           ],
         ),
       ),
 
       const SizedBox(height: 20),
 
-      Text(
-        widget.title,
-        style: const TextStyle(
-          fontSize: 28,
-          fontWeight: FontWeight.bold,
-          color: Color(0xff12372A),
-        ),
-      ),
-
+    Text(
+  formatTitle(widget.title),
+  textAlign: TextAlign.center,
+  style: const TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+    color: Color(0xff12372A),
+    height: 1.1,
+  ),
+),
       const SizedBox(height: 6),
 
       Text(
@@ -216,11 +253,14 @@ body: SafeArea(
           controller: _pageController,
           itemCount: hadiths.length,
 
-          onPageChanged: (i) {
-            setState(() {
-              currentPage = i;
-            });
-          },
+          onPageChanged: (i) async {
+  setState(() {
+    currentPage = i;
+  });
+
+  await _saveProgress();
+  await _loadBookmark();
+},
 
           itemBuilder: (context,index){
 
@@ -509,28 +549,81 @@ Row(
       MainAxisAlignment.spaceEvenly,
   children: [
 
-    _action(
-      Icons.bookmark_border,
-      "Save",
-    ),
+_action(
+  isBookmarked
+      ? Icons.bookmark
+      : Icons.bookmark_border,
+  "Bookmark",
+  () async {
+    final hadith = hadiths[currentPage];
 
-    _action(
-      Icons.copy_rounded,
-      "Copy",
-    ),
+    await _bookmarkService.toggleBookmark(
+      HadithBookmarkModel(
+        collection: widget.collection,
+        chapterId: widget.chapterId,
+        chapterTitle: widget.title,
+        hadithIndex: currentPage,
+        hadithId: hadith.id,
+        arabic: hadith.arabic,
+        english: hadith.english,
+        savedAt: DateTime.now(),
+      ),
+    );
 
-    _action(
-      Icons.share_outlined,
-      "Share",
-    ),
+    await _loadBookmark();
+  },
+),
+_action(
+  Icons.copy_rounded,
+  "Copy",
+  () async {
+    final hadith = hadiths[currentPage];
 
-    _action(
-      Icons.text_fields,
-      "Aa",
-    ),
-  ],
+    final text = '''
+${hadith.arabic}
+
+${hadith.narrator}
+
+${hadith.english}
+
+Source:
+${widget.collection.toUpperCase()}
+${widget.title}
+Hadith ${hadith.idInBook}
+''';
+
+    await Clipboard.setData(
+      ClipboardData(text: text),
+    );
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Hadith copied to clipboard"),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  },
 ),
 
+_action(
+  Icons.share_outlined,
+  "Share",
+  () {
+    
+  },
+),
+
+_action(
+  Icons.text_fields,
+  "Aa",
+  () {
+    
+  },
+),
+  ],
+  ),
 const SizedBox(height:12),
 
 ],
