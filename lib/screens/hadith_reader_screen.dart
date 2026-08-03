@@ -600,7 +600,7 @@ Hadith ${hadith.idInBook}
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text("Hadith copied to clipboard "),
+        content: Text("Hadith copied to clipboard"),
         duration: Duration(seconds: 2),
       ),
     );
