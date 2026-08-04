@@ -6,6 +6,11 @@ import '../../services/hadith_progress_service.dart';
 import '../../services/hadith_bookmark_service.dart';
 import '../../models/hadith_bookmark_model.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/rendering.dart';
+import 'share_preview_screen.dart';
+import '../../services/share_layout_service.dart';
+import '../../services/hadith_pdf_service.dart';
+
 class HadithReaderScreen extends StatefulWidget {
   final String collection;
 final int chapterId;
@@ -31,10 +36,14 @@ class _HadithReaderScreenState
       HadithReaderRepository();
 final HadithProgressService _progress =
     HadithProgressService();
+    final HadithBookmarkService _bookmarkService =
+    HadithBookmarkService();
   final PageController _pageController =
       PageController();
-final HadithBookmarkService _bookmarkService =
-    HadithBookmarkService();
+      final HadithPdfService _pdfService =
+    HadithPdfService();
+
+
 
 bool isBookmarked = false;
   List<HadithModel> hadiths = [];
@@ -147,7 +156,8 @@ Future<void> _loadBookmark() async {
       );
     }
 
-    return Scaffold(backgroundColor: const Color(0xffF7F3EA),
+    return Stack(
+  children: [ Scaffold(backgroundColor: const Color(0xffF7F3EA),
 
 body: SafeArea(
   child: Column(
@@ -606,20 +616,47 @@ Hadith ${hadith.idInBook}
     );
   },
 ),
-
 _action(
   Icons.share_outlined,
   "Share",
-  () {
-    
-  },
-),
+  () async {
+    final fits = ShareLayoutService.fitsInImage(
+      arabic: hadiths[currentPage].arabic,
+      narrator: hadiths[currentPage].narrator,
+      english: hadiths[currentPage].english,
+    );
 
-_action(
-  Icons.text_fields,
-  "Aa",
-  () {
-    
+    if (fits) {
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => SharePreviewScreen(
+            arabic: hadiths[currentPage].arabic,
+            narrator: hadiths[currentPage].narrator,
+            english: hadiths[currentPage].english,
+            collection: widget.collection,
+            chapter: widget.title,
+            hadithNumber: hadiths[currentPage].idInBook,
+          ),
+        ),
+      );
+
+    } else {
+
+  await _pdfService.generate(
+  arabic: hadiths[currentPage].arabic,
+  narrator: hadiths[currentPage].narrator,
+  english: hadiths[currentPage].english,
+  collection: widget.collection,
+  chapter: widget.title,
+  hadithNumber: hadiths[currentPage].idInBook,
+);
+
+      // PDF generation will be added here next.
+
+    }
+
   },
 ),
   ],
@@ -634,8 +671,11 @@ const SizedBox(height:12),
 ),
 ),
 ],
-),
-),
+),      ),
+    ),
+
+    
+
+  ],
 );
-  }
-    }
+}}

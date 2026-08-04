@@ -1,24 +1,24 @@
 class HadithBookModel {
   final int id;
-  final int collectionId;
-  final String englishTitle;
+  final int bookId;
   final String arabicTitle;
+  final String englishTitle;
 
   const HadithBookModel({
     required this.id,
-    required this.collectionId,
-    required this.englishTitle,
+    required this.bookId,
     required this.arabicTitle,
+    required this.englishTitle,
   });
 
   factory HadithBookModel.fromMap(
     Map<String, dynamic> map,
   ) {
     return HadithBookModel(
-      id: map["id"] ?? 0,
-      collectionId: map["bookId"] ?? 0,
-      englishTitle: map["english"] ?? "",
+      id: (map["id"] as num).toInt(),
+      bookId: (map["bookId"] as num).toInt(),
       arabicTitle: map["arabic"] ?? "",
+      englishTitle: map["english"] ?? "",
     );
   }
 }
