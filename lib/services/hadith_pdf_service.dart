@@ -19,6 +19,7 @@ class HadithPdfService {
     "ﷺ",
     "صلى الله عليه وسلم",
   );
+  english = english.replaceAll("ﷺ", "peace be upon him");
 
 final arabicFont = pw.Font.ttf(
   await rootBundle.load(

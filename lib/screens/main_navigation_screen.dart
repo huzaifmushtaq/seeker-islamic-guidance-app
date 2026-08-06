@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'home_screen.dart';
 import 'classes_screen.dart';
 import 'hadith_screen.dart';
+import 'home_screen.dart';
 import 'package:seeker/screens/quran/quran_screen.dart';
 import 'profile_screen.dart';
 
@@ -22,98 +22,215 @@ class _MainNavigationScreenState
 
   int currentIndex = 0;
 
-  final List<Widget> screens = [
+  final List<Widget> screens = const [
 
-  const HomeScreen(),
+    HomeScreen(),
 
-  const QuranScreen(),
+    QuranScreen(),
 
-  const ClassesScreen(),
+    ClassesScreen(),
 
-  const HadithScreen(),
+    HadithScreen(),
 
-  const ProfileScreen(),
-];
+    ProfileScreen(),
+
+  ];
+
+  Future<void> _onItemTapped(int index) async {
+
+    if (index == 4) {
+
+      final isGuest =
+          await GuestService().isGuest();
+
+      if (isGuest) {
+
+        if (!mounted) return;
+
+        showAuthPrompt(context);
+
+        return;
+      }
+    }
+
+    setState(() {
+      currentIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
 
     return Scaffold(
 
-     body: IndexedStack(
-  index: currentIndex,
-  children: screens,
-),
-      bottomNavigationBar: BottomNavigationBar(
+      backgroundColor: const Color(0xffF8F6F1),
 
-        currentIndex: currentIndex,
+      body: IndexedStack(
+        index: currentIndex,
+        children: screens,
+      ),
 
-        
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            0,
+            0,
+            0,
+            5,
+          ),
+          child: Container(
 
-       onTap: (index) async {
+            height: 78,
 
-  // Protect Profile tab for Guests
-  if (index == 4) {
+            decoration: BoxDecoration(
 
-    final isGuest =
-        await GuestService().isGuest();
+              color: const Color.fromARGB(255, 242, 243, 244),
 
-    if (isGuest) {
+              borderRadius:
+                  BorderRadius.circular(24),
 
-      if (!context.mounted) return;
+              boxShadow: [
 
-      showAuthPrompt(context);
+                BoxShadow(
+                  color: Colors.black.withOpacity(.12),
+                  blurRadius: 22,
+                  offset: const Offset(0, 10),
+                ),
 
-      return;
-    }
+              ],
+            ),
+
+            child: Row(
+
+              mainAxisAlignment:
+                  MainAxisAlignment.spaceAround,
+
+              children: [
+
+                // Home
+
+                _NavItem(
+                  icon: Icons.home_rounded,
+                  label: "Home",
+                  selected: currentIndex == 0,
+                  onTap: () => _onItemTapped(0),
+                ),
+
+                // Quran
+
+                _NavItem(
+                  icon: Icons.menu_book_rounded,
+                  label: "Quran",
+                  selected: currentIndex == 1,
+                  onTap: () => _onItemTapped(1),
+                ),
+
+                // Classes
+
+                _NavItem(
+                  icon: Icons.ondemand_video_rounded,
+                  label: "Classes",
+                  selected: currentIndex == 2,
+                  onTap: () => _onItemTapped(2),
+                ),
+
+                // Hadith
+
+                _NavItem(
+                  icon: Icons.auto_stories_rounded,
+                  label: "Hadith",
+                  selected: currentIndex == 3,
+                  onTap: () => _onItemTapped(3),
+                ),
+
+                // Profile
+
+                _NavItem(
+                  icon: Icons.person_rounded,
+                  label: "Profile",
+                  selected: currentIndex == 4,
+                  onTap: () => _onItemTapped(4),
+                ),
+
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
+}
+class _NavItem extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
 
-  setState(() {
-    currentIndex = index;
+  const _NavItem({
+    required this.icon,
+    required this.label,
+    required this.selected,
+    required this.onTap,
   });
 
-},
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: InkWell(
+        borderRadius: BorderRadius.circular(20),
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 280),
+          curve: Curves.easeOutCubic,
+          margin: const EdgeInsets.symmetric(
+            horizontal: 4,
+            vertical: 8,
+          ),
+          padding: const EdgeInsets.symmetric(
+            vertical: 8,
+          ),
+          decoration: BoxDecoration(
+            color: selected
+                ? const Color.fromARGB(255, 238, 239, 203)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(18),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
 
-        type: BottomNavigationBarType.fixed,
+              AnimatedScale(
+                scale: selected ? 1.15 : 1,
+                duration: const Duration(milliseconds: 250),
+                child: Icon(
+                  icon,
+                  size: 27,
+                  color: selected
+                      ? const Color.fromARGB(255, 231, 8, 138)
+                      : const Color.fromARGB(242, 39, 113, 153)
+                ),
+              ),
 
-        backgroundColor: const Color.fromARGB(255, 205, 40, 194),
+              const SizedBox(height: 5),
 
-        selectedItemColor:
-            const Color.fromARGB(255, 41, 199, 123),
+              AnimatedDefaultTextStyle(
+                duration: const Duration(milliseconds: 250),
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: selected
+                      ? FontWeight.bold
+                      : FontWeight.w500,
+                  color: selected
+                      ? const Color(0xff0E5A56)
+                      : const Color.fromARGB(179, 14, 3, 6),
+                ),
+                child: Text(label),
+              ),
 
-        unselectedItemColor:
-            Colors.white70,
-
-        items: const [
-
-  BottomNavigationBarItem(
-    icon: Icon(Icons.home),
-    label: "Home",
-  ),
-
-  BottomNavigationBarItem(
-    icon: Icon(Icons.menu_book_rounded),
-    label: "Al Quran",
-  ),
-
-  BottomNavigationBarItem(
-    icon: Icon(Icons.video_library),
-    label: "Classes",
-  ),
-
-  BottomNavigationBarItem(
-    icon: Icon(Icons.search),
-    label: "Search",
-  ),
-
-  BottomNavigationBarItem(
-    icon: Icon(Icons.person),
-    label: "Profile",
-  ),
-        ],
-        
+            ],
+          ),
+        ),
       ),
-      
     );
   }
 }
