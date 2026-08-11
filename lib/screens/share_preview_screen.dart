@@ -23,16 +23,13 @@ class SharePreviewScreen extends StatefulWidget {
   });
 
   @override
-  State<SharePreviewScreen> createState() =>
-      _SharePreviewScreenState();
+  State<SharePreviewScreen> createState() => _SharePreviewScreenState();
 }
 
-class _SharePreviewScreenState
-    extends State<SharePreviewScreen> {
+class _SharePreviewScreenState extends State<SharePreviewScreen> {
   final GlobalKey _shareKey = GlobalKey();
 
-  final HadithShareService _shareService =
-      HadithShareService();
+  final HadithShareService _shareService = HadithShareService();
 
   @override
   Widget build(BuildContext context) {
@@ -73,29 +70,25 @@ class _SharePreviewScreenState
         ),
       ),
 
-      floatingActionButton:
-          FloatingActionButton.extended(
-        backgroundColor:
-            const Color(0xff12372A),
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: const Color(0xff12372A),
         icon: const Icon(Icons.share),
         label: const Text("Share"),
         onPressed: () async {
-          try {
-            final boundary =
-                _shareKey.currentContext!
-                        .findRenderObject()
-                    as RenderRepaintBoundary;
+          final messenger = ScaffoldMessenger.of(context);
 
-            await _shareService.share(boundary);
+          try {
+            final renderObject = _shareKey.currentContext?.findRenderObject();
+
+            if (renderObject is! RenderRepaintBoundary) {
+              throw Exception("Share preview is not ready yet.");
+            }
+
+            await _shareService.share(renderObject);
           } catch (e) {
             if (!mounted) return;
 
-            ScaffoldMessenger.of(context)
-                .showSnackBar(
-              SnackBar(
-                content: Text(e.toString()),
-              ),
-            );
+            messenger.showSnackBar(SnackBar(content: Text(e.toString())));
           }
         },
       ),

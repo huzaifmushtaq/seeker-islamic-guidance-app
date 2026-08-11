@@ -11,9 +11,7 @@ class HadithBookModel {
     required this.englishTitle,
   });
 
-  factory HadithBookModel.fromMap(
-    Map<String, dynamic> map,
-  ) {
+  factory HadithBookModel.fromMap(Map<String, dynamic> map) {
     return HadithBookModel(
       id: (map["id"] as num).toInt(),
       bookId: (map["bookId"] as num).toInt(),

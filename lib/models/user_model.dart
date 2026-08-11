@@ -45,17 +45,11 @@ class UserModel {
       booksProgress: map["progress"]?["books"] ?? 0,
       classesProgress: map["progress"]?["classes"] ?? 0,
 
-      favoriteBooks: List<dynamic>.from(
-        map["favorites"]?["books"] ?? [],
-      ),
+      favoriteBooks: List<dynamic>.from(map["favorites"]?["books"] ?? []),
 
-      favoriteAudio: List<dynamic>.from(
-        map["favorites"]?["audio"] ?? [],
-      ),
+      favoriteAudio: List<dynamic>.from(map["favorites"]?["audio"] ?? []),
 
-      favoriteDuas: List<dynamic>.from(
-        map["favorites"]?["duas"] ?? [],
-      ),
+      favoriteDuas: List<dynamic>.from(map["favorites"]?["duas"] ?? []),
     );
   }
 

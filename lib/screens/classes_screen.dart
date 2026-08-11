@@ -12,381 +12,357 @@ class ClassesScreen extends StatelessWidget {
         child: Column(
           children: [
             SafeArea(
-  bottom: false,
-  child: Padding(
-    padding: const EdgeInsets.fromLTRB(20, 18, 20, 0),
-    child: Container(
-      padding: const EdgeInsets.all(22),
-      decoration: BoxDecoration(
-        color: const Color(0xFF134E4A),
-        borderRadius: BorderRadius.circular(28),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(.08),
-            blurRadius: 18,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFD4AF37).withOpacity(.15),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: const Icon(
-                  Icons.menu_book_rounded,
-                  color: Color(0xFFD4AF37),
-                  size: 24,
-                ),
-              ),
-
-              const SizedBox(width: 12),
-
-              const Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-
-                    Text(
-                      "Continue Learning",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 19,
-                        fontWeight: FontWeight.bold,
+              bottom: false,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 18, 20, 0),
+                child: Container(
+                  padding: const EdgeInsets.all(22),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF134E4A),
+                    borderRadius: BorderRadius.circular(28),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: .08),
+                        blurRadius: 18,
+                        offset: const Offset(0, 10),
                       ),
-                    ),
-
-                    SizedBox(height: 2),
-
-                    Text(
-                      "Resume where you left off",
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 13,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 26),
-
-          const Text(
-            "Quran Learning",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 23,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-
-          const SizedBox(height: 6),
-
-          const Text(
-            "Lesson 12 of 48 • 18 min remaining",
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: 14,
-            ),
-          ),
-
-          const SizedBox(height: 20),
-
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: const LinearProgressIndicator(
-              value: .42,
-              minHeight: 7,
-              backgroundColor: Color(0xFF2A6D67),
-              valueColor: AlwaysStoppedAnimation(
-                Color(0xFFD4AF37),
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 15),
-
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: () {},
-
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFD4AF37),
-                foregroundColor: const Color(0xFF12314A),
-                elevation: 0,
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-              ),
-
-              icon: const Icon(Icons.play_arrow_rounded),
-
-              label: const Text(
-                "Resume Learning",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    ),
-  ),
-),
-          
-           Padding(
-  padding: const EdgeInsets.fromLTRB(20, 25, 20, 14),
-  child: Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-
-      const Text(
-        "Live Classes",
-        style: TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-          color: Color(0xFF1A2B3C),
-        ),
-      ),
-    ],
-  ),
-),
-            
-            Padding(
-  padding: const EdgeInsets.symmetric(horizontal: 20),
-  child: Container(
-    padding: const EdgeInsets.all(20),
-    decoration: BoxDecoration(
-      color: const Color(0xFF12314A),
-      borderRadius: BorderRadius.circular(26),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(.08),
-          blurRadius: 18,
-          offset: const Offset(0, 8),
-        ),
-      ],
-    ),
-
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-
-        Row(
-          children: [
-
-            Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 10,
-                vertical: 5,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.red.shade600,
-                borderRadius: BorderRadius.circular(30),
-              ),
-
-              child: const Row(
-                children: [
-                  Icon(
-                    Icons.circle,
-                    size: 8,
-                    color: Colors.white,
+                    ],
                   ),
-                  SizedBox(width: 6),
-                  Text(
-                    "LIVE NOW",
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: const Color(
+                                0xFFD4AF37,
+                              ).withValues(alpha: .15),
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            child: const Icon(
+                              Icons.menu_book_rounded,
+                              color: Color(0xFFD4AF37),
+                              size: 24,
+                            ),
+                          ),
+
+                          const SizedBox(width: 12),
+
+                          const Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Continue Learning",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 19,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+
+                                SizedBox(height: 2),
+
+                                Text(
+                                  "Resume where you left off",
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 26),
+
+                      const Text(
+                        "Quran Learning",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 23,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+
+                      const SizedBox(height: 6),
+
+                      const Text(
+                        "Lesson 12 of 48 • 18 min remaining",
+                        style: TextStyle(color: Colors.white70, fontSize: 14),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: const LinearProgressIndicator(
+                          value: .42,
+                          minHeight: 7,
+                          backgroundColor: Color(0xFF2A6D67),
+                          valueColor: AlwaysStoppedAnimation(Color(0xFFD4AF37)),
+                        ),
+                      ),
+
+                      const SizedBox(height: 15),
+
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: () {},
+
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFD4AF37),
+                            foregroundColor: const Color(0xFF12314A),
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+
+                          icon: const Icon(Icons.play_arrow_rounded),
+
+                          label: const Text(
+                            "Resume Learning",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 25, 20, 14),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Live Classes",
                     style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 11,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
+                      color: Color(0xFF1A2B3C),
                     ),
                   ),
                 ],
               ),
             ),
 
-            const Spacer(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF12314A),
+                  borderRadius: BorderRadius.circular(26),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: .08),
+                      blurRadius: 18,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
 
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.calendar_month_rounded,
-                color: Color(0xFFD4AF37),
-              ),
-            ),
-          ],
-        ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 5,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.red.shade600,
+                            borderRadius: BorderRadius.circular(30),
+                          ),
 
-        
+                          child: const Row(
+                            children: [
+                              Icon(Icons.circle, size: 8, color: Colors.white),
+                              SizedBox(width: 6),
+                              Text(
+                                "LIVE NOW",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
 
-        const Text(
-          "Weekly Quran Circle",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+                        const Spacer(),
 
-        const SizedBox(height: 6),
+                        IconButton(
+                          onPressed: () {},
+                          icon: const Icon(
+                            Icons.calendar_month_rounded,
+                            color: Color(0xFFD4AF37),
+                          ),
+                        ),
+                      ],
+                    ),
 
-        const Text(
-          "By Peer Sahib",
-          style: TextStyle(
-            color: Colors.white70,
-            fontSize: 14,
-          ),
-        ),
+                    const Text(
+                      "Weekly Quran Circle",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
 
-        const SizedBox(height: 18),
+                    const SizedBox(height: 6),
 
-        Row(
-          children: [
+                    const Text(
+                      "By Peer Sahib",
+                      style: TextStyle(color: Colors.white70, fontSize: 14),
+                    ),
 
-            const Icon(
-              Icons.schedule,
-              color: Color(0xFFD4AF37),
-              size: 18,
-            ),
+                    const SizedBox(height: 18),
 
-            const SizedBox(width: 8),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.schedule,
+                          color: Color(0xFFD4AF37),
+                          size: 18,
+                        ),
 
-            const Text(
-              "Today • 7:30 PM",
-              style: TextStyle(
-                color: Colors.white,
-              ),
-            ),
+                        const SizedBox(width: 8),
 
-            const Spacer(),
+                        const Text(
+                          "Today • 7:30 PM",
+                          style: TextStyle(color: Colors.white),
+                        ),
 
-            Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 10,
-                vertical: 5,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.white10,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: const Text(
-                "Zoom",
-                style: TextStyle(
-                  color: Colors.white70,
-                  fontWeight: FontWeight.w600,
+                        const Spacer(),
+
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 5,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white10,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: const Text(
+                            "Zoom",
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 10),
+
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: () {},
+
+                        style: ElevatedButton.styleFrom(
+                          elevation: 0,
+                          backgroundColor: const Color(0xFFD4AF37),
+                          foregroundColor: const Color(0xFF12314A),
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+
+                        icon: const Icon(Icons.video_call_rounded),
+
+                        label: const Text(
+                          "Join Live Class",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
-          ],
-        ),
 
-        const SizedBox(height: 10),
-
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton.icon(
-            onPressed: () {},
-
-            style: ElevatedButton.styleFrom(
-              elevation: 0,
-              backgroundColor: const Color(0xFFD4AF37),
-              foregroundColor: const Color(0xFF12314A),
-              padding: const EdgeInsets.symmetric(
-                vertical: 15,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 25, 20, 14),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Learning Paths",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1A2B3C),
+                    ),
+                  ),
+                ],
               ),
             ),
+            SizedBox(
+              height: 210,
+              child: ListView(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                scrollDirection: Axis.horizontal,
+                children: [
+                  _learningPathCard(
+                    icon: Icons.menu_book_rounded,
+                    title: "Quran Learning",
+                    subtitle: "From Alif to Advanced Tajweed",
+                    lessons: "48 Lessons",
+                    color: const Color(0xFF12314A),
+                  ),
 
-            icon: const Icon(Icons.video_call_rounded),
+                  _learningPathCard(
+                    icon: Icons.mosque_rounded,
+                    title: "Perfect Your Salah",
+                    subtitle: "Prayer from basics to Khushu",
+                    lessons: "26 Lessons",
+                    color: const Color(0xFF0B6B61),
+                  ),
 
-            label: const Text(
-              "Join Live Class",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
+                  _learningPathCard(
+                    icon: Icons.favorite_rounded,
+                    title: "Soul Purification ",
+                    subtitle: "Tazkiyah & Spiritual Growth",
+                    lessons: "31 Lessons",
+                    color: const Color(0xFF5E4B8B),
+                  ),
+
+                  _learningPathCard(
+                    icon: Icons.auto_stories_rounded,
+                    title: "Foundations of Islam",
+                    subtitle: "Faith • Seerah • Aqeedah",
+                    lessons: "40 Lessons",
+                    color: const Color(0xFF8B5A2B),
+                  ),
+                ],
               ),
             ),
-          ),
-        ),
-      ],
-    ),
-  ),
-),
-            
-Padding(
-  padding: const EdgeInsets.fromLTRB(20, 25, 20, 14),
-  child: Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-
-      const Text(
-        "Learning Paths",
-        style: TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-          color: Color(0xFF1A2B3C),
-        ),
-      ),
-    ],
-  ),
-),
-SizedBox(
-  height: 210,
-  child: ListView(
-    padding: const EdgeInsets.symmetric(horizontal: 20),
-    scrollDirection: Axis.horizontal,
-    children: [
-
-      _learningPathCard(
-        icon: Icons.menu_book_rounded,
-        title: "Quran Learning",
-        subtitle: "From Alif to Advanced Tajweed",
-        lessons: "48 Lessons",
-        color: const Color(0xFF12314A),
-      ),
-
-      _learningPathCard(
-        icon: Icons.mosque_rounded,
-        title: "Perfect Your Salah",
-        subtitle: "Prayer from basics to Khushu",
-        lessons: "26 Lessons",
-        color: const Color(0xFF0B6B61),
-      ),
-
-      _learningPathCard(
-        icon: Icons.favorite_rounded,
-        title: "Soul Purification ",
-        subtitle: "Tazkiyah & Spiritual Growth",
-        lessons: "31 Lessons",
-        color: const Color(0xFF5E4B8B),
-      ),
-
-      _learningPathCard(
-        icon: Icons.auto_stories_rounded,
-        title: "Foundations of Islam",
-        subtitle: "Faith • Seerah • Aqeedah",
-        lessons: "40 Lessons",
-        color: const Color(0xFF8B5A2B),
-      ),
-    ],
-  ),
-),
- const SizedBox(height: 13),
+            const SizedBox(height: 13),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15),
 
@@ -399,7 +375,7 @@ SizedBox(
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color:Color(0xFF1A2B3C)
+                      color: Color(0xFF1A2B3C),
                     ),
                   ),
                 ],
@@ -439,39 +415,38 @@ SizedBox(
               ),
             ),
 
-           
-          const SizedBox(height: 13),
+            const SizedBox(height: 13),
 
-const Padding(
-  padding: EdgeInsets.symmetric(horizontal: 20),
-  child: Row(
-    children: [
-      Text(
-        "Need Guidance?",
-        style: TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-          color: Color(0xFF1A2B3C),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                children: [
+                  Text(
+                    "Need Guidance?",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1A2B3C),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 14),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: _guidanceCard(),
+            ),
+
+            const SizedBox(height: 30),
+          ],
         ),
-      ),
-    ],
-  ),
-),
-
-const SizedBox(height: 14),
-
-Padding(
-  padding: const EdgeInsets.symmetric(horizontal: 20),
-  child: _guidanceCard(),
-),
-
-const SizedBox(height: 30),
-        ]),
       ),
     );
   }
 }
-
 
 Widget _lessonCard(
   String image,
@@ -496,14 +471,10 @@ Widget _lessonCard(
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-
         ClipRRect(
-          borderRadius: const BorderRadius.vertical(
-            top: Radius.circular(28),
-          ),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
           child: Stack(
             children: [
-
               Image.asset(
                 image,
                 height: 145,
@@ -538,7 +509,6 @@ Widget _lessonCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
                 Text(
                   title,
                   maxLines: 2,
@@ -554,7 +524,6 @@ Widget _lessonCard(
 
                 Row(
                   children: [
-
                     const Icon(
                       Icons.menu_book_rounded,
                       size: 16,
@@ -581,7 +550,6 @@ Widget _lessonCard(
 
                 Row(
                   children: [
-
                     const Icon(
                       Icons.schedule_rounded,
                       size: 16,
@@ -592,9 +560,7 @@ Widget _lessonCard(
 
                     Text(
                       duration,
-                      style: const TextStyle(
-                        color: Colors.black54,
-                      ),
+                      style: const TextStyle(color: Colors.black54),
                     ),
 
                     const Spacer(),
@@ -624,6 +590,7 @@ Widget _lessonCard(
     ),
   );
 }
+
 Widget _learningPathCard({
   required IconData icon,
   required String title,
@@ -657,11 +624,7 @@ Widget _learningPathCard({
               color: Colors.white.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(16),
             ),
-            child: Icon(
-              icon,
-              color: const Color(0xFFD4AF37),
-              size: 28,
-            ),
+            child: Icon(icon, color: const Color(0xFFD4AF37), size: 28),
           ),
 
           const Spacer(),
@@ -731,6 +694,7 @@ Widget _learningPathCard({
     ),
   );
 }
+
 Widget _guidanceCard() {
   return Container(
     padding: const EdgeInsets.all(22),
@@ -769,10 +733,7 @@ Widget _guidanceCard() {
             children: [
               const Text(
                 "Ask Your Doubts",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
 
               const SizedBox(height: 8),
@@ -798,10 +759,10 @@ Widget _guidanceCard() {
                 ),
                 icon: const Icon(Icons.send_rounded),
                 label: const Text("Ask Question"),
-              )
+              ),
             ],
           ),
-        )
+        ),
       ],
     ),
   );

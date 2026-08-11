@@ -1,9 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:qcf_quran/qcf_quran.dart';
-import 'package:qcf_quran/src/header_widget.dart';
-// ignore: implementation_imports
-import 'package:qcf_quran/src/data/page_font_size.dart';
 
 /// A widget that renders a single page of the Quran.
 ///
@@ -53,7 +50,7 @@ class SeekerQcfPage extends StatelessWidget {
   /// This takes precedence over [theme.verseBackgroundColor] if provided.
   final Color? Function(int surahNumber, int verseNumber)? verseBackgroundColor;
 
- const SeekerQcfPage({
+  const SeekerQcfPage({
     super.key,
     required this.pageNumber,
     this.theme = const QcfThemeData(),
@@ -98,7 +95,9 @@ class SeekerQcfPage extends StatelessWidget {
         if (v == start && v == 1) {
           if (theme.showHeader) {
             verseSpans.add(
-              WidgetSpan(child: HeaderWidget(suraNumber: surah, theme: theme)),
+              WidgetSpan(
+                child: HeaderWidget(suraNumber: surah, theme: theme),
+              ),
             );
           }
           if (theme.showBasmala && pageNumber != 1 && pageNumber != 187) {
@@ -121,10 +120,9 @@ class SeekerQcfPage extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: "QCF_P001",
                     package: 'qcf_quran',
-                    fontSize:
-                        getScreenType(context) == ScreenType.large
-                            ? theme.basmalaFontSizeLarge * sp
-                            : theme.basmalaFontSizeSmall * sp,
+                    fontSize: getScreenType(context) == ScreenType.large
+                        ? theme.basmalaFontSizeLarge * sp
+                        : theme.basmalaFontSizeSmall * sp,
                     color: theme.basmalaColor,
                   ),
                 ),
@@ -136,19 +134,19 @@ class SeekerQcfPage extends StatelessWidget {
         // Gesture Handling
         GestureRecognizer? recognizer;
         if (onTap != null) {
-          recognizer =
-              TapGestureRecognizer()..onTap = () => onTap?.call(surah, v);
+          recognizer = TapGestureRecognizer()
+            ..onTap = () => onTap?.call(surah, v);
         } else if (onLongPress != null ||
             onLongPressDown != null ||
             onLongPressUp != null) {
           final longPressRecognizer = LongPressGestureRecognizer();
           longPressRecognizer.onLongPress = () => onLongPress?.call(surah, v);
-          longPressRecognizer.onLongPressStart =
-              (d) => onLongPressDown?.call(surah, v, d);
-          longPressRecognizer.onLongPressUp =
-              () => onLongPressUp?.call(surah, v);
-          longPressRecognizer.onLongPressEnd =
-              (d) => onLongPressCancel?.call(surah, v);
+          longPressRecognizer.onLongPressStart = (d) =>
+              onLongPressDown?.call(surah, v, d);
+          longPressRecognizer.onLongPressUp = () =>
+              onLongPressUp?.call(surah, v);
+          longPressRecognizer.onLongPressEnd = (d) =>
+              onLongPressCancel?.call(surah, v);
           recognizer = longPressRecognizer;
         }
 
@@ -179,15 +177,13 @@ class SeekerQcfPage extends StatelessWidget {
 
         verseSpans.add(
           TextSpan(
-            text:
-                v == ranges[0]['start']
-                    ? "${getVerseQCF(surah, v, verseEndSymbol: false).substring(0, 1)}\u200A${getVerseQCF(surah, v, verseEndSymbol: false).substring(1, getVerseQCF(surah, v, verseEndSymbol: false).length)}"
-                    : getVerseQCF(surah, v, verseEndSymbol: false),
+            text: v == ranges[0]['start']
+                ? "${getVerseQCF(surah, v, verseEndSymbol: false).substring(0, 1)}\u200A${getVerseQCF(surah, v, verseEndSymbol: false).substring(1, getVerseQCF(surah, v, verseEndSymbol: false).length)}"
+                : getVerseQCF(surah, v, verseEndSymbol: false),
             recognizer: recognizer,
-            style:
-                verseBgColor != null
-                    ? TextStyle(backgroundColor: verseBgColor)
-                    : null,
+            style: verseBgColor != null
+                ? TextStyle(backgroundColor: verseBgColor)
+                : null,
             children: [verseNumberSpan],
           ),
         );
@@ -195,46 +191,43 @@ class SeekerQcfPage extends StatelessWidget {
     }
 
     return SizedBox(
-  width: screenSize.width,
-  child: Column(
-                children: [
-                  SizedBox(
-                    width: double.infinity,
-                    child: Padding(
-                      padding: EdgeInsets.zero,
-                      child: Text.rich(
-                        TextSpan(children: verseSpans),
-                        locale: const Locale("ar"),
-                        textAlign: TextAlign.center,
-                        textDirection: TextDirection.rtl,
-                        style: TextStyle(
-                          fontFamily: pageFont,
-                          package: 'qcf_quran',
-                          fontSize:
-                              isPortrait
-                                  ? baseFontSize
-                                  : (pageNumber == 1 || pageNumber == 2)
-                                  ? 20 * sp
-                                  : baseFontSize - (17 * sp),
-                          color: theme.verseTextColor,
-                          height:
-                              isPortrait
-                                  ? (pageNumber == 1 || pageNumber == 2)
-                                      ? 2.2 * h
-                                      : theme.verseHeight * h
-                                  : (pageNumber == 1 || pageNumber == 2)
-                                  ? 4 *
-                                      h // simplified based on user's manual edit evaluation
-                                  : 4 *
-                                      h, // simplified based on user's manual edit evaluation
-                          letterSpacing: theme.letterSpacing,
-                          wordSpacing: theme.wordSpacing,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+      width: screenSize.width,
+      child: Column(
+        children: [
+          SizedBox(
+            width: double.infinity,
+            child: Padding(
+              padding: EdgeInsets.zero,
+              child: Text.rich(
+                TextSpan(children: verseSpans),
+                locale: const Locale("ar"),
+                textAlign: TextAlign.center,
+                textDirection: TextDirection.rtl,
+                style: TextStyle(
+                  fontFamily: pageFont,
+                  package: 'qcf_quran',
+                  fontSize: isPortrait
+                      ? baseFontSize
+                      : (pageNumber == 1 || pageNumber == 2)
+                      ? 20 * sp
+                      : baseFontSize - (17 * sp),
+                  color: theme.verseTextColor,
+                  height: isPortrait
+                      ? (pageNumber == 1 || pageNumber == 2)
+                            ? 2.2 * h
+                            : theme.verseHeight * h
+                      : (pageNumber == 1 || pageNumber == 2)
+                      ? 4 *
+                            h // simplified based on user's manual edit evaluation
+                      : 4 * h, // simplified based on user's manual edit evaluation
+                  letterSpacing: theme.letterSpacing,
+                  wordSpacing: theme.wordSpacing,
+                ),
               ),
-            );
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

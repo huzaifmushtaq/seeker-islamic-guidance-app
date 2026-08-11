@@ -11,10 +11,6 @@ class WisdomService {
 
     final List<dynamic> jsonData = json.decode(jsonString);
 
-    return jsonData
-        .map(
-          (item) => WisdomModel.fromJson(item),
-        )
-        .toList();
+    return jsonData.map((item) => WisdomModel.fromJson(item)).toList();
   }
 }

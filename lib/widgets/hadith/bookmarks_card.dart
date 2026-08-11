@@ -20,18 +20,14 @@ class BookmarksCard extends StatelessWidget {
         onTap: onTap,
         child: Container(
           height: 84,
-          padding: const EdgeInsets.symmetric(
-            horizontal: 20,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: const Color(0xffE8DFC9),
-            ),
+            border: Border.all(color: const Color(0xffE8DFC9)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(.05),
+                color: Colors.black.withValues(alpha: .05),
                 blurRadius: 14,
                 offset: const Offset(0, 6),
               ),
@@ -39,14 +35,12 @@ class BookmarksCard extends StatelessWidget {
           ),
           child: Row(
             children: [
-
               Container(
                 width: 54,
                 height: 54,
                 decoration: BoxDecoration(
                   color: const Color(0xffF6EFD9),
-                  borderRadius:
-                      BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(16),
                 ),
                 child: const Icon(
                   Icons.bookmark_rounded,
@@ -59,18 +53,14 @@ class BookmarksCard extends StatelessWidget {
 
               Expanded(
                 child: Column(
-                  mainAxisAlignment:
-                      MainAxisAlignment.center,
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-
                     const Text(
                       "Bookmarks",
                       style: TextStyle(
                         fontSize: 18,
-                        fontWeight:
-                            FontWeight.bold,
+                        fontWeight: FontWeight.bold,
                         color: Color(0xff12372A),
                       ),
                     ),
@@ -84,7 +74,6 @@ class BookmarksCard extends StatelessWidget {
                         fontSize: 14,
                       ),
                     ),
-
                   ],
                 ),
               ),
@@ -94,7 +83,6 @@ class BookmarksCard extends StatelessWidget {
                 color: Color(0xff0E5A56),
                 size: 18,
               ),
-
             ],
           ),
         ),

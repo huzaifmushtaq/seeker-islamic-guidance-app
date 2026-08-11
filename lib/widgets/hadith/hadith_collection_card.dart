@@ -28,12 +28,10 @@ class HadithCollectionCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(24),
-            border: Border.all(
-              color: const Color(0xffE7DCC1),
-            ),
+            border: Border.all(color: const Color(0xffE7DCC1)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 16,
                 offset: const Offset(0, 8),
               ),
@@ -44,7 +42,6 @@ class HadithCollectionCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
                 /// BOOK IMAGE
                 Expanded(
                   flex: 7,
@@ -58,11 +55,7 @@ class HadithCollectionCard extends StatelessWidget {
                       child: Image.asset(
                         coverImage,
                         fit: BoxFit.contain,
-                        errorBuilder: (
-                          context,
-                          error,
-                          stackTrace,
-                        ) {
+                        errorBuilder: (context, error, stackTrace) {
                           return Container(
                             color: const Color(0xffF8F5ED),
                             child: const Center(
@@ -131,9 +124,7 @@ class HadithCollectionCard extends StatelessWidget {
 
                     Expanded(
                       child: Text(
-                        totalHadith == 0
-                            ? "--"
-                            : totalHadith.toString(),
+                        totalHadith == 0 ? "--" : totalHadith.toString(),
                         style: const TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,

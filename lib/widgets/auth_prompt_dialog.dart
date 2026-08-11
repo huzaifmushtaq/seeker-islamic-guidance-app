@@ -10,26 +10,13 @@ Future<void> showAuthPrompt(BuildContext context) {
     barrierColor: Colors.black54,
     transitionDuration: const Duration(milliseconds: 300),
 
-    transitionBuilder: (
-      context,
-      animation,
-      secondaryAnimation,
-      child,
-    ) {
+    transitionBuilder: (context, animation, secondaryAnimation, child) {
       return SlideTransition(
-        position: Tween<Offset>(
-          begin: const Offset(0, -1),
-          end: Offset.zero,
-        ).animate(
-          CurvedAnimation(
-            parent: animation,
-            curve: Curves.easeOutCubic,
-          ),
-        ),
-        child: FadeTransition(
-          opacity: animation,
-          child: child,
-        ),
+        position: Tween<Offset>(begin: const Offset(0, -1), end: Offset.zero)
+            .animate(
+              CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+            ),
+        child: FadeTransition(opacity: animation, child: child),
       );
     },
 
@@ -58,7 +45,6 @@ Future<void> showAuthPrompt(BuildContext context) {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-
                   Align(
                     alignment: Alignment.topRight,
                     child: IconButton(
@@ -92,18 +78,14 @@ Future<void> showAuthPrompt(BuildContext context) {
                   const Text(
                     "Create a free account for personalized experience.",
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.grey,
-                      height: 1.5,
-                    ),
+                    style: TextStyle(color: Colors.grey, height: 1.5),
                   ),
 
                   const SizedBox(height: 25),
 
                   const Row(
                     children: [
-                      Icon(Icons.check_circle,
-                          color: Color(0xFF0B4B4B)),
+                      Icon(Icons.check_circle, color: Color(0xFF0B4B4B)),
                       SizedBox(width: 10),
                       Text("Save your progress"),
                     ],
@@ -113,8 +95,7 @@ Future<void> showAuthPrompt(BuildContext context) {
 
                   const Row(
                     children: [
-                      Icon(Icons.check_circle,
-                          color: Color(0xFF0B4B4B)),
+                      Icon(Icons.check_circle, color: Color(0xFF0B4B4B)),
                       SizedBox(width: 10),
                       Text("Bookmark books & duas"),
                     ],
@@ -124,8 +105,7 @@ Future<void> showAuthPrompt(BuildContext context) {
 
                   const Row(
                     children: [
-                      Icon(Icons.check_circle,
-                          color: Color(0xFF0B4B4B)),
+                      Icon(Icons.check_circle, color: Color(0xFF0B4B4B)),
                       SizedBox(width: 10),
                       Text("Continue learning"),
                     ],
@@ -135,8 +115,7 @@ Future<void> showAuthPrompt(BuildContext context) {
 
                   const Row(
                     children: [
-                      Icon(Icons.check_circle,
-                          color: Color(0xFF0B4B4B)),
+                      Icon(Icons.check_circle, color: Color(0xFF0B4B4B)),
                       SizedBox(width: 10),
                       Text("Sync across devices"),
                     ],
@@ -149,27 +128,22 @@ Future<void> showAuthPrompt(BuildContext context) {
                     height: 52,
                     child: ElevatedButton(
                       onPressed: () {
-
                         Navigator.pop(context);
 
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => const LoginScreen(
-  startWithLogin: true,
-),
+                            builder: (_) =>
+                                const LoginScreen(startWithLogin: true),
                           ),
                         );
                       },
 
                       style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            const Color(0xFFF4D17D),
-                        foregroundColor:
-                            const Color(0xFF0B4B4B),
+                        backgroundColor: const Color(0xFFF4D17D),
+                        foregroundColor: const Color(0xFF0B4B4B),
                         shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(16),
                         ),
                       ),
 
@@ -187,20 +161,17 @@ Future<void> showAuthPrompt(BuildContext context) {
 
                   TextButton(
                     onPressed: () {
-
                       Navigator.pop(context);
 
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                       builder: (_) => const LoginScreen(
-  startWithLogin: false,
-),
+                          builder: (_) =>
+                              const LoginScreen(startWithLogin: false),
                         ),
-                      
                       );
-                      },
-                    
+                    },
+
                     child: const Text(
                       "Create Account",
                       style: TextStyle(

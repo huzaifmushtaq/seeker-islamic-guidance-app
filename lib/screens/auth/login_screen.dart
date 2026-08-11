@@ -441,6 +441,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     final messenger = ScaffoldMessenger.of(
                                       context,
                                     );
+                                    final navigator = Navigator.of(context);
 
                                     setState(() {
                                       isLoading = true;
@@ -471,33 +472,33 @@ class _LoginScreenState extends State<LoginScreen> {
                                       isLoading = false;
                                     });
 
-                                   if (error == null) {
-  await GuestService().logoutGuest();
+                                    if (error == null) {
+                                      await GuestService().logoutGuest();
 
-  if (!mounted) return;
+                                      if (!mounted) return;
 
-  final user = _authService.currentUser;
+                                      final user = _authService.currentUser;
 
-  if (user != null && user.emailVerified) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (_) => const MainNavigationScreen(),
-      ),
-    );
-  } else {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (_) => const VerifyEmailScreen(),
-      ),
-    );
-  }
-} else {
-  messenger.showSnackBar(
-    SnackBar(content: Text(error)),
-  );
-}
+                                      if (user != null && user.emailVerified) {
+                                        navigator.pushReplacement(
+                                          MaterialPageRoute(
+                                            builder: (_) =>
+                                                const MainNavigationScreen(),
+                                          ),
+                                        );
+                                      } else {
+                                        navigator.pushReplacement(
+                                          MaterialPageRoute(
+                                            builder: (_) =>
+                                                const VerifyEmailScreen(),
+                                          ),
+                                        );
+                                      }
+                                    } else {
+                                      messenger.showSnackBar(
+                                        SnackBar(content: Text(error)),
+                                      );
+                                    }
                                   },
                             child: isLoading
                                 ? const SizedBox(
@@ -585,12 +586,13 @@ class _LoginScreenState extends State<LoginScreen> {
                               icon: Icons.person_outline,
                               label: "Guest",
                               onTap: () async {
+                                final navigator = Navigator.of(context);
+
                                 await GuestService().loginAsGuest();
 
-                                if (!context.mounted) return;
+                                if (!mounted) return;
 
-                                Navigator.pushReplacement(
-                                  context,
+                                navigator.pushReplacement(
                                   MaterialPageRoute(
                                     builder: (_) =>
                                         const MainNavigationScreen(),

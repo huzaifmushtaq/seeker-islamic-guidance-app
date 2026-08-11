@@ -19,14 +19,9 @@ class AuthWrapper extends StatelessWidget {
       stream: FirebaseAuth.instance.authStateChanges(),
 
       builder: (context, snapshot) {
-
-        if (snapshot.connectionState ==
-            ConnectionState.waiting) {
-
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
+            body: Center(child: CircularProgressIndicator()),
           );
         }
 
@@ -34,7 +29,6 @@ class AuthWrapper extends StatelessWidget {
 
         // Logged in with Firebase
         if (user != null) {
-
           if (!user.emailVerified) {
             return const VerifyEmailScreen();
           }
@@ -47,14 +41,9 @@ class AuthWrapper extends StatelessWidget {
           future: _isGuest(),
 
           builder: (context, guestSnapshot) {
-
-            if (guestSnapshot.connectionState ==
-                ConnectionState.waiting) {
-
+            if (guestSnapshot.connectionState == ConnectionState.waiting) {
               return const Scaffold(
-                body: Center(
-                  child: CircularProgressIndicator(),
-                ),
+                body: Center(child: CircularProgressIndicator()),
               );
             }
 
@@ -63,7 +52,6 @@ class AuthWrapper extends StatelessWidget {
             }
 
             return const LoginScreen();
-
           },
         );
       },

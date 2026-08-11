@@ -27,14 +27,12 @@ class SurahToggle extends StatelessWidget {
                 duration: const Duration(milliseconds: 220),
                 margin: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: isSurahSelected
-                      ? Colors.white
-                      : Colors.transparent,
+                  color: isSurahSelected ? Colors.white : Colors.transparent,
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: isSurahSelected
                       ? [
                           BoxShadow(
-                            color: Colors.black.withOpacity(.06),
+                            color: Colors.black.withValues(alpha: .06),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -60,14 +58,12 @@ class SurahToggle extends StatelessWidget {
                 duration: const Duration(milliseconds: 220),
                 margin: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: !isSurahSelected
-                      ? Colors.white
-                      : Colors.transparent,
+                  color: !isSurahSelected ? Colors.white : Colors.transparent,
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: !isSurahSelected
                       ? [
                           BoxShadow(
-                            color: Colors.black.withOpacity(.06),
+                            color: Colors.black.withValues(alpha: .06),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),

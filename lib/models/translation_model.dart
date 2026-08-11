@@ -3,7 +3,7 @@ class TranslationModel {
   final int ayah;
   final String translation;
 
-   TranslationModel({
+  TranslationModel({
     required this.surah,
     required this.ayah,
     required this.translation,

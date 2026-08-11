@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:seeker/models/verse_model.dart';
 import 'package:seeker/repositories/quran_repository.dart';
 import 'package:seeker/services/tafsir_preferences_service.dart';
+
 class TafsirView extends StatefulWidget {
   final int surahNumber;
   final int verses;
@@ -15,41 +16,29 @@ class TafsirView extends StatefulWidget {
   });
 
   @override
-  State<TafsirView> createState() =>
-      _TafsirViewState();
+  State<TafsirView> createState() => _TafsirViewState();
 }
+
 class _TafsirViewState extends State<TafsirView> {
   final QuranRepository _repository = QuranRepository();
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<VerseModel>>(
-      future: _repository.loadSurah(
-  widget.surahNumber,
-  widget.verses,
-      ),
+      future: _repository.loadSurah(widget.surahNumber, widget.verses),
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return const Center(child: CircularProgressIndicator());
         }
 
         if (snapshot.hasError) {
-          return Center(
-            child: Text(
-              snapshot.error.toString(),
-            ),
-          );
+          return Center(child: Text(snapshot.error.toString()));
         }
 
         final data = snapshot.data!;
 
         return ListView.builder(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 18,
-            vertical: 16,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
           itemCount: data.length,
           itemBuilder: (context, index) {
             final verse = data[index];
@@ -65,7 +54,6 @@ class _TafsirViewState extends State<TafsirView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-
                     Center(
                       child: Text(
                         "﴿ ${verse.ayah} ﴾",
@@ -83,21 +71,15 @@ class _TafsirViewState extends State<TafsirView> {
                       verse.arabic,
                       textAlign: TextAlign.center,
                       textDirection: TextDirection.rtl,
-                      style: const TextStyle(
-                        fontSize: 24,
-                        height: 1.7,
-                      ),
+                      style: const TextStyle(fontSize: 24, height: 1.7),
                     ),
 
                     const SizedBox(height: 18),
 
                     Text(
-                     verse.tafsir(widget.selectedTafsir),
+                      verse.tafsir(widget.selectedTafsir),
                       textAlign: TextAlign.right,
-                      style: const TextStyle(
-                        fontSize: 17,
-                        height: 1.8,
-                      ),
+                      style: const TextStyle(fontSize: 17, height: 1.8),
                     ),
                   ],
                 ),

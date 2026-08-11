@@ -23,10 +23,7 @@ class SurahTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 20,
-        vertical: 7,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 7),
       child: Material(
         color: Colors.white,
         elevation: 1.0,
@@ -36,10 +33,7 @@ class SurahTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(24),
           onTap: onTap,
           child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 18,
-              vertical: 14,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
             child: Row(
               children: [
                 /// Surah Number
@@ -68,8 +62,6 @@ class SurahTile extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                     
-
                       Text(
                         meaning,
                         maxLines: 1,

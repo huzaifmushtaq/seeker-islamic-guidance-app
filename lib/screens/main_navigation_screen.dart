@@ -13,17 +13,13 @@ class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
 
   @override
-  State<MainNavigationScreen> createState() =>
-      _MainNavigationScreenState();
+  State<MainNavigationScreen> createState() => _MainNavigationScreenState();
 }
 
-class _MainNavigationScreenState
-    extends State<MainNavigationScreen> {
-
+class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int currentIndex = 0;
 
   final List<Widget> screens = const [
-
     HomeScreen(),
 
     QuranScreen(),
@@ -33,18 +29,13 @@ class _MainNavigationScreenState
     HadithScreen(),
 
     ProfileScreen(),
-
   ];
 
   Future<void> _onItemTapped(int index) async {
-
     if (index == 4) {
-
-      final isGuest =
-          await GuestService().isGuest();
+      final isGuest = await GuestService().isGuest();
 
       if (isGuest) {
-
         if (!mounted) return;
 
         showAuthPrompt(context);
@@ -60,55 +51,36 @@ class _MainNavigationScreenState
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-
       backgroundColor: const Color(0xffF8F6F1),
 
-      body: IndexedStack(
-        index: currentIndex,
-        children: screens,
-      ),
+      body: IndexedStack(index: currentIndex, children: screens),
 
       bottomNavigationBar: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(
-            0,
-            0,
-            0,
-            5,
-          ),
+          padding: const EdgeInsets.fromLTRB(0, 0, 0, 5),
           child: Container(
-
             height: 78,
 
             decoration: BoxDecoration(
-
               color: const Color.fromARGB(255, 242, 243, 244),
 
-              borderRadius:
-                  BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(24),
 
               boxShadow: [
-
                 BoxShadow(
-                  color: Colors.black.withOpacity(.12),
+                  color: Colors.black.withValues(alpha: .12),
                   blurRadius: 22,
                   offset: const Offset(0, 10),
                 ),
-
               ],
             ),
 
             child: Row(
-
-              mainAxisAlignment:
-                  MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
 
               children: [
-
                 // Home
-
                 _NavItem(
                   icon: Icons.home_rounded,
                   label: "Home",
@@ -117,7 +89,6 @@ class _MainNavigationScreenState
                 ),
 
                 // Quran
-
                 _NavItem(
                   icon: Icons.menu_book_rounded,
                   label: "Quran",
@@ -126,7 +97,6 @@ class _MainNavigationScreenState
                 ),
 
                 // Classes
-
                 _NavItem(
                   icon: Icons.ondemand_video_rounded,
                   label: "Classes",
@@ -135,7 +105,6 @@ class _MainNavigationScreenState
                 ),
 
                 // Hadith
-
                 _NavItem(
                   icon: Icons.auto_stories_rounded,
                   label: "Hadith",
@@ -144,14 +113,12 @@ class _MainNavigationScreenState
                 ),
 
                 // Profile
-
                 _NavItem(
                   icon: Icons.person_rounded,
                   label: "Profile",
                   selected: currentIndex == 4,
                   onTap: () => _onItemTapped(4),
                 ),
-
               ],
             ),
           ),
@@ -160,6 +127,7 @@ class _MainNavigationScreenState
     );
   }
 }
+
 class _NavItem extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -182,13 +150,8 @@ class _NavItem extends StatelessWidget {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 280),
           curve: Curves.easeOutCubic,
-          margin: const EdgeInsets.symmetric(
-            horizontal: 4,
-            vertical: 8,
-          ),
-          padding: const EdgeInsets.symmetric(
-            vertical: 8,
-          ),
+          margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+          padding: const EdgeInsets.symmetric(vertical: 8),
           decoration: BoxDecoration(
             color: selected
                 ? const Color.fromARGB(255, 238, 239, 203)
@@ -198,7 +161,6 @@ class _NavItem extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-
               AnimatedScale(
                 scale: selected ? 1.15 : 1,
                 duration: const Duration(milliseconds: 250),
@@ -207,7 +169,7 @@ class _NavItem extends StatelessWidget {
                   size: 27,
                   color: selected
                       ? const Color.fromARGB(255, 231, 8, 138)
-                      : const Color.fromARGB(242, 39, 113, 153)
+                      : const Color.fromARGB(242, 39, 113, 153),
                 ),
               ),
 
@@ -217,16 +179,13 @@ class _NavItem extends StatelessWidget {
                 duration: const Duration(milliseconds: 250),
                 style: TextStyle(
                   fontSize: 11,
-                  fontWeight: selected
-                      ? FontWeight.bold
-                      : FontWeight.w500,
+                  fontWeight: selected ? FontWeight.bold : FontWeight.w500,
                   color: selected
                       ? const Color(0xff0E5A56)
                       : const Color.fromARGB(179, 14, 3, 6),
                 ),
                 child: Text(label),
               ),
-
             ],
           ),
         ),

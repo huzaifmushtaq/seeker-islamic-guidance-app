@@ -16,82 +16,55 @@ class HadithBookmarkService {
 
     final List list = jsonDecode(json);
 
-    return list
-        .map(
-          (e) => HadithBookmarkModel.fromMap(e),
-        )
-        .toList();
+    return list.map((e) => HadithBookmarkModel.fromMap(e)).toList();
   }
 
-  Future<void> saveBookmarks(
-    List<HadithBookmarkModel> bookmarks,
-  ) async {
+  Future<void> saveBookmarks(List<HadithBookmarkModel> bookmarks) async {
     final prefs = await SharedPreferences.getInstance();
 
     await prefs.setString(
       _key,
-      jsonEncode(
-        bookmarks
-            .map((e) => e.toMap())
-            .toList(),
-      ),
+      jsonEncode(bookmarks.map((e) => e.toMap()).toList()),
     );
   }
-  Future<bool> isBookmarked(
-  int hadithId,
-) async {
-  final bookmarks = await loadBookmarks();
 
-  return bookmarks.any(
-    (e) => e.hadithId == hadithId,
-  );
-}
+  Future<bool> isBookmarked(int hadithId) async {
+    final bookmarks = await loadBookmarks();
 
-Future<void> addBookmark(
-  HadithBookmarkModel bookmark,
-) async {
-  final bookmarks = await loadBookmarks();
+    return bookmarks.any((e) => e.hadithId == hadithId);
+  }
 
-  final exists = bookmarks.any(
-    (e) => e.hadithId == bookmark.hadithId,
-  );
+  Future<void> addBookmark(HadithBookmarkModel bookmark) async {
+    final bookmarks = await loadBookmarks();
 
-  if (exists) return;
+    final exists = bookmarks.any((e) => e.hadithId == bookmark.hadithId);
 
-  bookmarks.add(bookmark);
+    if (exists) return;
 
-  await saveBookmarks(bookmarks);
-}
-
-Future<void> removeBookmark(
-  int hadithId,
-) async {
-  final bookmarks = await loadBookmarks();
-
-  bookmarks.removeWhere(
-    (e) => e.hadithId == hadithId,
-  );
-
-  await saveBookmarks(bookmarks);
-}
-
-Future<void> toggleBookmark(
-  HadithBookmarkModel bookmark,
-) async {
-  final bookmarks = await loadBookmarks();
-
-  final exists = bookmarks.any(
-    (e) => e.hadithId == bookmark.hadithId,
-  );
-
-  if (exists) {
-    bookmarks.removeWhere(
-      (e) => e.hadithId == bookmark.hadithId,
-    );
-  } else {
     bookmarks.add(bookmark);
+
+    await saveBookmarks(bookmarks);
   }
 
-  await saveBookmarks(bookmarks);
-}
+  Future<void> removeBookmark(int hadithId) async {
+    final bookmarks = await loadBookmarks();
+
+    bookmarks.removeWhere((e) => e.hadithId == hadithId);
+
+    await saveBookmarks(bookmarks);
+  }
+
+  Future<void> toggleBookmark(HadithBookmarkModel bookmark) async {
+    final bookmarks = await loadBookmarks();
+
+    final exists = bookmarks.any((e) => e.hadithId == bookmark.hadithId);
+
+    if (exists) {
+      bookmarks.removeWhere((e) => e.hadithId == bookmark.hadithId);
+    } else {
+      bookmarks.add(bookmark);
+    }
+
+    await saveBookmarks(bookmarks);
+  }
 }

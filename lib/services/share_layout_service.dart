@@ -34,10 +34,7 @@ class ShareLayoutService {
     final painter = TextPainter(
       text: TextSpan(
         text: text,
-        style: const TextStyle(
-          fontSize: 48,
-          height: 2.05,
-        ),
+        style: const TextStyle(fontSize: 48, height: 2.05),
       ),
       textDirection: TextDirection.rtl,
     );
@@ -51,10 +48,7 @@ class ShareLayoutService {
     final painter = TextPainter(
       text: TextSpan(
         text: text,
-        style: const TextStyle(
-          fontSize: 30,
-          fontWeight: FontWeight.bold,
-        ),
+        style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
       ),
       textDirection: TextDirection.ltr,
     );
@@ -68,10 +62,7 @@ class ShareLayoutService {
     final painter = TextPainter(
       text: TextSpan(
         text: text,
-        style: const TextStyle(
-          fontSize: 35,
-          height: 1.8,
-        ),
+        style: const TextStyle(fontSize: 35, height: 1.8),
       ),
       textDirection: TextDirection.ltr,
     );

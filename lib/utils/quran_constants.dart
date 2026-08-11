@@ -112,5 +112,5 @@ const List<int> surahVerseCounts = [
   5,
   4,
   5,
-  6
+  6,
 ];

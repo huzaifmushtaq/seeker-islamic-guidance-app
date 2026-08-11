@@ -32,9 +32,7 @@ class HadithBookmarkModel {
     };
   }
 
-  factory HadithBookmarkModel.fromMap(
-    Map<String, dynamic> map,
-  ) {
+  factory HadithBookmarkModel.fromMap(Map<String, dynamic> map) {
     return HadithBookmarkModel(
       collection: map["collection"],
       chapterId: map["chapterId"],
@@ -43,9 +41,7 @@ class HadithBookmarkModel {
       hadithId: map["hadithId"],
       arabic: map["arabic"],
       english: map["english"],
-      savedAt: DateTime.fromMillisecondsSinceEpoch(
-        map["savedAt"],
-      ),
+      savedAt: DateTime.fromMillisecondsSinceEpoch(map["savedAt"]),
     );
   }
 }

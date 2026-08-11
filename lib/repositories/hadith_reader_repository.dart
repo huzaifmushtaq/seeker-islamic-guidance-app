@@ -13,17 +13,12 @@ class HadithReaderRepository {
       "assets/hadith/by_chapter/the_9_books/$collection/$chapterId.json",
     );
 
-    final Map<String, dynamic> json =
-        jsonDecode(jsonString);
+    final Map<String, dynamic> json = jsonDecode(jsonString);
 
     final List hadiths = json["hadiths"] ?? [];
 
     return hadiths
-        .map(
-          (e) => HadithModel.fromMap(
-            e as Map<String, dynamic>,
-          ),
-        )
+        .map((e) => HadithModel.fromMap(e as Map<String, dynamic>))
         .toList();
   }
 }

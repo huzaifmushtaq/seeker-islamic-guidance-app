@@ -11,8 +11,6 @@ class ReadingProgressService {
     required int page,
     required int surah,
     required int ayah,
-
-    
   }) async {
     final prefs = await SharedPreferences.getInstance();
 
@@ -32,11 +30,7 @@ class ReadingProgressService {
       return null;
     }
 
-    return LastReadModel(
-      page: page,
-      surah: surah,
-      ayah: ayah,
-    );
+    return LastReadModel(page: page, surah: surah, ayah: ayah);
   }
 
   Future<void> clearLastRead() async {

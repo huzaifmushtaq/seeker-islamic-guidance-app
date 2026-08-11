@@ -28,16 +28,12 @@ class HadithShareCard extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [
-            Color(0xffF7F2E4),
-            Color(0xffEFE4C7),
-          ],
+          colors: [Color(0xffF7F2E4), Color(0xffEFE4C7)],
         ),
       ),
 
       child: Stack(
         children: [
-
           /// TOP RIGHT DECORATION
           Positioned(
             top: -120,
@@ -47,7 +43,7 @@ class HadithShareCard extends StatelessWidget {
               height: 420,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Color(0xff0E5A56).withOpacity(.05),
+                color: Color(0xff0E5A56).withValues(alpha: .05),
               ),
             ),
           ),
@@ -61,20 +57,16 @@ class HadithShareCard extends StatelessWidget {
               height: 460,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Color(0xffD4AF37).withOpacity(.06),
+                color: Color(0xffD4AF37).withValues(alpha: .06),
               ),
             ),
           ),
 
           Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 70,
-              vertical: 80,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 70, vertical: 80),
 
             child: Column(
               children: [
-
                 /// BISMILLAH
                 const Text(
                   "﷽",
@@ -113,7 +105,7 @@ class HadithShareCard extends StatelessWidget {
                     vertical: 55,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(.45),
+                    color: Colors.white.withValues(alpha: .45),
                     borderRadius: BorderRadius.circular(36),
                     border: Border.all(
                       color: const Color(0xffD9C79E),
@@ -123,7 +115,6 @@ class HadithShareCard extends StatelessWidget {
 
                   child: Column(
                     children: [
-
                       Text(
                         arabic,
                         textAlign: TextAlign.center,
@@ -137,7 +128,6 @@ class HadithShareCard extends StatelessWidget {
                       ),
 
                       if (narrator.isNotEmpty) ...[
-
                         const SizedBox(height: 45),
 
                         Container(
@@ -191,16 +181,13 @@ class HadithShareCard extends StatelessWidget {
 
                 const SizedBox(height: 45),
 
-                                /// ENGLISH TRANSLATION
+                /// ENGLISH TRANSLATION
                 Expanded(
                   child: Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 28,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 28),
                     child: SingleChildScrollView(
-                      physics:
-                          const NeverScrollableScrollPhysics(),
+                      physics: const NeverScrollableScrollPhysics(),
                       child: Text(
                         english,
                         textAlign: TextAlign.justify,
@@ -217,104 +204,99 @@ class HadithShareCard extends StatelessWidget {
 
                 const SizedBox(height: 50),
 
-               /// COLLECTION INFO
-Container(
-  width: double.infinity,
-  padding: const EdgeInsets.symmetric(
-    horizontal: 30,
-    vertical: 20,
-  ),
-  decoration: BoxDecoration(
-    color: Colors.white.withOpacity(.55),
-    borderRadius: BorderRadius.circular(22),
-    border: Border.all(
-      color: const Color(0xffD8C59A),
-      width: 1.6,
-    ),
-  ),
-  child: Row(
-    crossAxisAlignment: CrossAxisAlignment.center,
-    children: [
+                /// COLLECTION INFO
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 30,
+                    vertical: 20,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: .55),
+                    borderRadius: BorderRadius.circular(22),
+                    border: Border.all(
+                      color: const Color(0xffD8C59A),
+                      width: 1.6,
+                    ),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 54,
+                        height: 54,
+                        decoration: BoxDecoration(
+                          color: const Color(0xff0E5A56).withValues(alpha: .08),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: const Icon(
+                          Icons.menu_book_rounded,
+                          color: Color(0xff0E5A56),
+                          size: 30,
+                        ),
+                      ),
 
-      Container(
-        width: 54,
-        height: 54,
-        decoration: BoxDecoration(
-          color: const Color(0xff0E5A56).withOpacity(.08),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: const Icon(
-          Icons.menu_book_rounded,
-          color: Color(0xff0E5A56),
-          size: 30,
-        ),
-      ),
+                      const SizedBox(width: 18),
 
-      const SizedBox(width: 18),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              collection.replaceAll("_", " ").toUpperCase(),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 38,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff12372A),
+                              ),
+                            ),
 
-      Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
+                            const SizedBox(height: 6),
 
-            Text(
-              collection
-    .replaceAll("_", " ")
-    .toUpperCase(),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 38,
-                fontWeight: FontWeight.bold,
-                color: Color(0xff12372A),
-              ),
-            ),
+                            Text(
+                              chapter,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 25,
+                                color: Colors.black87,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
 
-            const SizedBox(height: 6),
+                      const SizedBox(width: 20),
 
-            Text(
-              chapter,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 25,
-                color: Colors.black87,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ),
-
-      const SizedBox(width: 20),
-
-      Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 22,
-          vertical: 12,
-        ),
-        decoration: BoxDecoration(
-          color: const Color(0xffD4AF37),
-          borderRadius: BorderRadius.circular(30),
-        ),
-        child: Text(
-          "Hadith $hadithNumber",
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-
-    ],
-  ),
-),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 22,
+                          vertical: 12,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xffD4AF37),
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: Text(
+                          "Hadith $hadithNumber",
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
 
                 const SizedBox(height: 55),
 
-                                /// PREMIUM FOOTER
+                /// PREMIUM FOOTER
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(
@@ -323,16 +305,12 @@ Container(
                   ),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                      colors: [
-                        Color(0xff0E5A56),
-                        Color(0xff12372A),
-                      ],
+                      colors: [Color(0xff0E5A56), Color(0xff12372A)],
                     ),
                     borderRadius: BorderRadius.circular(30),
                   ),
                   child: Column(
                     children: [
-
                       const Icon(
                         Icons.auto_awesome_rounded,
                         color: Color(0xffD4AF37),
@@ -381,10 +359,8 @@ Container(
                       const SizedBox(height: 10),
 
                       const Row(
-                        mainAxisAlignment:
-                            MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-
                           Icon(
                             Icons.menu_book_rounded,
                             color: Color(0xffD4AF37),
@@ -406,7 +382,6 @@ Container(
                     ],
                   ),
                 ),
-
               ],
             ),
           ),

@@ -11,7 +11,6 @@ class HomeScreenV2 extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-
             /// HEADER
             SizedBox(
               height: 120,
@@ -19,45 +18,31 @@ class HomeScreenV2 extends StatelessWidget {
 
               child: SafeArea(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
 
                   child: Row(
-                    mainAxisAlignment:
-                        MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
                     children: [
-
                       Container(
                         width: 50,
                         height: 50,
 
                         decoration: BoxDecoration(
-                          color: const Color(
-                            0xFF0B4B4B,
-                          ),
+                          color: const Color(0xFF0B4B4B),
 
-                          borderRadius:
-                              BorderRadius.circular(
-                            16,
-                          ),
+                          borderRadius: BorderRadius.circular(16),
                         ),
 
-                        child: const Icon(
-                          Icons.menu,
-                          color: Colors.white,
-                        ),
+                        child: const Icon(Icons.menu, color: Colors.white),
                       ),
 
                       const Text(
                         "Home",
                         style: TextStyle(
                           fontSize: 32,
-                          fontWeight:
-                              FontWeight.bold,
-                          color:
-                              Color(0xFF0B4B4B),
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF0B4B4B),
                         ),
                       ),
 
@@ -66,14 +51,9 @@ class HomeScreenV2 extends StatelessWidget {
                         height: 50,
 
                         decoration: BoxDecoration(
-                          color: const Color(
-                            0xFF0B4B4B,
-                          ),
+                          color: const Color(0xFF0B4B4B),
 
-                          borderRadius:
-                              BorderRadius.circular(
-                            16,
-                          ),
+                          borderRadius: BorderRadius.circular(16),
                         ),
 
                         child: const Icon(
@@ -87,175 +67,160 @@ class HomeScreenV2 extends StatelessWidget {
               ),
             ),
 
-           Padding(
-  padding: const EdgeInsets.symmetric(
-    horizontal: 16,
-  ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
 
-  child: Container(
-    height: 220,
-    width: double.infinity,
+              child: Container(
+                height: 220,
+                width: double.infinity,
 
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(28),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(28),
 
-      image: const DecorationImage(
-        image: AssetImage(
-          "assets/images/homebg.png",
-        ),
-        fit: BoxFit.cover,
-      ),
-    ),
-
-    child: Padding(
-      padding: const EdgeInsets.all(20),
-
-      child: Row(
-        children: [
-
-          /// LEFT SIDE
-          Expanded(
-            flex: 3,
-
-            child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
-
-              children: [
-
-                const Text(
-                  "NEXT PRAYER",
-                  style: TextStyle(
-                    color: Color(0xFFF4D17D),
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1,
+                  image: const DecorationImage(
+                    image: AssetImage("assets/images/homebg.png"),
+                    fit: BoxFit.cover,
                   ),
                 ),
 
-                const SizedBox(height: 10),
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
 
-                const Text(
-                  "Maghrib",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 38,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                  child: Row(
+                    children: [
+                      /// LEFT SIDE
+                      Expanded(
+                        flex: 3,
 
-                const SizedBox(height: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
 
-                const Text(
-                  "02:14:21",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 34,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                          children: [
+                            const Text(
+                              "NEXT PRAYER",
+                              style: TextStyle(
+                                color: Color(0xFFF4D17D),
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1,
+                              ),
+                            ),
 
-                const Text(
-                  "Remaining",
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 14,
-                  ),
-                ),
+                            const SizedBox(height: 10),
 
-                const Spacer(),
+                            const Text(
+                              "Maghrib",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 38,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
 
-                Row(
-                  children: [
+                            const SizedBox(height: 10),
 
-                    const Icon(
-                      Icons.access_time,
-                      color: Color(0xFFF4D17D),
-                      size: 18,
-                    ),
+                            const Text(
+                              "02:14:21",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 34,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
 
-                    const SizedBox(width: 5),
+                            const Text(
+                              "Remaining",
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 14,
+                              ),
+                            ),
 
-                    const Text(
-                      "6:57 PM",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 13,
+                            const Spacer(),
+
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.access_time,
+                                  color: Color(0xFFF4D17D),
+                                  size: 18,
+                                ),
+
+                                const SizedBox(width: 5),
+
+                                const Text(
+                                  "6:57 PM",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 13,
+                                  ),
+                                ),
+
+                                const SizedBox(width: 12),
+
+                                const Icon(
+                                  Icons.location_on,
+                                  color: Color(0xFFF4D17D),
+                                  size: 18,
+                                ),
+
+                                const SizedBox(width: 4),
+
+                                const Text(
+                                  "Srinagar",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
 
-                    const SizedBox(width: 12),
+                      /// RIGHT SIDE DATE BOX
+                      Container(
+                        width: 110,
+                        height: 70,
 
-                    const Icon(
-                      Icons.location_on,
-                      color: Color(0xFFF4D17D),
-                      size: 18,
-                    ),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.12),
 
-                    const SizedBox(width: 4),
+                          borderRadius: BorderRadius.circular(18),
+                        ),
 
-                    const Text(
-                      "Srinagar",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 13,
+                        child: const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+
+                          children: [
+                            Text(
+                              "21 Jun",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+
+                            SizedBox(height: 4),
+
+                            Text(
+                              "1447 AH",
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ],
-            ),
-          ),
-
-          /// RIGHT SIDE DATE BOX
-          Container(
-            width: 110,
-            height: 70,
-
-            decoration: BoxDecoration(
-              // ignore: deprecated_member_use
-              color: Colors.white.withOpacity(
-                0.12,
               ),
-
-              borderRadius:
-                  BorderRadius.circular(18),
             ),
 
-            child: const Column(
-              mainAxisAlignment:
-                  MainAxisAlignment.center,
-
-              children: [
-
-                Text(
-                  "21 Jun",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight:
-                        FontWeight.bold,
-                  ),
-                ),
-
-                SizedBox(height: 4),
-
-                Text(
-                  "1447 AH",
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    ),
-  ),
-),
-
-const SizedBox(height: 18),
+            const SizedBox(height: 18),
           ],
         ),
       ),

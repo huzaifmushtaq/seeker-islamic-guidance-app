@@ -12,20 +12,11 @@ class AzkarProgressService {
   }) async {
     final prefs = await SharedPreferences.getInstance();
 
-    await prefs.setString(
-      _dateKey,
-      _todayKey(),
-    );
+    await prefs.setString(_dateKey, _todayKey());
 
-    await prefs.setString(
-      _azkarIdKey,
-      azkarId,
-    );
+    await prefs.setString(_azkarIdKey, azkarId);
 
-    await prefs.setInt(
-      _countKey,
-      count,
-    );
+    await prefs.setInt(_countKey, count);
   }
 
   /// Load today's saved progress.
@@ -34,8 +25,7 @@ class AzkarProgressService {
   Future<Map<String, dynamic>?> loadProgress() async {
     final prefs = await SharedPreferences.getInstance();
 
-    final savedDate =
-        prefs.getString(_dateKey);
+    final savedDate = prefs.getString(_dateKey);
 
     // Nothing saved yet.
     if (savedDate == null) {
@@ -49,10 +39,8 @@ class AzkarProgressService {
     }
 
     return {
-      'azkarId':
-          prefs.getString(_azkarIdKey),
-      'count':
-          prefs.getInt(_countKey) ?? 0,
+      'azkarId': prefs.getString(_azkarIdKey),
+      'count': prefs.getInt(_countKey) ?? 0,
     };
   }
 

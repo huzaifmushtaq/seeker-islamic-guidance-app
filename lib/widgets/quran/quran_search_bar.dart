@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 class QuranSearchBar extends StatelessWidget {
   final ValueChanged<String> onChanged;
 
-  const QuranSearchBar({
-    super.key,
-    required this.onChanged,
-  });
+  const QuranSearchBar({super.key, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -17,14 +14,12 @@ class QuranSearchBar extends StatelessWidget {
         borderRadius: BorderRadius.circular(22),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(.05),
+            color: Colors.black.withValues(alpha: .05),
             blurRadius: 18,
             offset: const Offset(0, 8),
           ),
         ],
-        border: Border.all(
-          color: const Color(0xffE7E2D8),
-        ),
+        border: Border.all(color: const Color(0xffE7E2D8)),
       ),
       child: TextField(
         onChanged: onChanged,
@@ -38,10 +33,7 @@ class QuranSearchBar extends StatelessWidget {
         decoration: InputDecoration(
           border: InputBorder.none,
           hintText: "Search Surah, Ayah...",
-          hintStyle: TextStyle(
-            color: Colors.grey.shade500,
-            fontSize: 15,
-          ),
+          hintStyle: TextStyle(color: Colors.grey.shade500, fontSize: 15),
 
           prefixIcon: const Icon(
             Icons.search_rounded,

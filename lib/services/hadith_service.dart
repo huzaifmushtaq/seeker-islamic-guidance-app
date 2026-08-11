@@ -10,18 +10,12 @@ class HadithService {
 
   /// Loads all Hadith from Sahih al-Bukhari.
   Future<List<HadithModel>> loadBukhari() async {
-    final jsonString =
-        await rootBundle.loadString(_bukhariPath);
+    final jsonString = await rootBundle.loadString(_bukhariPath);
 
-    final List<dynamic> jsonData =
-        json.decode(jsonString);
+    final List<dynamic> jsonData = json.decode(jsonString);
 
     return jsonData
-        .map(
-          (e) => HadithModel.fromMap(
-            e as Map<String, dynamic>,
-          ),
-        )
+        .map((e) => HadithModel.fromMap(e as Map<String, dynamic>))
         .toList();
   }
 
@@ -38,14 +32,11 @@ class HadithService {
 
     final now = DateTime.now();
 
-    final startOfYear =
-        DateTime(now.year, 1, 1);
+    final startOfYear = DateTime(now.year, 1, 1);
 
-    final dayOfYear =
-        now.difference(startOfYear).inDays;
+    final dayOfYear = now.difference(startOfYear).inDays;
 
-    final index =
-        dayOfYear % hadiths.length;
+    final index = dayOfYear % hadiths.length;
 
     return hadiths[index];
   }

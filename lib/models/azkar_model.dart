@@ -15,9 +15,7 @@ class AzkarModel {
     required this.targetCount,
   });
 
-  factory AzkarModel.fromJson(
-    Map<String, dynamic> json,
-  ) {
+  factory AzkarModel.fromJson(Map<String, dynamic> json) {
     return AzkarModel(
       // The original JSON has no ID,
       // so we generate one later from the index.
@@ -26,20 +24,16 @@ class AzkarModel {
       category: json["category"]?.toString() ?? "",
 
       arabic: (json["zekr"] ?? "")
-    .replaceAll("((", "")
-    .replaceAll("))", "")
-    .replaceAll(".", "")
-    .trim(),
+          .replaceAll("((", "")
+          .replaceAll("))", "")
+          .replaceAll(".", "")
+          .trim(),
 
       benefit: json["description"]?.toString() ?? "",
 
       reference: json["reference"]?.toString() ?? "",
 
-        targetCount:
-        int.tryParse(
-          json["targetCount"].toString(),
-        ) ??
-        1,
-  );
+      targetCount: int.tryParse(json["targetCount"].toString()) ?? 1,
+    );
   }
 }

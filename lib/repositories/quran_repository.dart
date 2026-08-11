@@ -16,15 +16,11 @@ class QuranRepository {
   final TranslationService _translation = TranslationService();
   final BayanulFurqanTranslationService _bayanTranslation =
       BayanulFurqanTranslationService();
-  final BayanulFurqanTafsirService _bayanTafsir =
-      BayanulFurqanTafsirService();
+  final BayanulFurqanTafsirService _bayanTafsir = BayanulFurqanTafsirService();
 
   final Map<int, List<VerseModel>> _cache = {};
 
-  Future<List<VerseModel>> loadSurah(
-    int surah,
-    int verses,
-  ) async {
+  Future<List<VerseModel>> loadSurah(int surah, int verses) async {
     if (_cache.containsKey(surah)) {
       return _cache[surah]!;
     }
@@ -59,8 +55,7 @@ class QuranRepository {
           ayah: ayah,
           arabic: arabic[key]?["text"] ?? "",
           kashmiriTranslation: translation[key]?["t"] ?? "",
-          bayanulFurqanTranslation:
-              bayanTranslation[key]?["t"] ?? "",
+          bayanulFurqanTranslation: bayanTranslation[key]?["t"] ?? "",
           bayanulFurqanTafsir: tafsir,
           ibnKathirTafsir: "",
         ),
@@ -72,14 +67,8 @@ class QuranRepository {
     return result;
   }
 
-  Future<VerseModel?> loadVerse(
-    int surah,
-    int ayah,
-  ) async {
-    final verses = await loadSurah(
-      surah,
-      surahVerseCounts[surah - 1],
-    );
+  Future<VerseModel?> loadVerse(int surah, int ayah) async {
+    final verses = await loadSurah(surah, surahVerseCounts[surah - 1]);
 
     if (ayah < 1 || ayah > verses.length) {
       return null;
@@ -87,18 +76,16 @@ class QuranRepository {
 
     return verses[ayah - 1];
   }
+
   Future<List<VerseModel>> loadAllVerses() async {
-  final List<VerseModel> allVerses = [];
+    final List<VerseModel> allVerses = [];
 
-  for (int surah = 1; surah <= 114; surah++) {
-    final verses = await loadSurah(
-      surah,
-      surahVerseCounts[surah - 1],
-    );
+    for (int surah = 1; surah <= 114; surah++) {
+      final verses = await loadSurah(surah, surahVerseCounts[surah - 1]);
 
-    allVerses.addAll(verses);
+      allVerses.addAll(verses);
+    }
+
+    return allVerses;
   }
-
-  return allVerses;
-}
 }

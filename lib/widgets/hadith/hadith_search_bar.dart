@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 class HadithSearchBar extends StatelessWidget {
   final ValueChanged<String>? onChanged;
 
-  const HadithSearchBar({
-    super.key,
-    this.onChanged,
-  });
+  const HadithSearchBar({super.key, this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -15,13 +12,10 @@ class HadithSearchBar extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(
-          color: const Color(0xffE6DBC2),
-          width: 1.2,
-        ),
+        border: Border.all(color: const Color(0xffE6DBC2), width: 1.2),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(.04),
+            color: Colors.black.withValues(alpha: .04),
             blurRadius: 14,
             offset: const Offset(0, 6),
           ),
@@ -55,9 +49,7 @@ class HadithSearchBar extends StatelessWidget {
               ),
             ),
           ),
-          prefixIconConstraints: const BoxConstraints(
-            minWidth: 76,
-          ),
+          prefixIconConstraints: const BoxConstraints(minWidth: 76),
 
           hintText: "Search By Hadith, Narrator...",
           hintStyle: const TextStyle(
@@ -82,9 +74,7 @@ class HadithSearchBar extends StatelessWidget {
               ),
             ),
           ),
-          suffixIconConstraints: const BoxConstraints(
-            minWidth: 64,
-          ),
+          suffixIconConstraints: const BoxConstraints(minWidth: 64),
         ),
       ),
     );

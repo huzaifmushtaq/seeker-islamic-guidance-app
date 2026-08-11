@@ -1,22 +1,14 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-enum TafsirType {
-  bayanulFurqan,
-  ibnKathir,
-}
+enum TafsirType { bayanulFurqan, ibnKathir }
 
 class TafsirPreferencesService {
   static const _key = "selected_tafsir";
 
-  Future<void> setSelectedTafsir(
-    TafsirType type,
-  ) async {
+  Future<void> setSelectedTafsir(TafsirType type) async {
     final prefs = await SharedPreferences.getInstance();
 
-    await prefs.setString(
-      _key,
-      type.name,
-    );
+    await prefs.setString(_key, type.name);
   }
 
   Future<TafsirType> getSelectedTafsir() async {

@@ -4,11 +4,7 @@ class FeatureCard extends StatelessWidget {
   final String imagePath;
   final String title;
 
-  const FeatureCard({
-    super.key,
-    required this.imagePath,
-    required this.title,
-  });
+  const FeatureCard({super.key, required this.imagePath, required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -27,21 +23,14 @@ class FeatureCard extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Image.asset(
-            imagePath,
-            height: 38,
-            width: 38,
-          ),
+          Image.asset(imagePath, height: 38, width: 38),
 
           const SizedBox(height: 10),
 
           Text(
             title,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-            ),
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
           ),
         ],
       ),

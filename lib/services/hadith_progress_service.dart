@@ -12,46 +12,34 @@ class HadithProgressService {
     required int index,
     required String title,
   }) async {
-    final prefs =
-        await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
 
-    await prefs.setString(
-        _collection, collection);
+    await prefs.setString(_collection, collection);
 
-    await prefs.setInt(
-        _chapter, chapterId);
+    await prefs.setInt(_chapter, chapterId);
 
-    await prefs.setInt(
-        _index, index);
+    await prefs.setInt(_index, index);
 
-    await prefs.setString(
-        _title, title);
+    await prefs.setString(_title, title);
   }
 
-  Future<Map<String, dynamic>?> loadProgress()
-      async {
-    final prefs =
-        await SharedPreferences.getInstance();
+  Future<Map<String, dynamic>?> loadProgress() async {
+    final prefs = await SharedPreferences.getInstance();
 
     if (!prefs.containsKey(_collection)) {
       return null;
     }
 
     return {
-      "collection":
-          prefs.getString(_collection),
-      "chapter":
-          prefs.getInt(_chapter),
-      "index":
-          prefs.getInt(_index),
-      "title":
-          prefs.getString(_title),
+      "collection": prefs.getString(_collection),
+      "chapter": prefs.getInt(_chapter),
+      "index": prefs.getInt(_index),
+      "title": prefs.getString(_title),
     };
   }
 
   Future<void> clear() async {
-    final prefs =
-        await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
 
     await prefs.remove(_collection);
     await prefs.remove(_chapter);

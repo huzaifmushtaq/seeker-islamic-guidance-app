@@ -6,10 +6,6 @@ class QuranReaderTest extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: PageviewQuran(
-        initialPageNumber: 1,
-      ),
-    );
+    return Scaffold(body: PageviewQuran(initialPageNumber: 1));
   }
 }

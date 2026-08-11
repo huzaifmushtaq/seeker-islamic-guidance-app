@@ -18,11 +18,8 @@ class HadithModel {
     required this.english,
   });
 
-  factory HadithModel.fromMap(
-    Map<String, dynamic> map,
-  ) {
-    final english =
-        map["english"] as Map<String, dynamic>? ?? {};
+  factory HadithModel.fromMap(Map<String, dynamic> map) {
+    final english = map["english"] as Map<String, dynamic>? ?? {};
 
     return HadithModel(
       id: map["id"] ?? 0,
@@ -31,10 +28,10 @@ class HadithModel {
       chapterId: map["chapterId"] ?? 0,
       arabic: map["arabic"] ?? "",
       narrator: english["narrator"] ?? "",
-     english: (map["english"]?["text"] ?? "")
-    .replaceAll(RegExp(r'\n\s*'), ' ')
-    .replaceAll(RegExp(r'\s+'), ' ')
-    .trim(),
+      english: (map["english"]?["text"] ?? "")
+          .replaceAll(RegExp(r'\n\s*'), ' ')
+          .replaceAll(RegExp(r'\s+'), ' ')
+          .trim(),
     );
   }
 }

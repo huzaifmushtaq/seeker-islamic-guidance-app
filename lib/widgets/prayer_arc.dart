@@ -5,19 +5,14 @@ class PrayerArc extends StatelessWidget {
   /// 1.0 = Prayer almost finished
   final double progress;
 
-  const PrayerArc({
-    super.key,
-    required this.progress,
-  });
+  const PrayerArc({super.key, required this.progress});
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: 200,
       height: 100,
-      child: CustomPaint(
-        painter: PrayerArcPainter(progress),
-      ),
+      child: CustomPaint(painter: PrayerArcPainter(progress)),
     );
   }
 }
@@ -29,12 +24,7 @@ class PrayerArcPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final rect = Rect.fromLTWH(
-      0,
-      0,
-      size.width,
-      size.height * 2,
-    );
+    final rect = Rect.fromLTWH(0, 0, size.width, size.height * 2);
 
     final yellowPaint = Paint()
       ..color = const Color.fromARGB(255, 86, 204, 100)
@@ -49,13 +39,7 @@ class PrayerArcPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round;
 
     // Full yellow arc
-    canvas.drawArc(
-      rect,
-      3.14159265359,
-      3.14159265359,
-      false,
-      yellowPaint,
-    );
+    canvas.drawArc(rect, 3.14159265359, 3.14159265359, false, yellowPaint);
 
     // White grows with progress
     canvas.drawArc(

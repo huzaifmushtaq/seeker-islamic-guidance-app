@@ -9,9 +9,7 @@ class ArabicService {
       return _verses!;
     }
 
-    final jsonString = await rootBundle.loadString(
-      'assets/quran/uthmani.json',
-    );
+    final jsonString = await rootBundle.loadString('assets/quran/uthmani.json');
 
     _verses = json.decode(jsonString);
 

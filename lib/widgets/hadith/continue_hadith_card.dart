@@ -28,14 +28,11 @@ class ContinueHadithCard extends StatelessWidget {
             gradient: const LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                Color(0xff0E5A56),
-                Color(0xff0A403C),
-              ],
+              colors: [Color(0xff0E5A56), Color(0xff0A403C)],
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(.12),
+                color: Colors.black.withValues(alpha: .12),
                 blurRadius: 18,
                 offset: const Offset(0, 8),
               ),
@@ -50,7 +47,7 @@ class ContinueHadithCard extends StatelessWidget {
                   width: 130,
                   height: 130,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(.05),
+                    color: Colors.white.withValues(alpha: .05),
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -62,7 +59,7 @@ class ContinueHadithCard extends StatelessWidget {
                 child: Icon(
                   Icons.menu_book_rounded,
                   size: 90,
-                  color: Colors.white.withOpacity(.08),
+                  color: Colors.white.withValues(alpha: .08),
                 ),
               ),
 
@@ -107,7 +104,7 @@ class ContinueHadithCard extends StatelessWidget {
                     Text(
                       bookName,
                       style: TextStyle(
-                        color: Colors.white.withOpacity(.82),
+                        color: Colors.white.withValues(alpha: .82),
                         fontSize: 15,
                       ),
                     ),
@@ -122,10 +119,10 @@ class ContinueHadithCard extends StatelessWidget {
                             vertical: 10,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(.12),
+                            color: Colors.white.withValues(alpha: .12),
                             borderRadius: BorderRadius.circular(14),
                             border: Border.all(
-                              color: Colors.white.withOpacity(.15),
+                              color: Colors.white.withValues(alpha: .15),
                             ),
                           ),
                           child: Row(

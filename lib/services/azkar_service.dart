@@ -7,26 +7,15 @@ import '../models/azkar_model.dart';
 class AzkarService {
   /// Loads the complete Azkar collection.
   Future<List<AzkarModel>> loadAzkar() async {
-    final jsonString = await rootBundle.loadString(
-      'assets/azkar/azkar.json',
-    );
+    final jsonString = await rootBundle.loadString('assets/azkar/azkar.json');
 
-    final List<dynamic> jsonData =
-        json.decode(jsonString);
+    final List<dynamic> jsonData = json.decode(jsonString);
 
-    return List.generate(
-      jsonData.length,
-      (index) {
-        final item = Map<String, dynamic>.from(
-          jsonData[index],
-        );
+    return List.generate(jsonData.length, (index) {
+      final item = Map<String, dynamic>.from(jsonData[index]);
 
-        return AzkarModel.fromJson({
-          ...item,
-          'id': 'azkar_$index',
-        });
-      },
-    );
+      return AzkarModel.fromJson({...item, 'id': 'azkar_$index'});
+    });
   }
 
   /// Returns exactly ONE Azkar for today.
@@ -44,15 +33,11 @@ class AzkarService {
       now.year,
       now.month,
       now.day,
-    ).difference(
-      DateTime(2026, 1, 1),
-    ).inDays;
+    ).difference(DateTime(2026, 1, 1)).inDays;
 
     /// Move to the next Azkar each day.
     final index = dayNumber % azkar.length;
 
     return azkar[index];
-    
   }
-  
 }
