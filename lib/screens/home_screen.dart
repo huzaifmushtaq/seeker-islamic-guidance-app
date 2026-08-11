@@ -13,6 +13,8 @@ import 'package:hijri/hijri_calendar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/prayer_tracker_card.dart';
 import '../widgets/prayer_arc.dart';
+import '../../models/wisdom_model.dart';
+import '../../services/wisdom_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -24,6 +26,10 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final LocationService _locationService = LocationService();
   final PrayerService _prayerService = PrayerService();
+final WisdomService _wisdomService = WisdomService();
+
+WisdomModel? _todayWisdom;
+bool _wisdomLoading = true;
 
   PrayerModel? prayerModel;
   Timer? _countdownTimer;
@@ -53,6 +59,7 @@ bool locationUnavailable = false;
 
     _loadPrayerTimes();
     _checkLocationSetup();
+     _loadTodayWisdom();
     _countdownTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (!mounted || prayerModel == null) return;
 
@@ -235,6 +242,48 @@ Future<void> _requestLocationAgain() async {
 
   await _checkLocationSetup();
 }
+Future<void> _loadTodayWisdom() async {
+  try {
+    final wisdoms =
+        await _wisdomService.loadWisdoms();
+
+    if (!mounted) return;
+
+    if (wisdoms.isEmpty) {
+      setState(() {
+        _wisdomLoading = false;
+      });
+      return;
+    }
+
+    final now = DateTime.now();
+
+    final startOfYear =
+        DateTime(now.year, 1, 1);
+
+    final dayOfYear =
+        now.difference(startOfYear).inDays;
+
+    final index =
+        dayOfYear % wisdoms.length;
+
+    setState(() {
+      _todayWisdom = wisdoms[index];
+      _wisdomLoading = false;
+    });
+  } catch (e) {
+    debugPrint(
+      'Wisdom loading error: $e',
+    );
+
+    if (!mounted) return;
+
+    setState(() {
+      _wisdomLoading = false;
+    });
+  }
+}
+
  @override
 Widget build(BuildContext context) {
   return Scaffold(
@@ -500,27 +549,30 @@ Positioned(
    ),
   );
 }
-
-
 Widget _hadithOfTheDayCard() {
-  final List<Map<String, dynamic>> wisdoms = [
-  {
-    "icon": Icons.menu_book_rounded,
-    "title": "Quran",
-    "quote":
-        "\"Indeed, in the remembrance of Allah do hearts find rest.\"",
-    "reference": "— Quran 13:28",
-  },
-  {
-    "icon": Icons.auto_stories_rounded,
-    "title": "Hadith",
-    "quote":
-        "\"The best among you are those who learn the Qur’an and teach it.\"",
-    "reference": "— Sahih al-Bukhari 5027",
-  },
-];
+  if (_wisdomLoading) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      height: 280,
+      decoration: BoxDecoration(
+        color: const Color(0xff0E5A56),
+        borderRadius: BorderRadius.circular(32),
+      ),
+      child: const Center(
+        child: CircularProgressIndicator(
+          color: Color(0xffE8C76A),
+        ),
+      ),
+    );
+  }
 
-final wisdom = wisdoms[DateTime.now().day % wisdoms.length];
+  if (_todayWisdom == null) {
+    return const SizedBox.shrink();
+  }
+
+  final bool isQuran =
+      _todayWisdom!.type.toLowerCase() == "quran";
+
   return Container(
     margin: const EdgeInsets.symmetric(horizontal: 20),
     decoration: BoxDecoration(
@@ -537,24 +589,29 @@ final wisdom = wisdoms[DateTime.now().day % wisdoms.length];
     child: Stack(
       children: [
 
-        /// Decorative Quote
+        /// Decorative quote
         Positioned(
           right: -15,
           top: -20,
           child: Icon(
-            Icons.format_quote,
+            Icons.format_quote_rounded,
             size: 130,
             color: Colors.white.withOpacity(.06),
           ),
         ),
 
         Padding(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.fromLTRB(
+  20,
+  20,
+  20,
+  18,
+),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
 
-              /// Top Badge
+              /// TOP BADGE
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 14,
@@ -568,18 +625,22 @@ final wisdom = wisdoms[DateTime.now().day % wisdoms.length];
                   mainAxisSize: MainAxisSize.min,
                   children: [
 
-                   Icon(
-  wisdom["icon"] as IconData,
-  size: 18,
-  color: const Color(0xffE8C76A),
-),
+                    Icon(
+                      isQuran
+                          ? Icons.menu_book_rounded
+                          : Icons.auto_stories_rounded,
+                      size: 18,
+                      color: const Color.fromARGB(255, 245, 223, 163),
+                    ),
 
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
 
-                   Text(
-  "${wisdom["title"]} • Wisdom of the Day",
-                      style: TextStyle(
-                        color: Colors.white,
+                    Text(
+                      isQuran
+                          ? "Wisdom of the Day"
+                          : "Wisdom of the Day",
+                      style: const TextStyle(
+                        color: Color.fromARGB(255, 245, 251, 156),
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -587,43 +648,60 @@ final wisdom = wisdoms[DateTime.now().day % wisdoms.length];
                 ),
               ),
 
-              const SizedBox(height: 28),
+              const SizedBox(height: 37),
 
-              /// Quote
-             Text(
-  wisdom["quote"] as String,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 23,
-                  fontWeight: FontWeight.w600,
-                  height: 1.55,
-                ),
-              ),
+             /// WISDOM TEXT
+Center(
+  child: ConstrainedBox(
+    constraints: const BoxConstraints(
+      maxWidth: 285,
+    ),
+    child: Text(
+      _todayWisdom!.text,
+      textAlign: TextAlign.center,
+      style: const TextStyle(
+        color: Colors.white,
+        fontSize: 22,
+        fontWeight: FontWeight.w600,
+        height: 1.4,
+        letterSpacing: 0.1,
+      ),
+    ),
+  ),
+),
 
-              const SizedBox(height: 18),
+const SizedBox(height: 25),
 
-              Container(
-                width: 70,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: const Color(0xffE8C76A),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
+/// GOLD DIVIDER
+Center(
+  child: Container(
+    width: 58,
+    height: 4,
+    decoration: BoxDecoration(
+      color: const Color(0xffE8C76A),
+      borderRadius: BorderRadius.circular(20),
+    ),
+  ),
+),
 
-              const SizedBox(height: 18),
+const SizedBox(height: 14),
 
-             Text(
-  wisdom["reference"] as String,
-                style: TextStyle(
-                  color: Color(0xffE8C76A),
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-
+/// REFERENCE
+Center(
+  child: Text(
+    _todayWisdom!.reference,
+    textAlign: TextAlign.center,
+    style: const TextStyle(
+      color: Color(0xffE8C76A),
+      fontSize: 13,
+      fontWeight: FontWeight.w700,
+      height: 1.2,
+    ),
+  ),
+),
               const SizedBox(height: 26),
 
+              /// BUTTONS
               Row(
                 children: [
 
@@ -637,10 +715,16 @@ final wisdom = wisdoms[DateTime.now().day % wisdoms.length];
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(18),
                         ),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 14,
+                        ),
                       ),
-                      onPressed: () {},
-                      icon: const Icon(Icons.share_rounded),
+                      onPressed: () {
+                        // Share will be implemented later.
+                      },
+                      icon: const Icon(
+                        Icons.share_rounded,
+                      ),
                       label: const Text("Share"),
                     ),
                   ),
@@ -650,16 +734,24 @@ final wisdom = wisdoms[DateTime.now().day % wisdoms.length];
                   Expanded(
                     child: ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xffE8C76A),
-                        foregroundColor: const Color(0xff0E5A56),
+                        backgroundColor:
+                            const Color(0xffE8C76A),
+                        foregroundColor:
+                            const Color(0xff0E5A56),
                         elevation: 0,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 14,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(18),
                         ),
                       ),
-                      onPressed: () {},
-                      icon: const Icon(Icons.arrow_forward_rounded),
+                      onPressed: () {
+                        // Read More will be implemented later.
+                      },
+                      icon: const Icon(
+                        Icons.arrow_forward_rounded,
+                      ),
                       label: const Text(
                         "Read More",
                         style: TextStyle(
