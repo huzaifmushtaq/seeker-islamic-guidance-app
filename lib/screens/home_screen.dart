@@ -15,6 +15,9 @@ import '../widgets/prayer_tracker_card.dart';
 import '../widgets/prayer_arc.dart';
 import '../../models/wisdom_model.dart';
 import '../../services/wisdom_service.dart';
+import 'dart:typed_data';
+import 'package:screenshot/screenshot.dart';
+import 'package:share_plus/share_plus.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -117,14 +120,15 @@ bool locationUnavailable = false;
       }
       final configured = await _locationService.isLocationConfigured();
 
-      if (!configured) {
-        if (prayerModel == null && mounted) {
-          setState(() {
-            isLoadingPrayer = false;
-          });
-        }
-        return;
-      }
+     if (!configured) {
+  if (prayerModel == null && mounted) {
+    setState(() {
+      isLoadingPrayer = false;
+      locationUnavailable = true;
+    });
+  }
+  return;
+}
 
       // 2. Refresh silently using live GPS
       final livePosition = await _locationService.getCurrentLocation();
@@ -227,7 +231,7 @@ if (asked || !mounted) return;
       ),
     );
   }
-// ignore: unused_element
+
 Future<void> _requestLocationAgain() async {
   // Allow the permission flow to run again
   final prefs = await SharedPreferences.getInstance();
@@ -284,6 +288,174 @@ Future<void> _loadTodayWisdom() async {
   }
 }
 
+Future<void> _shareWisdom() async {
+  if (_todayWisdom == null) return;
+
+  try {
+    final wisdom = _todayWisdom!;
+    final bool isQuran =
+        wisdom.type.toLowerCase() == "quran";
+
+    final screenshotController = ScreenshotController();
+
+    final Uint8List image =
+        await screenshotController.captureFromWidget(
+      _buildShareImage(
+        wisdom: wisdom,
+        isQuran: isQuran,
+      ),
+      context: context,
+      pixelRatio: 2.0,
+    );
+
+
+
+    final file = XFile.fromData(
+      image,
+      mimeType: 'image/png',
+      name: 'seeker_wisdom.png',
+    );
+
+    await Share.shareXFiles(
+      [file],
+      text: 'Seeker • Wisdom of the Day',
+    );
+  } catch (e) {
+    debugPrint('Wisdom share error: $e');
+  }
+}
+
+Widget _buildShareImage({
+  required WisdomModel wisdom,
+  required bool isQuran,
+}) {
+  return Material(
+    color: Colors.white,
+    child: Container(
+      width: 360,
+      padding: const EdgeInsets.all(28),
+      decoration: BoxDecoration(
+        color: const Color(0xff0E5A56),
+        borderRadius: BorderRadius.circular(28),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment:
+            CrossAxisAlignment.start,
+        children: [
+
+          /// HEADER
+          Row(
+            children: [
+
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(.12),
+                  borderRadius:
+                      BorderRadius.circular(13),
+                ),
+                child: Icon(
+                  isQuran
+                      ? Icons.menu_book_rounded
+                      : Icons.auto_stories_rounded,
+                  color:
+                      const Color(0xffE8C76A),
+                  size: 21,
+                ),
+              ),
+
+              const SizedBox(width: 12),
+
+              Expanded(
+                child: Text(
+                  isQuran
+                      ? "Quran • Wisdom of the Day"
+                      : "Hadith • Wisdom of the Day",
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 28),
+
+          /// WISDOM
+          Text(
+            wisdom.text,
+            textAlign: TextAlign.left,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 21,
+              fontWeight: FontWeight.w600,
+              height: 1.5,
+            ),
+          ),
+
+          const SizedBox(height: 22),
+
+          /// DIVIDER
+          Container(
+            width: 58,
+            height: 4,
+            decoration: BoxDecoration(
+              color: const Color(0xffE8C76A),
+              borderRadius:
+                  BorderRadius.circular(20),
+            ),
+          ),
+
+          const SizedBox(height: 14),
+
+          /// REFERENCE
+          Text(
+            "— ${wisdom.reference}",
+            style: const TextStyle(
+              color: Color(0xffE8C76A),
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+
+          const SizedBox(height: 30),
+
+          /// BRAND
+          Row(
+            children: [
+
+              Container(
+                width: 7,
+                height: 7,
+                decoration: const BoxDecoration(
+                  color: Color(0xffE8C76A),
+                  shape: BoxShape.circle,
+                ),
+              ),
+
+              const SizedBox(width: 8),
+
+              const Text(
+                "Seeker",
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+
  @override
 Widget build(BuildContext context) {
   return Scaffold(
@@ -295,8 +467,8 @@ Widget build(BuildContext context) {
       child: Column(
         children: [
 
-          /// TOP PRAYER HEADER
-        Container(
+/// TOP PRAYER HEADER
+Container(
   height: 340,
   width: double.infinity,
   decoration: const BoxDecoration(
@@ -316,184 +488,289 @@ Widget build(BuildContext context) {
       padding: const EdgeInsets.fromLTRB(22, 18, 22, 0),
 
       child: Stack(
-  children: [
-
-    /// Top Row
-    Positioned(
-      top: 4,
-      left: 22,
-      right: 22,
-      child: Row(
         children: [
 
-          const Icon(
-            Icons.location_on_rounded,
-            color: Color.fromARGB(253, 246, 244, 244),
-            size: 18,
-          ),
+          /// TOP ROW
+          Positioned(
+            top: 4,
+            left: 22,
+            right: 22,
+            child: Row(
+              children: [
 
-          const SizedBox(width: 5),
+                const Icon(
+                  Icons.location_on_rounded,
+                  color: Color.fromARGB(
+                    253,
+                    246,
+                    244,
+                    244,
+                  ),
+                  size: 18,
+                ),
 
-          Expanded(
-            child: Text(
-              cityName,
-              style: const TextStyle(
-                color: Color.fromARGB(248, 236, 237, 239),
-                fontWeight: FontWeight.w600,
-                fontSize: 15,
-              ),
+                const SizedBox(width: 5),
+
+                Expanded(
+                  child: Text(
+                    locationUnavailable
+                        ? "Location unavailable"
+                        : cityName,
+                    style: const TextStyle(
+                      color: Color.fromARGB(
+                        248,
+                        236,
+                        237,
+                        239,
+                      ),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+
+                Text(
+                  getHijriDate(),
+                  style: const TextStyle(
+                    color: Color.fromARGB(
+                      235,
+                      248,
+                      249,
+                      247,
+                    ),
+                    fontSize: 15,
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
+              ],
             ),
           ),
 
-          Text(
-            getHijriDate(),
+ /// CENTER PRAYER
+Positioned(
+  top: locationUnavailable ? 92 : 76,
+  left: 0,
+  right: 0,
+  child: Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+
+      /// NORMAL PRAYER STATE
+      if (!locationUnavailable) ...[
+        PrayerArc(
+          progress: prayerModel?.prayerProgress ?? 0,
+        ),
+
+        Transform.translate(
+          offset: const Offset(0, -35),
+          child: Text(
+            prayerModel == null
+                ? "--"
+                : "${prayerModel!.currentPrayer[0].toUpperCase()}${prayerModel!.currentPrayer.substring(1)}",
             style: const TextStyle(
-              color: Color.fromARGB(235, 248, 249, 247),
-              fontSize: 15,
-              fontWeight: FontWeight.w300
+              color: Colors.white,
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
+              height: 1,
+            ),
+          ),
+        ),
+      ],
+
+      /// LOCATION UNAVAILABLE
+      if (locationUnavailable) ...[
+        const Text(
+          "Prayer Times Unavailable",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            height: 1.1,
+          ),
+        ),
+
+        const SizedBox(height: 12),
+
+        const Text(
+          "Enable location to get accurate prayer times.",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Colors.white70,
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+
+        const SizedBox(height: 14),
+
+        GestureDetector(
+          onTap: _requestLocationAgain,
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 8,
+            ),
+            decoration: BoxDecoration(
+              color: const Color(0xffE8C76A),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: const Text(
+              "Enable Location",
+              style: TextStyle(
+                color: Color(0xff0E5A56),
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+      ],
+    ],
+  ),
+),
+
+          /// BOTTOM ACTION BAR
+          Positioned(
+            left: 24,
+            right: 24,
+            bottom: 35,
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 14,
+                vertical: 0,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(.12),
+                borderRadius:
+                    BorderRadius.circular(18),
+                border: Border.all(
+                  color: const Color.fromARGB(
+                    255,
+                    162,
+                    131,
+                    131,
+                  ).withOpacity(.12),
+                ),
+              ),
+              child: Row(
+                children: [
+
+                  /// ALARM
+                  Expanded(
+                    child: InkWell(
+                      onTap: () {},
+                      borderRadius:
+                          BorderRadius.circular(14),
+                      child: const Padding(
+                        padding:
+                            EdgeInsets.symmetric(
+                          vertical: 8,
+                        ),
+                        child: Row(
+                          mainAxisAlignment:
+                              MainAxisAlignment.center,
+                          children: [
+
+                            Icon(
+                              Icons.alarm_rounded,
+                              color: Color.fromARGB(
+                                255,
+                                226,
+                                223,
+                                25,
+                              ),
+                              size: 18,
+                            ),
+
+                            SizedBox(width: 8),
+
+                            Text(
+                              "Alarm",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 13,
+                                fontWeight:
+                                    FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  Container(
+                    width: 1,
+                    height: 24,
+                    color: Colors.white24,
+                  ),
+
+                  /// FULL SCHEDULE
+                  Expanded(
+                    child: InkWell(
+                      onTap: prayerModel == null
+                          ? null
+                          : () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) =>
+                                      PrayerTimesScreen(
+                                    prayerModel:
+                                        prayerModel!,
+                                    city: cityName,
+                                  ),
+                                ),
+                              );
+                            },
+                      borderRadius:
+                          BorderRadius.circular(14),
+                      child: Padding(
+                        padding:
+                            const EdgeInsets.symmetric(
+                          vertical: 8,
+                        ),
+                        child: Row(
+                          mainAxisAlignment:
+                              MainAxisAlignment.center,
+                          children: [
+
+                            Icon(
+                              Icons.schedule_rounded,
+                              color:
+                                  const Color.fromARGB(
+                                255,
+                                216,
+                                216,
+                                26,
+                              ),
+                              size: 18,
+                            ),
+
+                            const SizedBox(width: 8),
+
+                            const Text(
+                              "Full Schedule",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 13,
+                                fontWeight:
+                                    FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
       ),
     ),
-
-    /// Center Prayer
-Center(
-  child: Column(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-
-      PrayerArc(
-        progress: prayerModel?.prayerProgress ?? 0,
-      ),
-
-      Transform.translate(
-        offset: const Offset(0, -35),
-        child: Text(
-          prayerModel == null
-              ? "--"
-              : "${prayerModel!.currentPrayer[0].toUpperCase()}${prayerModel!.currentPrayer.substring(1)}",
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 30,
-            fontWeight: FontWeight.bold,
-            height: 1,
-          ),
-        ),
-      ),
-    ],
-  ),
-),
-
-Positioned(
-  left: 24,
-  right: 24,
-  bottom: 35, // <-- change this value to move it up/down
-  child: Container(
-    padding: const EdgeInsets.symmetric(
-      horizontal: 14,
-      vertical: 0,
-    ),
-    decoration: BoxDecoration(
-      color: Colors.white.withOpacity(.12),
-      borderRadius: BorderRadius.circular(18),
-      border: Border.all(
-        color: const Color.fromARGB(255, 162, 131, 131).withOpacity(.12),
-      ),
-    ),
-    child: Row(
-      children: [
-
-        Expanded(
-          child: InkWell(
-            onTap: () {},
-            borderRadius: BorderRadius.circular(14),
-            child: const Padding(
-  padding: EdgeInsets.symmetric(vertical: 8),
-  child: Row(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-
-      Icon(
-        Icons.alarm_rounded,
-        color: Color.fromARGB(255, 226, 223, 25),
-        size: 18,
-      ),
-
-      SizedBox(width: 8),
-
-      Text(
-        "Alarm",
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 13,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    ],
-  ),
-),
-          ),
-        ),
-
-        Container(
-          width: 1,
-          height: 24,
-          color: Colors.white24,
-        ),
-
-        Expanded(
-          child: InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => PrayerTimesScreen(
-                    prayerModel: prayerModel!,
-                    city: cityName,
-                  ),
-                ),
-              );
-            },
-            borderRadius: BorderRadius.circular(14),
-            child: const Padding(
-  padding:  EdgeInsets.symmetric(vertical: 8),
-  child: Row(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: const [
-
-      Icon(
-        Icons.schedule_rounded,
-        color: Color.fromARGB(255, 216, 216, 26),
-        size: 18,
-      ),
-
-      SizedBox(width: 8),
-
-      Text(
-        "Full Schedule",
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 13,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    ],
-  ),
-  
-),
-
-          ),
-        ),
-      ],
-    ),
-  ),
-),
-  ],
-),
-
-    ),
-    
   ),
 ),
 
@@ -525,11 +802,11 @@ Positioned(
 
                     const SizedBox(height: 20),
 
-                     _duaCard(),
+                      _hadithOfTheDayCard(), 
 
                     const SizedBox(height: 20),
 
-                    _hadithOfTheDayCard(),
+                    _duaCard(),
 
                     const SizedBox(height: 20),
 
@@ -719,9 +996,7 @@ Center(
                           vertical: 14,
                         ),
                       ),
-                      onPressed: () {
-                        // Share will be implemented later.
-                      },
+                     onPressed: _shareWisdom,
                       icon: const Icon(
                         Icons.share_rounded,
                       ),
@@ -731,7 +1006,7 @@ Center(
 
                   const SizedBox(width: 14),
 
-                  Expanded(
+                /*  Expanded(
                     child: ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
                         backgroundColor:
@@ -760,6 +1035,7 @@ Center(
                       ),
                     ),
                   ),
+                  */
                 ],
               ),
             ],

@@ -25,17 +25,21 @@ class AzkarModel {
 
       category: json["category"]?.toString() ?? "",
 
-      arabic: json["zekr"]?.toString() ?? "",
+      arabic: (json["zekr"] ?? "")
+    .replaceAll("((", "")
+    .replaceAll("))", "")
+    .replaceAll(".", "")
+    .trim(),
 
       benefit: json["description"]?.toString() ?? "",
 
       reference: json["reference"]?.toString() ?? "",
 
-      targetCount:
-          int.tryParse(
-                json["count"]?.toString() ?? "1",
-              ) ??
-              1,
-    );
+        targetCount:
+        int.tryParse(
+          json["targetCount"].toString(),
+        ) ??
+        1,
+  );
   }
 }

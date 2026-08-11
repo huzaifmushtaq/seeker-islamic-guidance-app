@@ -181,14 +181,19 @@ Future<void> _continueAzkar() async {
                     borderRadius:
                         BorderRadius.circular(18),
                   ),
-                  child: Text(
-                    "${currentAzkar!.targetCount} Left",
-                    style: const TextStyle(
-                      color: Color(0xff0E5A56),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                    ),
-                  ),
+                  child:Text(
+  currentAzkar == null
+      ? ""
+      : "${(currentAzkar!.targetCount - currentCount).clamp(
+          0,
+          currentAzkar!.targetCount,
+        )} Left",
+  style: const TextStyle(
+    color: Color(0xff0E5A56),
+    fontWeight: FontWeight.bold,
+    fontSize: 12,
+  ),
+),
                 ),
             ],
           ),
