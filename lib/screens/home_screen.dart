@@ -679,7 +679,7 @@ const SizedBox(height: 12),
 ).format(context)}",
                 style: const TextStyle(
                   color: Colors.white,
-                  fontSize: 13,
+                  fontSize: 12,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -909,16 +909,7 @@ Widget _hadithOfTheDayCard() {
 
                       const SizedBox(height: 2),
 
-                      Text(
-                        isQuran
-                            ? "A verse to reflect upon"
-                            : "A saying to reflect upon",
-                        style: TextStyle(
-                          color: Colors.white.withValues(alpha: .58),
-                          fontSize: 11.5,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
+                    
                     ],
                   ),
                 ],
@@ -1009,7 +1000,7 @@ Widget _hadithOfTheDayCard() {
                 ),
               ),
 
-              const SizedBox(height: 13),
+              const SizedBox(height: 20),
 
               /// ─────────────────────────────
               /// REFERENCE

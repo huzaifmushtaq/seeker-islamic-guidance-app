@@ -22,105 +22,118 @@ class SurahTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 7),
-      child: Material(
-        color: Colors.white,
-        elevation: 1.0,
-        shadowColor: Colors.black12,
-        borderRadius: BorderRadius.circular(24),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(24),
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-            child: Row(
-              children: [
-                /// Surah Number
-                Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: const Color(0xffF6EFD9),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 18,
+            vertical: 13,
+          ),
+          decoration: const BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                color: Color(0xFFE7E3D9),
+                width: 0.8,
+              ),
+            ),
+          ),
+          child: Row(
+            children: [
+              /// ─────────────────────────────
+              /// SURAH NUMBER ORNAMENT
+              /// ─────────────────────────────
+              SizedBox(
+                width: 48,
+                height: 48,
+                child: Stack(
                   alignment: Alignment.center,
-                  child: Text(
-                    number.toString(),
-                    style: const TextStyle(
-                      color: Color(0xff0E5A56),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
-
-                const SizedBox(width: 16),
-
-                /// English Details
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        meaning,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: Color(0xffB28A2E),
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-
-                      const SizedBox(height: 5),
-
-                      Text(
-                        "$revelationType • $verses Verses",
-                        style: const TextStyle(
-                          color: Color.fromARGB(137, 15, 12, 12),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(width: 16),
-
-                /// Arabic + Arrow
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
+                    Icon(
+                      Icons.star_rounded,
+                      size: 46,
+                      color: const Color(0xff0E5A56),
+                    ),
+
+                    Icon(
+                      Icons.star_border_rounded,
+                      size: 43,
+                      color: const Color(0xffF8F4E8),
+                    ),
+
                     Text(
-                      arabicName,
+                      number.toString(),
                       style: const TextStyle(
                         color: Color(0xff0E5A56),
-                        fontSize: 26,
-                        fontFamily: 'Amiri',
-                      ),
-                    ),
-
-                    const SizedBox(height: 8),
-
-                    Container(
-                      width: 32,
-                      height: 32,
-                      decoration: BoxDecoration(
-                        color: const Color(0xffF6EFD9),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Icon(
-                        Icons.arrow_forward_ios_rounded,
-                        size: 14,
-                        color: Color(0xff0E5A56),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                   ],
                 ),
-              ],
-            ),
+              ),
+
+              const SizedBox(width: 14),
+
+              /// ─────────────────────────────
+              /// SURAH INFORMATION
+              /// ─────────────────────────────
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      englishName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Color(0xff0E5A56),
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        height: 1.15,
+                      ),
+                    ),
+
+                    const SizedBox(height: 4),
+
+                    Text(
+                      "$revelationType • $verses Verses",
+                      style: const TextStyle(
+                        color: Color(0xff777777),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        height: 1.1,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(width: 14),
+
+              /// ─────────────────────────────
+              /// ARABIC NAME
+              /// ─────────────────────────────
+              SizedBox(
+                width: 105,
+                child: Text(
+                  arabicName,
+                  textAlign: TextAlign.right,
+                  textDirection: TextDirection.rtl,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Color(0xffB28A2E),
+                    fontSize: 25,
+                    fontFamily: 'Amiri',
+                    fontWeight: FontWeight.w500,
+                    height: 1.2,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

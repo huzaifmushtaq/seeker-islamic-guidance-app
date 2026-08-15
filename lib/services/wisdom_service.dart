@@ -6,7 +6,7 @@ import '../models/wisdom_model.dart';
 class WisdomService {
   Future<List<WisdomModel>> loadWisdoms() async {
     final String jsonString =
-        await rootBundle.loadString('assets/wisdoms_200.json');
+        await rootBundle.loadString('assets/hadith/wisdoms_200.json');
 
     final List<dynamic> jsonData = json.decode(jsonString);
 
