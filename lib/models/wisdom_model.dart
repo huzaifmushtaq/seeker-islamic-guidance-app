@@ -1,13 +1,15 @@
 class WisdomModel {
   final String id;
   final String type;
-  final String text;
+  final String arabic;
+  final String urdu;
   final String reference;
 
-  const WisdomModel({
+  WisdomModel({
     required this.id,
     required this.type,
-    required this.text,
+    required this.arabic,
+    required this.urdu,
     required this.reference,
   });
 
@@ -15,7 +17,8 @@ class WisdomModel {
     return WisdomModel(
       id: json['id'] ?? '',
       type: json['type'] ?? '',
-      text: json['text'] ?? '',
+      arabic: json['arabic'] ?? '',
+      urdu: json['urdu'] ?? '',
       reference: json['reference'] ?? '',
     );
   }
