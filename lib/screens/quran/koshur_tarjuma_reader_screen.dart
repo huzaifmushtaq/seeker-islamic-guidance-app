@@ -12,6 +12,8 @@ class KoshurTarjumaReaderScreen extends StatefulWidget {
   final String arabicName;
   final String revelationType;
   final int verses;
+  /// Ayah to restore when opened from Continue Reading.
+  final int? initialAyah;
 
   const KoshurTarjumaReaderScreen({
     super.key,
@@ -20,6 +22,7 @@ class KoshurTarjumaReaderScreen extends StatefulWidget {
     required this.arabicName,
     required this.revelationType,
     required this.verses,
+    this.initialAyah,
   });
 
   @override
@@ -30,17 +33,23 @@ class KoshurTarjumaReaderScreen extends StatefulWidget {
 class _KoshurTarjumaReaderScreenState
     extends State<KoshurTarjumaReaderScreen> {
   final QuranRepository _repository = QuranRepository();
-final QuranModeProgressService
-    _progressService =
-    QuranModeProgressService();
-    final ScrollController _scrollController =
-    ScrollController();
-    @override
-void dispose() {
-  _scrollController.dispose();
-  super.dispose();
-}
+
+  final QuranModeProgressService _progressService =
+      QuranModeProgressService();
+
+  final ScrollController _scrollController =
+      ScrollController();
+
   late Future<List<VerseModel>> _versesFuture;
+
+  /// One key for every Ayah.
+  final Map<int, GlobalKey> _ayahKeys = {};
+
+  /// Prevents the restored Ayah from immediately
+  /// overwriting the saved position.
+  bool _isRestoring = false;
+
+  bool _restoreCompleted = false;
 
   @override
   void initState() {
@@ -50,7 +59,174 @@ void dispose() {
       widget.surahNumber,
       widget.verses,
     );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _restoreSavedAyah();
+    });
   }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  // ─────────────────────────────────────────────
+  // RESTORE LAST READ AYAH
+  // ─────────────────────────────────────────────
+
+  Future<void> _restoreSavedAyah() async {
+    final savedAyah = widget.initialAyah;
+
+    if (savedAyah == null || savedAyah <= 1) {
+      _restoreCompleted = true;
+      return;
+    }
+
+    _isRestoring = true;
+
+    /*
+     * Wait until the FutureBuilder has loaded the verses
+     * and the ListView has created its children.
+     */
+    final verses = await _versesFuture;
+
+    if (!mounted) return;
+
+    if (verses.isEmpty) {
+      _restoreCompleted = true;
+      _isRestoring = false;
+      return;
+    }
+
+    /*
+     * The Ayah is 1-based.
+     * ListView index is 0-based.
+     */
+    final targetIndex = savedAyah - 1;
+
+    if (targetIndex < 0 ||
+        targetIndex >= verses.length) {
+      _restoreCompleted = true;
+      _isRestoring = false;
+      return;
+    }
+
+    /*
+     * Make sure the target Ayah gets built.
+     *
+     * This is only a rough positioning step.
+     * The actual final positioning is done using
+     * Scrollable.ensureVisible().
+     */
+    if (_scrollController.hasClients) {
+      final roughOffset =
+          targetIndex * 350.0;
+
+      final maxExtent =
+          _scrollController.position.maxScrollExtent;
+
+      _scrollController.jumpTo(
+        roughOffset.clamp(
+          0.0,
+          maxExtent,
+        ),
+      );
+    }
+
+    await Future.delayed(
+      const Duration(milliseconds: 80),
+    );
+
+    await _ensureAyahVisible(savedAyah);
+
+    _restoreCompleted = true;
+    _isRestoring = false;
+  }
+
+  // ─────────────────────────────────────────────
+  // EXACT AYAH POSITIONING
+  // ─────────────────────────────────────────────
+
+  Future<void> _ensureAyahVisible(
+    int ayah,
+  ) async {
+    final key = _ayahKeys[ayah];
+
+    if (key == null) return;
+
+    BuildContext? ayahContext =
+        key.currentContext;
+
+    /*
+     * If the target is not currently built,
+     * move closer and wait for another frame.
+     */
+    if (ayahContext == null &&
+        _scrollController.hasClients) {
+      final roughOffset =
+          (ayah - 1) * 350.0;
+
+      final maxExtent =
+          _scrollController.position.maxScrollExtent;
+
+      _scrollController.jumpTo(
+        roughOffset.clamp(
+          0.0,
+          maxExtent,
+        ),
+      );
+
+      await Future.delayed(
+        const Duration(milliseconds: 100),
+      );
+
+      ayahContext = key.currentContext;
+    }
+
+    if (ayahContext == null || !mounted) {
+      return;
+    }
+
+    /*
+     * This is the actual positioning.
+     *
+     * Flutter finds the real Ayah widget and moves
+     * the scroll view to it.
+     */
+    await Scrollable.ensureVisible(
+      ayahContext,
+      duration: const Duration(
+        milliseconds: 450,
+      ),
+      curve: Curves.easeOutCubic,
+      alignment: 0.08,
+    );
+  }
+
+  // ─────────────────────────────────────────────
+  // SAVE PROGRESS
+  // ─────────────────────────────────────────────
+
+  Future<void> _saveProgress(
+    int ayah,
+  ) async {
+    if (_isRestoring ||
+        !_restoreCompleted ||
+        !mounted) {
+      return;
+    }
+
+    await _progressService.saveProgress(
+      mode: QuranMode.tarjuma,
+      surah: widget.surahNumber,
+      ayah: ayah,
+    );
+  }
+
+  // ─────────────────────────────────────────────
+  // BUILD
+  // ─────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +247,8 @@ void dispose() {
         ),
 
         title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment:
+              CrossAxisAlignment.start,
           children: [
             Text(
               widget.arabicName,
@@ -99,7 +276,8 @@ void dispose() {
         future: _versesFuture,
 
         builder: (context, snapshot) {
-          if (snapshot.connectionState != ConnectionState.done) {
+          if (snapshot.connectionState !=
+              ConnectionState.done) {
             return const Center(
               child: CircularProgressIndicator(
                 color: Color(0xff0E5A56),
@@ -119,7 +297,8 @@ void dispose() {
             );
           }
 
-          final verses = snapshot.data ?? [];
+          final verses =
+              snapshot.data ?? [];
 
           if (verses.isEmpty) {
             return const Center(
@@ -127,10 +306,22 @@ void dispose() {
             );
           }
 
-         return ListView.builder(
-  controller: _scrollController,
-  physics: const BouncingScrollPhysics(),
-  
+          /*
+           * Create keys once the actual verses are available.
+           */
+          for (final verse in verses) {
+            _ayahKeys.putIfAbsent(
+              verse.ayah,
+              () => GlobalKey(),
+            );
+          }
+
+          return ListView.builder(
+            controller: _scrollController,
+
+            physics:
+                const BouncingScrollPhysics(),
+
             padding: const EdgeInsets.fromLTRB(
               16,
               8,
@@ -140,46 +331,60 @@ void dispose() {
 
             itemCount: verses.length,
 
-         itemBuilder: (context, index) {
-  final verse = verses[index];
+            itemBuilder: (context, index) {
+              final verse = verses[index];
 
-  return VisibilityDetector(
-  key: Key(
-    'tarjuma_${widget.surahNumber}_${verse.ayah}',
-  ),
+              return KeyedSubtree(
+                key: _ayahKeys[verse.ayah],
 
-  onVisibilityChanged: (info) async {
-    if (info.visibleFraction >= 0.6) {
-      await _progressService.saveProgress(
-        mode: QuranMode.tarjuma,
-        surah: widget.surahNumber,
-        ayah: verse.ayah,
-      );
-    }
-  },
+                child: VisibilityDetector(
+                  key: Key(
+                    'tarjuma_${widget.surahNumber}_${verse.ayah}',
+                  ),
 
-  child: _ayahCard(verse),
-);
+                  onVisibilityChanged:
+                      (info) async {
+                    if (info.visibleFraction >=
+                        0.6) {
+                      await _saveProgress(
+                        verse.ayah,
+                      );
+                    }
+                  },
 
-},
-
+                  child: _ayahCard(verse),
+                ),
+              );
+            },
           );
         },
       ),
     );
   }
 
-  Widget _ayahCard(VerseModel verse) {
+  // ─────────────────────────────────────────────
+  // AYAH CARD
+  // ─────────────────────────────────────────────
+
+  Widget _ayahCard(
+    VerseModel verse,
+  ) {
     final kashmiri =
-        verse.translation(TranslationType.kashmiri);
+        verse.translation(
+      TranslationType.kashmiri,
+    );
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 14),
+      margin:
+          const EdgeInsets.only(
+        bottom: 14,
+      ),
 
       decoration: BoxDecoration(
         color: Colors.white,
 
-        borderRadius: BorderRadius.circular(22),
+        borderRadius:
+            BorderRadius.circular(22),
 
         border: Border.all(
           color: const Color(0xff0E5A56)
@@ -188,7 +393,8 @@ void dispose() {
 
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: .035),
+            color: Colors.black
+                .withValues(alpha: .035),
             blurRadius: 14,
             offset: const Offset(0, 5),
           ),
@@ -196,7 +402,8 @@ void dispose() {
       ),
 
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(
+        padding:
+            const EdgeInsets.fromLTRB(
           18,
           16,
           18,
@@ -215,19 +422,25 @@ void dispose() {
                   width: 30,
                   height: 30,
 
-                  decoration: BoxDecoration(
-                    color: const Color(0xffF6EFD9),
+                  decoration:
+                      const BoxDecoration(
+                    color:
+                        Color(0xffF6EFD9),
                     shape: BoxShape.circle,
                   ),
 
-                  alignment: Alignment.center,
+                  alignment:
+                      Alignment.center,
 
                   child: Text(
                     verse.ayah.toString(),
-                    style: const TextStyle(
-                      color: Color(0xff0E5A56),
+                    style:
+                        const TextStyle(
+                      color:
+                          Color(0xff0E5A56),
                       fontSize: 11,
-                      fontWeight: FontWeight.bold,
+                      fontWeight:
+                          FontWeight.bold,
                     ),
                   ),
                 ),
@@ -236,12 +449,16 @@ void dispose() {
 
                 Text(
                   "آيَة ${verse.ayah}",
-                  textDirection: TextDirection.rtl,
-                  style: const TextStyle(
-                    color: Color(0xffB28A2E),
+                  textDirection:
+                      TextDirection.rtl,
+                  style:
+                      const TextStyle(
+                    color:
+                        Color(0xffB28A2E),
                     fontFamily: 'Amiri',
                     fontSize: 13,
-                    fontWeight: FontWeight.w600,
+                    fontWeight:
+                        FontWeight.w600,
                   ),
                 ),
               ],
@@ -252,14 +469,19 @@ void dispose() {
             /// ARABIC
             Text(
               verse.arabic,
-              textAlign: TextAlign.right,
-              textDirection: TextDirection.rtl,
-              style: const TextStyle(
-                color: Color(0xff182C2A),
+              textAlign:
+                  TextAlign.right,
+              textDirection:
+                  TextDirection.rtl,
+              style:
+                  const TextStyle(
+                color:
+                    Color(0xff182C2A),
                 fontFamily: 'Amiri',
                 fontSize: 24,
                 height: 1.9,
-                fontWeight: FontWeight.w500,
+                fontWeight:
+                    FontWeight.w500,
               ),
             ),
 
@@ -271,10 +493,16 @@ void dispose() {
                 Container(
                   width: 28,
                   height: 2,
-                  decoration: BoxDecoration(
-                    color: const Color(0xffE8C76A),
+                  decoration:
+                      BoxDecoration(
+                    color:
+                        const Color(
+                      0xffE8C76A,
+                    ),
                     borderRadius:
-                        BorderRadius.circular(10),
+                        BorderRadius.circular(
+                      10,
+                    ),
                   ),
                 ),
 
@@ -295,13 +523,18 @@ void dispose() {
             /// KASHMIRI TRANSLATION
             Text(
               kashmiri,
-              textAlign: TextAlign.right,
-              textDirection: TextDirection.rtl,
-              style: const TextStyle(
-                color: Color(0xff40504E),
+              textAlign:
+                  TextAlign.right,
+              textDirection:
+                  TextDirection.rtl,
+              style:
+                  const TextStyle(
+                color:
+                    Color(0xff40504E),
                 fontSize: 16,
                 height: 1.75,
-                fontWeight: FontWeight.w500,
+                fontWeight:
+                    FontWeight.w500,
               ),
             ),
           ],

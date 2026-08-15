@@ -79,6 +79,7 @@ class _KoshurTarjumaScreenState
           revelationType:
               "${surah.revelationPlace[0].toUpperCase()}${surah.revelationPlace.substring(1)}",
           verses: surah.versesCount,
+         
         ),
       ),
     );

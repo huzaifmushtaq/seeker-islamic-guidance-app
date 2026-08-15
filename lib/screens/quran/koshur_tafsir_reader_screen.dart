@@ -12,6 +12,7 @@ class KoshurTafsirReaderScreen extends StatefulWidget {
   final String arabicName;
   final String revelationType;
   final int verses;
+  final int? initialAyah;
 
   const KoshurTafsirReaderScreen({
     super.key,
@@ -20,6 +21,8 @@ class KoshurTafsirReaderScreen extends StatefulWidget {
     required this.arabicName,
     required this.revelationType,
     required this.verses,
+    this.initialAyah,
+    
   });
 
   @override
@@ -33,18 +36,116 @@ class _KoshurTafsirReaderScreenState
       QuranRepository();
  final QuranModeProgressService _progressService =
       QuranModeProgressService();
+      final ScrollController _scrollController =
+    ScrollController();
+
+final Map<int, GlobalKey> _ayahKeys = {};
+
+bool _isRestoring = false;
+bool _restoreCompleted = false;
 
   late Future<List<VerseModel>> _versesFuture;
 
-  @override
-  void initState() {
-    super.initState();
+ @override
+void initState() {
+  super.initState();
 
-    _versesFuture = _repository.loadSurah(
-      widget.surahNumber,
-      widget.verses,
+  _versesFuture = _repository.loadSurah(
+    widget.surahNumber,
+    widget.verses,
+  );
+
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    _restoreSavedAyah();
+  });
+}
+@override
+void dispose() {
+  _scrollController.dispose();
+  super.dispose();
+}
+Future<void> _restoreSavedAyah() async {
+  final savedAyah = widget.initialAyah;
+
+  if (savedAyah == null || savedAyah <= 1) {
+    _restoreCompleted = true;
+    return;
+  }
+
+  _isRestoring = true;
+
+  final verses = await _versesFuture;
+
+  if (!mounted || verses.isEmpty) {
+    _isRestoring = false;
+    _restoreCompleted = true;
+    return;
+  }
+
+  final targetIndex = savedAyah - 1;
+
+  if (targetIndex < 0 ||
+      targetIndex >= verses.length) {
+    _isRestoring = false;
+    _restoreCompleted = true;
+    return;
+  }
+
+  /*
+   * Give FutureBuilder/ListView time to build.
+   */
+  await Future.delayed(
+    const Duration(milliseconds: 150),
+  );
+
+  /*
+   * Try several times because ListView.builder
+   * only builds children around the current viewport.
+   */
+  for (int attempt = 0; attempt < 10; attempt++) {
+    if (!mounted) return;
+
+    final key = _ayahKeys[savedAyah];
+
+    if (key?.currentContext != null) {
+      await Scrollable.ensureVisible(
+        key!.currentContext!,
+        duration: const Duration(
+          milliseconds: 500,
+        ),
+        curve: Curves.easeOutCubic,
+        alignment: 0.08,
+      );
+
+      break;
+    }
+
+    /*
+     * Move progressively closer to the target.
+     */
+    if (_scrollController.hasClients) {
+      final maxExtent =
+          _scrollController.position.maxScrollExtent;
+
+      final estimatedOffset =
+          targetIndex * 500.0;
+
+      _scrollController.jumpTo(
+        estimatedOffset.clamp(
+          0.0,
+          maxExtent,
+        ),
+      );
+    }
+
+    await Future.delayed(
+      const Duration(milliseconds: 100),
     );
   }
+
+  _restoreCompleted = true;
+  _isRestoring = false;
+}
 
   @override
   Widget build(BuildContext context) {
@@ -130,9 +231,9 @@ class _KoshurTafsirReaderScreenState
             );
           }
 
-          return ListView.builder(
-            physics:
-                const BouncingScrollPhysics(),
+         return ListView.builder(
+  controller: _scrollController,
+  physics: const BouncingScrollPhysics(),
 
             padding:
                 const EdgeInsets.fromLTRB(
@@ -145,23 +246,34 @@ class _KoshurTafsirReaderScreenState
             itemCount: verses.length,
 
             itemBuilder: (context, index) {
-              final verse = verses[index];
-             return VisibilityDetector(
-  key: Key(
-    'tafsir_${widget.surahNumber}_${verse.ayah}',
+            final verse = verses[index];
+
+final ayahKey = _ayahKeys.putIfAbsent(
+  verse.ayah,
+  () => GlobalKey(),
+);
+return KeyedSubtree(
+  key: ayahKey,
+
+  child: VisibilityDetector(
+    key: Key(
+      'tafsir_${widget.surahNumber}_${verse.ayah}',
+    ),
+
+    onVisibilityChanged: (info) async {
+      if (info.visibleFraction >= 0.6 &&
+          !_isRestoring &&
+          _restoreCompleted) {
+        await _progressService.saveProgress(
+          mode: QuranMode.tafsir,
+          surah: widget.surahNumber,
+          ayah: verse.ayah,
+        );
+      }
+    },
+
+    child: _ayahCard(verse),
   ),
-
-  onVisibilityChanged: (info) async {
-    if (info.visibleFraction >= 0.6) {
-      await _progressService.saveProgress(
-        mode: QuranMode.tafsir,
-        surah: widget.surahNumber,
-        ayah: verse.ayah,
-      );
-    }
-  },
-
-  child: _ayahCard(verse),
 );
             },
           );

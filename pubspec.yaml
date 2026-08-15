@@ -57,6 +57,7 @@ dependencies:
   pdf: ^3.11.1
   printing: ^5.13.4
   screenshot: ^3.0.0
+  quran_library: ^4.2.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
