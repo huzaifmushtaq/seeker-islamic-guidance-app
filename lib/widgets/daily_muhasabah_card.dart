@@ -1,87 +1,34 @@
 import 'package:flutter/material.dart';
 
-import '../../models/azkar_model.dart';
-import '../../services/azkar_service.dart';
-import '../../services/azkar_progress_service.dart';
-
-class DailyAzkaarCard extends StatefulWidget {
-  const DailyAzkaarCard({super.key});
+class DailyMuhasabahCard extends StatefulWidget {
+  const DailyMuhasabahCard({super.key});
 
   @override
-  State<DailyAzkaarCard> createState() => _DailyAzkaarCardState();
+  State<DailyMuhasabahCard> createState() =>
+      _DailyMuhasabahCardState();
 }
 
-class _DailyAzkaarCardState extends State<DailyAzkaarCard> {
-  final AzkarService _azkarService = AzkarService();
-  final AzkarProgressService _progressService =
-      AzkarProgressService();
+class _DailyMuhasabahCardState
+    extends State<DailyMuhasabahCard> {
+  // Temporary daily Muhasabah.
+  //
+  // Later this will come from a proper
+  // DailyMuhasabahService + Firebase progress.
 
-  AzkarModel? currentAzkar;
+  final String question =
+      'What did you do today that you would want to change if you could live this day again?';
 
-  bool isLoading = true;
-  int currentCount = 0;
+  final String reflectionHint =
+      'Take a quiet moment. Be honest with yourself.';
 
-  @override
-  void initState() {
-    super.initState();
-    _loadTodayAzkar();
-  }
-
-  // ─────────────────────────────────────────────
-  // LOAD TODAY'S DHIKR
-  // ─────────────────────────────────────────────
-
-  Future<void> _loadTodayAzkar() async {
-    try {
-      final azkar =
-          await _azkarService.getTodayAzkar();
-
-      if (!mounted) return;
-
-      if (azkar == null) {
-        setState(() {
-          isLoading = false;
-        });
-        return;
-      }
-
-      final savedProgress =
-          await _progressService.loadProgress();
-
-      int savedCount = 0;
-
-      if (savedProgress != null &&
-          savedProgress['azkarId'] == azkar.id) {
-        savedCount =
-            savedProgress['count'] ?? 0;
-      }
-
-      if (!mounted) return;
-
-      setState(() {
-        currentAzkar = azkar;
-        currentCount = savedCount;
-        isLoading = false;
-      });
-    } catch (e) {
-      debugPrint(
-        'Today Azkar loading error: $e',
-      );
-
-      if (!mounted) return;
-
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
+  bool completed = false;
 
   // ─────────────────────────────────────────────
-  // OPEN DHIKR
+  // OPEN MUHASABAH
   // ─────────────────────────────────────────────
 
-  Future<void> _openDhikr() async {
-    if (currentAzkar == null) return;
+  Future<void> _openMuhasabah() async {
+    if (completed) return;
 
     await showDialog(
       context: context,
@@ -89,36 +36,30 @@ class _DailyAzkaarCardState extends State<DailyAzkaarCard> {
       barrierColor:
           Colors.black.withValues(alpha: .45),
       builder: (_) {
-        return _DailyDhikrDialog(
-          azkar: currentAzkar!,
-          initialCount: currentCount,
-          progressService: _progressService,
+        return _DailyMuhasabahDialog(
+          question: question,
+          reflectionHint: reflectionHint,
+          onCompleted: () {
+            if (!mounted) return;
+
+            setState(() {
+              completed = true;
+            });
+          },
         );
       },
     );
-
-    // Reload after the dialog closes.
-    //
-    // This is important because the dialog is where
-    // the actual Dhikr progress is performed.
-    await _loadTodayAzkar();
   }
 
   // ─────────────────────────────────────────────
-  // HOME CARD
+  // BUILD
   // ─────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
-    final completed =
-        currentAzkar != null &&
-        currentCount >=
-            currentAzkar!.targetCount;
-
     return GestureDetector(
-      onTap: isLoading
-          ? null
-          : _openDhikr,
+      onTap:
+          completed ? null : _openMuhasabah,
       child: AnimatedContainer(
         duration:
             const Duration(milliseconds: 250),
@@ -135,14 +76,16 @@ class _DailyAzkaarCardState extends State<DailyAzkaarCard> {
         ),
 
         decoration: BoxDecoration(
-          color: const Color(0xffF6EFD9),
+          color:
+              const Color(0xffEDE8E0),
 
           borderRadius:
               BorderRadius.circular(20),
 
           border: Border.all(
-            color: const Color(0xff0E5A56)
-                .withValues(alpha: .07),
+            color:
+                const Color(0xff6E6255)
+                    .withValues(alpha: .08),
           ),
 
           boxShadow: [
@@ -172,38 +115,36 @@ class _DailyAzkaarCardState extends State<DailyAzkaarCard> {
   Widget _pendingHomeCard() {
     return Row(
       children: [
-        // Icon
         Container(
           width: 40,
           height: 40,
           decoration: BoxDecoration(
             color:
-                const Color(0xff0E5A56)
-                    .withValues(alpha: .09),
+                const Color(0xff6E6255)
+                    .withValues(alpha: .10),
             borderRadius:
                 BorderRadius.circular(13),
           ),
           child: const Icon(
-            Icons.self_improvement_rounded,
+            Icons.nightlight_round,
             color:
-                Color(0xff0E5A56),
+                Color(0xff6E6255),
             size: 21,
           ),
         ),
 
         const SizedBox(width: 12),
 
-        // Text
         const Expanded(
           child: Column(
             crossAxisAlignment:
                 CrossAxisAlignment.start,
             children: [
               Text(
-                'DAILY DHIKR',
+                'DAILY MUHASABAH',
                 style: TextStyle(
                   color:
-                      Color(0xff0E5A56),
+                      Color(0xff6E6255),
                   fontSize: 11,
                   fontWeight:
                       FontWeight.w800,
@@ -214,7 +155,7 @@ class _DailyAzkaarCardState extends State<DailyAzkaarCard> {
               SizedBox(height: 3),
 
               Text(
-                'Begin today\'s dhikr',
+                'Take a moment to look within',
                 style: TextStyle(
                   color:
                       Colors.black54,
@@ -227,13 +168,12 @@ class _DailyAzkaarCardState extends State<DailyAzkaarCard> {
           ),
         ),
 
-        // Arrow
         Container(
           width: 32,
           height: 32,
           decoration: BoxDecoration(
             color:
-                const Color(0xff0E5A56),
+                const Color(0xff6E6255),
             borderRadius:
                 BorderRadius.circular(11),
           ),
@@ -259,14 +199,14 @@ class _DailyAzkaarCardState extends State<DailyAzkaarCard> {
           height: 40,
           decoration: BoxDecoration(
             color:
-                const Color(0xff0E5A56)
-                    .withValues(alpha: .09),
+                const Color(0xff6E6255)
+                    .withValues(alpha: .10),
             shape: BoxShape.circle,
           ),
           child: const Icon(
             Icons.check_rounded,
             color:
-                Color(0xff0E5A56),
+                Color(0xff6E6255),
             size: 22,
           ),
         ),
@@ -279,10 +219,10 @@ class _DailyAzkaarCardState extends State<DailyAzkaarCard> {
                 CrossAxisAlignment.start,
             children: [
               Text(
-                'DAILY DHIKR',
+                'DAILY MUHASABAH',
                 style: TextStyle(
                   color:
-                      Color(0xff0E5A56),
+                      Color(0xff6E6255),
                   fontSize: 11,
                   fontWeight:
                       FontWeight.w800,
@@ -293,7 +233,7 @@ class _DailyAzkaarCardState extends State<DailyAzkaarCard> {
               SizedBox(height: 3),
 
               Text(
-                'Completed today',
+                'Reflection completed today',
                 style: TextStyle(
                   color:
                       Colors.black54,
@@ -309,7 +249,7 @@ class _DailyAzkaarCardState extends State<DailyAzkaarCard> {
         const Icon(
           Icons.check_circle_rounded,
           color:
-              Color(0xff0E5A56),
+              Color(0xff6E6255),
           size: 21,
         ),
       ],
@@ -318,100 +258,29 @@ class _DailyAzkaarCardState extends State<DailyAzkaarCard> {
 }
 
 // ═══════════════════════════════════════════════
-// DAILY DHIKR ACTIVITY DIALOG
+// DAILY MUHASABAH DIALOG
 // ═══════════════════════════════════════════════
 
-class _DailyDhikrDialog extends StatefulWidget {
-  final AzkarModel azkar;
-  final int initialCount;
-  final AzkarProgressService progressService;
+class _DailyMuhasabahDialog
+    extends StatelessWidget {
+  final String question;
+  final String reflectionHint;
+  final VoidCallback onCompleted;
 
-  const _DailyDhikrDialog({
-    required this.azkar,
-    required this.initialCount,
-    required this.progressService,
+  const _DailyMuhasabahDialog({
+    required this.question,
+    required this.reflectionHint,
+    required this.onCompleted,
   });
 
-  @override
-  State<_DailyDhikrDialog> createState() =>
-      _DailyDhikrDialogState();
-}
+  void _complete(BuildContext context) {
+    onCompleted();
 
-class _DailyDhikrDialogState
-    extends State<_DailyDhikrDialog> {
-  late int currentCount;
-
-  bool saving = false;
-
-  @override
-  void initState() {
-    super.initState();
-
-    currentCount =
-        widget.initialCount;
-  }
-
-  // ─────────────────────────────────────────────
-  // CONTINUE DHIKR
-  // ─────────────────────────────────────────────
-
-  Future<void> _continueDhikr() async {
-    if (saving) return;
-
-    if (currentCount >=
-        widget.azkar.targetCount) {
-      return;
-    }
-
-    final newCount =
-        currentCount + 1;
-
-    setState(() {
-      currentCount = newCount;
-      saving = true;
-    });
-
-    await widget.progressService
-        .saveProgress(
-      azkarId: widget.azkar.id,
-      count: newCount,
-    );
-
-    if (!mounted) return;
-
-    setState(() {
-      saving = false;
-    });
-
-    // Completed
-    if (newCount >=
-        widget.azkar.targetCount) {
-      await Future.delayed(
-        const Duration(milliseconds: 350),
-      );
-
-      if (!mounted) return;
-
-      Navigator.pop(context);
-    }
+    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    final progress =
-        widget.azkar.targetCount == 0
-            ? 0.0
-            : currentCount /
-                widget.azkar.targetCount;
-
-    final remaining =
-        (widget.azkar.targetCount -
-                currentCount)
-            .clamp(
-      0,
-      widget.azkar.targetCount,
-    );
-
     return Dialog(
       backgroundColor:
           Colors.transparent,
@@ -474,9 +343,9 @@ class _DailyDhikrDialogState
                       BoxDecoration(
                     color:
                         const Color(
-                      0xff0E5A56,
+                      0xff6E6255,
                     ).withValues(
-                      alpha: .09,
+                      alpha: .10,
                     ),
                     borderRadius:
                         BorderRadius.circular(
@@ -484,10 +353,9 @@ class _DailyDhikrDialogState
                     ),
                   ),
                   child: const Icon(
-                    Icons
-                        .self_improvement_rounded,
+                    Icons.nightlight_round,
                     color:
-                        Color(0xff0E5A56),
+                        Color(0xff6E6255),
                     size: 20,
                   ),
                 ),
@@ -496,11 +364,10 @@ class _DailyDhikrDialogState
 
                 const Expanded(
                   child: Text(
-                    'DAILY DHIKR',
-                    style:
-                        TextStyle(
+                    'DAILY MUHASABAH',
+                    style: TextStyle(
                       color:
-                          Color(0xff0E5A56),
+                          Color(0xff6E6255),
                       fontSize: 12,
                       fontWeight:
                           FontWeight.w800,
@@ -515,8 +382,7 @@ class _DailyDhikrDialogState
                       context,
                     );
                   },
-                  icon:
-                      const Icon(
+                  icon: const Icon(
                     Icons.close_rounded,
                     color:
                         Colors.black45,
@@ -525,124 +391,88 @@ class _DailyDhikrDialogState
               ],
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
 
             // ─────────────────────────────
-            // ARABIC DHIKR
+            // REFLECTION SYMBOL
             // ─────────────────────────────
 
             Container(
-              width: double.infinity,
-
-              padding:
-                  const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 22,
-              ),
-
-              decoration:
-                  BoxDecoration(
+              width: 58,
+              height: 58,
+              decoration: BoxDecoration(
                 color:
-                    const Color(0xffF6EFD9),
-
-                borderRadius:
-                    BorderRadius.circular(
-                  20,
-                ),
+                    const Color(0xffEDE8E0),
+                shape: BoxShape.circle,
               ),
-
-              child: Text(
-                widget.azkar.arabic,
-                textAlign:
-                    TextAlign.center,
-
-                style:
-                    const TextStyle(
-                  fontSize: 23,
-                  fontWeight:
-                      FontWeight.bold,
-                  height: 1.6,
-                  color:
-                      Color(0xff182C2A),
-                ),
+              child: const Icon(
+                Icons.self_improvement_rounded,
+                color:
+                    Color(0xff6E6255),
+                size: 28,
               ),
             ),
 
-            const SizedBox(height: 18),
+            const SizedBox(height: 20),
 
             // ─────────────────────────────
-            // COUNT
+            // QUESTION
             // ─────────────────────────────
 
-            Row(
-              mainAxisAlignment:
-                  MainAxisAlignment
-                      .spaceBetween,
-
-              children: [
-                Text(
-                  '$currentCount / '
-                  '${widget.azkar.targetCount}',
-
-                  style:
-                      const TextStyle(
-                    color:
-                        Color(0xff0E5A56),
-                    fontSize: 14,
-                    fontWeight:
-                        FontWeight.w800,
-                  ),
-                ),
-
-                Text(
-                  remaining == 0
-                      ? 'Completed'
-                      : '$remaining remaining',
-
-                  style:
-                      const TextStyle(
-                    color:
-                        Colors.black54,
-                    fontSize: 12,
-                    fontWeight:
-                        FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 8),
-
-            // ─────────────────────────────
-            // PROGRESS
-            // ─────────────────────────────
-
-            ClipRRect(
-              borderRadius:
-                  BorderRadius.circular(
-                10,
-              ),
-
-              child:
-                  LinearProgressIndicator(
-                value: progress,
-
-                minHeight: 6,
-
-                backgroundColor:
-                    Colors.white,
-
-                valueColor:
-                    const AlwaysStoppedAnimation(
-                  Color(0xff0E5A56),
-                ),
+            const Text(
+              'TAKE A MOMENT',
+              style: TextStyle(
+                color:
+                    Color(0xff6E6255),
+                fontSize: 11,
+                fontWeight:
+                    FontWeight.w800,
+                letterSpacing: 1,
               ),
             ),
 
-            const SizedBox(height: 18),
+            const SizedBox(height: 12),
+
+            Text(
+              question,
+              textAlign:
+                  TextAlign.center,
+              style:
+                  const TextStyle(
+                color:
+                    Color(0xff182C2A),
+                fontSize: 21,
+                fontWeight:
+                    FontWeight.w700,
+                height: 1.4,
+              ),
+            ),
+
+            const SizedBox(height: 14),
 
             // ─────────────────────────────
-            // CONTINUE
+            // REFLECTION HINT
+            // ─────────────────────────────
+
+            Text(
+              reflectionHint,
+              textAlign:
+                  TextAlign.center,
+              style:
+                  const TextStyle(
+                color:
+                    Colors.black54,
+                fontSize: 13,
+                fontStyle:
+                    FontStyle.italic,
+                height: 1.45,
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // ─────────────────────────────
+            // COMPLETE
             // ─────────────────────────────
 
             SizedBox(
@@ -650,14 +480,12 @@ class _DailyDhikrDialogState
 
               child:
                   GestureDetector(
-                onTap: saving
-                    ? null
-                    : _continueDhikr,
+                onTap: () =>
+                    _complete(context),
 
                 child: Container(
                   padding:
-                      const EdgeInsets
-                          .symmetric(
+                      const EdgeInsets.symmetric(
                     vertical: 13,
                   ),
 
@@ -665,28 +493,23 @@ class _DailyDhikrDialogState
                       BoxDecoration(
                     color:
                         const Color(
-                      0xff0E5A56,
+                      0xff6E6255,
                     ),
-
                     borderRadius:
                         BorderRadius.circular(
                       16,
                     ),
                   ),
 
-                  child: Row(
+                  child: const Row(
                     mainAxisAlignment:
                         MainAxisAlignment
                             .center,
-
                     children: [
                       Text(
-                        remaining == 0
-                            ? 'Completed'
-                            : 'Continue',
-
+                        'I’VE REFLECTED',
                         style:
-                            const TextStyle(
+                            TextStyle(
                           color:
                               Colors.white,
                           fontSize: 12,
@@ -695,20 +518,15 @@ class _DailyDhikrDialogState
                         ),
                       ),
 
-                      if (remaining !=
-                          0) ...[
-                        const SizedBox(
-                          width: 5,
-                        ),
+                      SizedBox(width: 6),
 
-                        const Icon(
-                          Icons
-                              .arrow_forward_rounded,
-                          color:
-                              Colors.white,
-                          size: 16,
-                        ),
-                      ],
+                      Icon(
+                        Icons
+                            .check_rounded,
+                        color:
+                            Colors.white,
+                        size: 17,
+                      ),
                     ],
                   ),
                 ),

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../models/verse_model.dart';
 import '../../repositories/quran_repository.dart';
 import '../../services/translation_preferences_service.dart';
 import '../../services/quran_mode_progress_service.dart';
-import 'package:visibility_detector/visibility_detector.dart';
 
 class KoshurTarjumaReaderScreen extends StatefulWidget {
   final int surahNumber;
@@ -12,7 +12,8 @@ class KoshurTarjumaReaderScreen extends StatefulWidget {
   final String arabicName;
   final String revelationType;
   final int verses;
-  /// Ayah to restore when opened from Continue Reading.
+
+  /// Ayah to open directly.
   final int? initialAyah;
 
   const KoshurTarjumaReaderScreen({
@@ -32,176 +33,196 @@ class KoshurTarjumaReaderScreen extends StatefulWidget {
 
 class _KoshurTarjumaReaderScreenState
     extends State<KoshurTarjumaReaderScreen> {
-  final QuranRepository _repository = QuranRepository();
+  final QuranRepository _repository =
+      QuranRepository();
 
   final QuranModeProgressService _progressService =
       QuranModeProgressService();
 
-  final ScrollController _scrollController =
-      ScrollController();
+  final ItemScrollController _itemScrollController =
+      ItemScrollController();
+
+  final ItemPositionsListener _itemPositionsListener =
+      ItemPositionsListener.create();
 
   late Future<List<VerseModel>> _versesFuture;
 
-  /// One key for every Ayah.
-  final Map<int, GlobalKey> _ayahKeys = {};
+  /// Current Ayah.
+  int _currentAyah = 1;
 
-  /// Prevents the restored Ayah from immediately
-  /// overwriting the saved position.
+  /// Prevents progress from being changed while
+  /// Continue Reading is restoring the saved Ayah.
   bool _isRestoring = false;
 
   bool _restoreCompleted = false;
+
+  /// Arabic text keys.
+  ///
+  /// These are ONLY used to determine where the
+  /// Arabic Ayah is on screen.
+  ///
+  /// Translation never participates in Ayah detection.
+  final Map<int, GlobalKey> _arabicKeys = {};
 
   @override
   void initState() {
     super.initState();
 
-    _versesFuture = _repository.loadSurah(
+    _currentAyah =
+        widget.initialAyah ?? 1;
+
+    _versesFuture =
+        _repository.loadSurah(
       widget.surahNumber,
       widget.verses,
     );
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _restoreSavedAyah();
-    });
+    _itemPositionsListener.itemPositions
+        .addListener(_updateCurrentAyah);
+
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) {
+        _restoreInitialAyah();
+      },
+    );
   }
 
   @override
   void dispose() {
-    _scrollController.dispose();
+    _itemPositionsListener.itemPositions
+        .removeListener(_updateCurrentAyah);
+
     super.dispose();
   }
 
   // ─────────────────────────────────────────────
-  // RESTORE LAST READ AYAH
+  // CURRENT AYAH
   // ─────────────────────────────────────────────
 
-  Future<void> _restoreSavedAyah() async {
-    final savedAyah = widget.initialAyah;
-
-    if (savedAyah == null || savedAyah <= 1) {
-      _restoreCompleted = true;
+  void _updateCurrentAyah() {
+    if (!mounted ||
+        _isRestoring ||
+        !_restoreCompleted) {
       return;
     }
 
-    _isRestoring = true;
+    final positions =
+        _itemPositionsListener
+            .itemPositions
+            .value;
 
-    /*
-     * Wait until the FutureBuilder has loaded the verses
-     * and the ListView has created its children.
-     */
-    final verses = await _versesFuture;
-
-    if (!mounted) return;
-
-    if (verses.isEmpty) {
-      _restoreCompleted = true;
-      _isRestoring = false;
+    if (positions.isEmpty) {
       return;
     }
 
     /*
-     * The Ayah is 1-based.
-     * ListView index is 0-based.
-     */
-    final targetIndex = savedAyah - 1;
-
-    if (targetIndex < 0 ||
-        targetIndex >= verses.length) {
-      _restoreCompleted = true;
-      _isRestoring = false;
-      return;
-    }
-
-    /*
-     * Make sure the target Ayah gets built.
+     * Only inspect Ayah ITEMS that are actually
+     * visible.
      *
-     * This is only a rough positioning step.
-     * The actual final positioning is done using
-     * Scrollable.ensureVisible().
+     * The list index is the Ayah index.
+     *
+     * We then look at that Ayah's Arabic text
+     * to determine whether its Arabic content
+     * is still in the reading area.
      */
-    if (_scrollController.hasClients) {
-      final roughOffset =
-          targetIndex * 350.0;
-
-      final maxExtent =
-          _scrollController.position.maxScrollExtent;
-
-      _scrollController.jumpTo(
-        roughOffset.clamp(
-          0.0,
-          maxExtent,
-        ),
-      );
-    }
-
-    await Future.delayed(
-      const Duration(milliseconds: 80),
+    final visiblePositions =
+        positions.where(
+      (position) =>
+          position.itemTrailingEdge > 0 &&
+          position.itemLeadingEdge < 1,
     );
 
-    await _ensureAyahVisible(savedAyah);
-
-    _restoreCompleted = true;
-    _isRestoring = false;
-  }
-
-  // ─────────────────────────────────────────────
-  // EXACT AYAH POSITIONING
-  // ─────────────────────────────────────────────
-
-  Future<void> _ensureAyahVisible(
-    int ayah,
-  ) async {
-    final key = _ayahKeys[ayah];
-
-    if (key == null) return;
-
-    BuildContext? ayahContext =
-        key.currentContext;
-
-    /*
-     * If the target is not currently built,
-     * move closer and wait for another frame.
-     */
-    if (ayahContext == null &&
-        _scrollController.hasClients) {
-      final roughOffset =
-          (ayah - 1) * 350.0;
-
-      final maxExtent =
-          _scrollController.position.maxScrollExtent;
-
-      _scrollController.jumpTo(
-        roughOffset.clamp(
-          0.0,
-          maxExtent,
-        ),
-      );
-
-      await Future.delayed(
-        const Duration(milliseconds: 100),
-      );
-
-      ayahContext = key.currentContext;
-    }
-
-    if (ayahContext == null || !mounted) {
+    if (visiblePositions.isEmpty) {
       return;
     }
 
+    final sorted =
+        visiblePositions.toList()
+          ..sort(
+            (a, b) =>
+                a.index.compareTo(
+              b.index,
+            ),
+          );
+
+    int? detectedAyah;
+
     /*
-     * This is the actual positioning.
+     * Reading boundary.
      *
-     * Flutter finds the real Ayah widget and moves
-     * the scroll view to it.
+     * We compare the ACTUAL Arabic text
+     * position against this boundary.
      */
-    await Scrollable.ensureVisible(
-      ayahContext,
-      duration: const Duration(
-        milliseconds: 450,
-      ),
-      curve: Curves.easeOutCubic,
-      alignment: 0.08,
-    );
+    const double readingBoundary = 115;
+
+    for (final position in sorted) {
+      final ayahNumber =
+          position.index + 1;
+
+      final key =
+          _arabicKeys[ayahNumber];
+
+      if (key == null) {
+        continue;
+      }
+
+      final context =
+          key.currentContext;
+
+      if (context == null) {
+        continue;
+      }
+
+      final renderObject =
+          context.findRenderObject();
+
+      if (renderObject == null ||
+          renderObject is! RenderBox ||
+          !renderObject.hasSize) {
+        continue;
+      }
+
+      final globalPosition =
+          renderObject.localToGlobal(
+        Offset.zero,
+      );
+
+      final bottom =
+          globalPosition.dy +
+              renderObject.size.height;
+
+      /*
+       * This is the same principle we established
+       * in the Arabic reader:
+       *
+       * the current Ayah is the first Ayah whose
+       * Arabic text has not completely crossed
+       * the reading boundary.
+       */
+      if (bottom > readingBoundary) {
+        detectedAyah = ayahNumber;
+        break;
+      }
+    }
+
+    /*
+     * If nothing was found above the boundary,
+     * use the last visible Ayah.
+     *
+     * This matters when scrolling very quickly.
+     */
+    detectedAyah ??=
+        sorted.last.index + 1;
+
+    if (detectedAyah == _currentAyah) {
+      return;
+    }
+
+    setState(() {
+      _currentAyah = detectedAyah!;
+    });
+
+    _saveProgress(detectedAyah);
   }
 
   // ─────────────────────────────────────────────
@@ -211,9 +232,9 @@ class _KoshurTarjumaReaderScreenState
   Future<void> _saveProgress(
     int ayah,
   ) async {
-    if (_isRestoring ||
-        !_restoreCompleted ||
-        !mounted) {
+    if (!mounted ||
+        _isRestoring ||
+        !_restoreCompleted) {
       return;
     }
 
@@ -225,62 +246,224 @@ class _KoshurTarjumaReaderScreenState
   }
 
   // ─────────────────────────────────────────────
+  // RESTORE AYAH
+  // ─────────────────────────────────────────────
+
+  Future<void> _restoreInitialAyah() async {
+    final initialAyah =
+        widget.initialAyah;
+
+    if (initialAyah == null) {
+      _restoreCompleted = true;
+      return;
+    }
+
+    _isRestoring = true;
+
+    final verses =
+        await _versesFuture;
+
+    if (!mounted) {
+      return;
+    }
+
+    final index =
+        _getInitialIndex(verses);
+
+    if (index == -1) {
+      _restoreCompleted = true;
+      _isRestoring = false;
+      return;
+    }
+
+    /*
+     * First make sure the correct Ayah ITEM
+     * is brought into the list.
+     *
+     * This is the exact same mechanism used
+     * by the working Arabic reader.
+     */
+    if (_itemScrollController.isAttached) {
+      _itemScrollController.jumpTo(
+        index: index,
+        alignment: 0.02,
+      );
+    }
+
+    /*
+     * Wait for the target Arabic Text widget
+     * to be built.
+     */
+    await Future.delayed(
+      const Duration(milliseconds: 80),
+    );
+
+    if (!mounted) {
+      return;
+    }
+
+    /*
+     * Now position the ACTUAL ARABIC TEXT,
+     * not the whole Tarjuma card.
+     */
+    await _ensureArabicTextVisible(
+      initialAyah,
+    );
+
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _currentAyah = initialAyah;
+    });
+
+    _restoreCompleted = true;
+    _isRestoring = false;
+  }
+
+  // ─────────────────────────────────────────────
+  // POSITION ACTUAL ARABIC TEXT
+  // ─────────────────────────────────────────────
+
+  Future<void> _ensureArabicTextVisible(
+    int ayah,
+  ) async {
+    final key =
+        _arabicKeys[ayah];
+
+    if (key == null) {
+      return;
+    }
+
+    final context =
+        key.currentContext;
+
+    if (context == null ||
+        !mounted) {
+      return;
+    }
+
+    /*
+     * Exactly the same successful technique
+     * we used in the Arabic reader.
+     *
+     * We position the Arabic text itself.
+     */
+    await Scrollable.ensureVisible(
+      context,
+      alignment: 0.12,
+      duration:
+          const Duration(milliseconds: 1),
+      curve: Curves.linear,
+    );
+  }
+
+  // ─────────────────────────────────────────────
+  // INITIAL INDEX
+  // ─────────────────────────────────────────────
+
+  int _getInitialIndex(
+    List<VerseModel> verses,
+  ) {
+    if (widget.initialAyah == null) {
+      return 0;
+    }
+
+    final index =
+        verses.indexWhere(
+      (verse) =>
+          verse.ayah ==
+          widget.initialAyah,
+    );
+
+    if (index == -1) {
+      return 0;
+    }
+
+    return index;
+  }
+
+  // ─────────────────────────────────────────────
   // BUILD
   // ─────────────────────────────────────────────
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+  ) {
     return Scaffold(
-      backgroundColor: const Color(0xffFBF8F1),
+      backgroundColor:
+          const Color(0xffFBF8F1),
 
       appBar: AppBar(
-        backgroundColor: const Color(0xffFBF8F1),
+        backgroundColor:
+            const Color(0xffFBF8F1),
+
         elevation: 0,
+
         scrolledUnderElevation: 0,
 
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back_ios_new_rounded,
-            color: Color(0xff0E5A56),
+            color:
+                Color(0xff0E5A56),
           ),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
 
         title: Column(
           crossAxisAlignment:
               CrossAxisAlignment.start,
+
           children: [
             Text(
               widget.arabicName,
-              style: const TextStyle(
-                color: Color(0xff0E5A56),
+
+              style:
+                  const TextStyle(
+                color:
+                    Color(0xff0E5A56),
                 fontFamily: 'Amiri',
                 fontSize: 22,
-                fontWeight: FontWeight.w700,
+                fontWeight:
+                    FontWeight.w700,
               ),
             ),
 
             Text(
-              "Koshur Tarjuma • ${widget.verses} Ayahs",
-              style: const TextStyle(
-                color: Colors.black54,
+              "Koshur Tarjuma • "
+              "${widget.verses} Ayahs",
+
+              style:
+                  const TextStyle(
+                color:
+                    Colors.black54,
                 fontSize: 11,
-                fontWeight: FontWeight.w500,
+                fontWeight:
+                    FontWeight.w500,
               ),
             ),
           ],
         ),
       ),
 
-      body: FutureBuilder<List<VerseModel>>(
+      body:
+          FutureBuilder<List<VerseModel>>(
         future: _versesFuture,
 
-        builder: (context, snapshot) {
+        builder:
+            (context, snapshot) {
           if (snapshot.connectionState !=
               ConnectionState.done) {
             return const Center(
-              child: CircularProgressIndicator(
-                color: Color(0xff0E5A56),
+              child:
+                  CircularProgressIndicator(
+                color:
+                    Color(0xff0E5A56),
               ),
             );
           }
@@ -288,10 +471,15 @@ class _KoshurTarjumaReaderScreenState
           if (snapshot.hasError) {
             return Center(
               child: Padding(
-                padding: const EdgeInsets.all(24),
+                padding:
+                    const EdgeInsets.all(24),
+
                 child: Text(
-                  snapshot.error.toString(),
-                  textAlign: TextAlign.center,
+                  'Unable to load Quran.\n\n'
+                  '${snapshot.error}',
+
+                  textAlign:
+                      TextAlign.center,
                 ),
               ),
             );
@@ -302,58 +490,61 @@ class _KoshurTarjumaReaderScreenState
 
           if (verses.isEmpty) {
             return const Center(
-              child: Text("No verses found."),
+              child:
+                  Text('No verses found.'),
             );
           }
 
           /*
-           * Create keys once the actual verses are available.
+           * Create one Arabic key per Ayah.
            */
           for (final verse in verses) {
-            _ayahKeys.putIfAbsent(
+            _arabicKeys.putIfAbsent(
               verse.ayah,
               () => GlobalKey(),
             );
           }
 
-          return ListView.builder(
-            controller: _scrollController,
+          final initialIndex =
+              _getInitialIndex(
+            verses,
+          );
+
+          return ScrollablePositionedList
+              .builder(
+            initialScrollIndex:
+                initialIndex,
+
+            initialAlignment:
+                0.02,
+
+            itemScrollController:
+                _itemScrollController,
+
+            itemPositionsListener:
+                _itemPositionsListener,
 
             physics:
                 const BouncingScrollPhysics(),
 
-            padding: const EdgeInsets.fromLTRB(
+            padding:
+                const EdgeInsets.fromLTRB(
               16,
               8,
               16,
               32,
             ),
 
-            itemCount: verses.length,
+            itemCount:
+                verses.length,
 
-            itemBuilder: (context, index) {
-              final verse = verses[index];
+            itemBuilder:
+                (context, index) {
+              final verse =
+                  verses[index];
 
-              return KeyedSubtree(
-                key: _ayahKeys[verse.ayah],
-
-                child: VisibilityDetector(
-                  key: Key(
-                    'tarjuma_${widget.surahNumber}_${verse.ayah}',
-                  ),
-
-                  onVisibilityChanged:
-                      (info) async {
-                    if (info.visibleFraction >=
-                        0.6) {
-                      await _saveProgress(
-                        verse.ayah,
-                      );
-                    }
-                  },
-
-                  child: _ayahCard(verse),
-                ),
+              return _ayahCard(
+                verse,
               );
             },
           );
@@ -374,29 +565,43 @@ class _KoshurTarjumaReaderScreenState
       TranslationType.kashmiri,
     );
 
+    final isCurrent =
+        _currentAyah ==
+            verse.ayah;
+
     return Container(
       margin:
           const EdgeInsets.only(
         bottom: 14,
       ),
 
-      decoration: BoxDecoration(
-        color: Colors.white,
+      decoration:
+          BoxDecoration(
+        color: isCurrent
+            ? const Color(0xffF1E8CC)
+            : Colors.white,
 
         borderRadius:
             BorderRadius.circular(22),
 
-        border: Border.all(
-          color: const Color(0xff0E5A56)
-              .withValues(alpha: .07),
+        border:
+            Border.all(
+          color:
+              const Color(0xff0E5A56)
+                  .withValues(
+            alpha: .07,
+          ),
         ),
 
         boxShadow: [
           BoxShadow(
-            color: Colors.black
-                .withValues(alpha: .035),
+            color:
+                Colors.black.withValues(
+              alpha: .035,
+            ),
             blurRadius: 14,
-            offset: const Offset(0, 5),
+            offset:
+                const Offset(0, 5),
           ),
         ],
       ),
@@ -415,7 +620,8 @@ class _KoshurTarjumaReaderScreenState
               CrossAxisAlignment.stretch,
 
           children: [
-            /// AYAH NUMBER
+            // ───────── AYAH NUMBER ─────────
+
             Row(
               children: [
                 Container(
@@ -426,14 +632,17 @@ class _KoshurTarjumaReaderScreenState
                       const BoxDecoration(
                     color:
                         Color(0xffF6EFD9),
-                    shape: BoxShape.circle,
+                    shape:
+                        BoxShape.circle,
                   ),
 
                   alignment:
                       Alignment.center,
 
                   child: Text(
-                    verse.ayah.toString(),
+                    verse.ayah
+                        .toString(),
+
                     style:
                         const TextStyle(
                       color:
@@ -449,8 +658,10 @@ class _KoshurTarjumaReaderScreenState
 
                 Text(
                   "آيَة ${verse.ayah}",
+
                   textDirection:
                       TextDirection.rtl,
+
                   style:
                       const TextStyle(
                     color:
@@ -464,15 +675,30 @@ class _KoshurTarjumaReaderScreenState
               ],
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(
+              height: 16,
+            ),
 
-            /// ARABIC
+            // ───────── ARABIC ─────────
+            //
+            // THIS is the Ayah anchor.
+            // Translation below is irrelevant
+            // to current-Ayah detection.
+
             Text(
               verse.arabic,
+
+              key:
+                  _arabicKeys[
+                verse.ayah
+              ],
+
               textAlign:
                   TextAlign.right,
+
               textDirection:
                   TextDirection.rtl,
+
               style:
                   const TextStyle(
                 color:
@@ -485,14 +711,18 @@ class _KoshurTarjumaReaderScreenState
               ),
             ),
 
-            const SizedBox(height: 15),
+            const SizedBox(
+              height: 15,
+            ),
 
-            /// SMALL DIVIDER
+            // ───────── DIVIDER ─────────
+
             Row(
               children: [
                 Container(
                   width: 28,
                   height: 2,
+
                   decoration:
                       BoxDecoration(
                     color:
@@ -506,27 +736,38 @@ class _KoshurTarjumaReaderScreenState
                   ),
                 ),
 
-                const SizedBox(width: 8),
+                const SizedBox(
+                  width: 8,
+                ),
 
                 Expanded(
                   child: Divider(
                     height: 1,
-                    color: Colors.black
-                        .withValues(alpha: .06),
+                    color:
+                        Colors.black
+                            .withValues(
+                      alpha: .06,
+                    ),
                   ),
                 ),
               ],
             ),
 
-            const SizedBox(height: 13),
+            const SizedBox(
+              height: 13,
+            ),
 
-            /// KASHMIRI TRANSLATION
+            // ───────── KASHMIRI TARJUMA ─────────
+
             Text(
               kashmiri,
+
               textAlign:
                   TextAlign.right,
+
               textDirection:
                   TextDirection.rtl,
+
               style:
                   const TextStyle(
                 color:

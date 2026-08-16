@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:seeker/widgets/daily_azkaar_card.dart';
 import '../widgets/location_permission_dialog.dart';
 import '../services/location_service.dart';
 import '../services/prayer_service.dart';
@@ -14,7 +13,7 @@ import '../../services/wisdom_service.dart';
 import 'dart:typed_data';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
-
+import '../../widgets/daily_practice_section.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -440,7 +439,7 @@ class _HomeScreenState extends State<HomeScreen> {
 Container(
   margin: const EdgeInsets.fromLTRB(
     16,
-    22,
+    55,
     16,
     0,
   ),
@@ -783,13 +782,13 @@ const SizedBox(height: 12),
                       children: [
                         const PrayerTrackerCard(),
 
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 10),                       
 
-                        const DailyAzkaarCard(),
+                        const DailyPracticeSection(),
+                       
+                        const SizedBox(height: 10),
 
-                        const SizedBox(height: 20),
-
-                        _hadithOfTheDayCard(),
+                        _essentialToolsCard(),
 
                         const SizedBox(height: 20),
 
@@ -797,7 +796,7 @@ const SizedBox(height: 12),
 
                         const SizedBox(height: 20),
 
-                        _essentialToolsCard(),
+                        _hadithOfTheDayCard(),
                       ],
                     ),
                   ),
@@ -1177,19 +1176,7 @@ Widget _hadithOfTheDayCard() {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "Essentials",
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 6),
-
-          const Text(
-            "Quick access to your daily tools",
-            style: TextStyle(color: Colors.black54, fontSize: 13),
-          ),
-
-          const SizedBox(height: 22),
+        
 
           Row(
             children: [

@@ -67,7 +67,7 @@ class _QuranSurahBrowserState
         return "Koshur Tarjuma";
 
       case QuranBrowserMode.tafsir:
-        return "Koshur Tafsir";
+        return "Urdu Tafsir";
     }
   }
 
@@ -80,7 +80,7 @@ class _QuranSurahBrowserState
         return "Quran • Kashmiri Translation";
 
       case QuranBrowserMode.tafsir:
-        return "Quran • Kashmiri Explanation";
+        return "Quran • Urdu Explanation";
     }
   }
 

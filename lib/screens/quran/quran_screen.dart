@@ -10,7 +10,9 @@ import '../quran/surah_details_screen.dart';
 import '../quran/koshur_tafsir_reader_screen.dart';
 import '../quran/koshur_tarjuma_reader_screen.dart';
 import '../quran/quran_surah_browser.dart';
+import '../quran/quran_ayah_reader_screen.dart';
 import '../../services/quran_mode_progress_service.dart';
+
 
 class QuranScreen extends StatefulWidget {
   const QuranScreen({super.key});
@@ -58,7 +60,7 @@ class _QuranScreenState extends State<QuranScreen> {
               return QuranSurahBrowser(
                 mode: QuranBrowserMode.arabic,
                 readerBuilder: (surah) {
-                  return SurahDetailsScreen(
+                  return QuranAyahReaderScreen(
                     surahNumber: surah.id,
                     englishName: surah.nameSimple,
                     arabicName: surah.nameArabic,
@@ -256,9 +258,7 @@ class _QuranScreenState extends State<QuranScreen> {
 
     final String progressText =
         hasProgress
-            ? mode == QuranMode.arabic
-                ? "Page ${progress.page ?? '-'}"
-                : "Ayah ${progress.ayah}"
+            ? "Ayah ${progress.ayah}"
             : "Explore 114 Surahs";
 
     return Container(
@@ -316,7 +316,6 @@ class _QuranScreenState extends State<QuranScreen> {
 
             child: Row(
               children: [
-
                 // ICON
                 Container(
                   width: 38,
@@ -359,7 +358,6 @@ class _QuranScreenState extends State<QuranScreen> {
                         CrossAxisAlignment.start,
 
                     children: [
-
                       Text(
                         hasProgress
                             ? "CONTINUE READING"
@@ -380,7 +378,6 @@ class _QuranScreenState extends State<QuranScreen> {
 
                       Row(
                         children: [
-
                           Flexible(
                             child: Text(
                               surahName,
@@ -447,7 +444,8 @@ class _QuranScreenState extends State<QuranScreen> {
                         .withValues(
                       alpha: .10,
                     ),
-                    shape: BoxShape.circle,
+                    shape:
+                        BoxShape.circle,
                   ),
 
                   child: const Icon(
@@ -480,7 +478,7 @@ class _QuranScreenState extends State<QuranScreen> {
           context,
           MaterialPageRoute(
             builder: (_) =>
-                SurahDetailsScreen(
+                QuranAyahReaderScreen(
               surahNumber: surah.id,
               englishName:
                   surah.nameSimple,
@@ -490,8 +488,8 @@ class _QuranScreenState extends State<QuranScreen> {
                   "${surah.revelationPlace[0].toUpperCase()}${surah.revelationPlace.substring(1)}",
               verses:
                   surah.versesCount,
-              initialPage:
-                  progress.page,
+              initialAyah:
+                  progress.ayah,
             ),
           ),
         );
@@ -562,7 +560,6 @@ class _QuranScreenState extends State<QuranScreen> {
             CrossAxisAlignment.start,
 
         children: [
-
           const SizedBox(height: 20),
 
           // ═══════════════════════════════
@@ -577,7 +574,6 @@ class _QuranScreenState extends State<QuranScreen> {
 
             child: Column(
               children: [
-
                 _quranFeatureCard(
                   icon:
                       Icons.menu_book_rounded,
@@ -589,37 +585,28 @@ class _QuranScreenState extends State<QuranScreen> {
                   accent:
                       const Color(0xff0E5A56),
 
-                  onTap: () async {
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) =>
-                            QuranSurahBrowser(
-                          mode:
-                              QuranBrowserMode
-                                  .arabic,
+                 onTap: () async {
+  await Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => QuranSurahBrowser(
+        mode: QuranBrowserMode.arabic,
+        readerBuilder: (surah) {
+          return QuranAyahReaderScreen(
+            surahNumber: surah.id,
+            englishName: surah.nameSimple,
+            arabicName: surah.nameArabic,
+            revelationType:
+                "${surah.revelationPlace[0].toUpperCase()}${surah.revelationPlace.substring(1)}",
+            verses: surah.versesCount,
+          );
+        },
+      ),
+    ),
+  );
 
-                          readerBuilder:
-                              (surah) {
-                            return SurahDetailsScreen(
-                              surahNumber:
-                                  surah.id,
-                              englishName:
-                                  surah.nameSimple,
-                              arabicName:
-                                  surah.nameArabic,
-                              revelationType:
-                                  "${surah.revelationPlace[0].toUpperCase()}${surah.revelationPlace.substring(1)}",
-                              verses:
-                                  surah.versesCount,
-                            );
-                          },
-                        ),
-                      ),
-                    );
-
-                    await _loadProgress();
-                  },
+  await _loadProgress();
+},
                 ),
 
                 const SizedBox(height: 7),
@@ -648,7 +635,6 @@ class _QuranScreenState extends State<QuranScreen> {
 
             child: Column(
               children: [
-
                 _quranFeatureCard(
                   icon:
                       Icons.translate_rounded,
@@ -661,37 +647,28 @@ class _QuranScreenState extends State<QuranScreen> {
                   accent:
                       const Color(0xff0E5A56),
 
-                  onTap: () async {
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) =>
-                            QuranSurahBrowser(
-                          mode:
-                              QuranBrowserMode
-                                  .tarjuma,
+                onTap: () async {
+  await Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => QuranSurahBrowser(
+        mode: QuranBrowserMode.tarjuma,
+        readerBuilder: (surah) {
+          return KoshurTarjumaReaderScreen(
+            surahNumber: surah.id,
+            englishName: surah.nameSimple,
+            arabicName: surah.nameArabic,
+            revelationType:
+                "${surah.revelationPlace[0].toUpperCase()}${surah.revelationPlace.substring(1)}",
+            verses: surah.versesCount,
+          );
+        },
+      ),
+    ),
+  );
 
-                          readerBuilder:
-                              (surah) {
-                            return KoshurTarjumaReaderScreen(
-                              surahNumber:
-                                  surah.id,
-                              englishName:
-                                  surah.nameSimple,
-                              arabicName:
-                                  surah.nameArabic,
-                              revelationType:
-                                  "${surah.revelationPlace[0].toUpperCase()}${surah.revelationPlace.substring(1)}",
-                              verses:
-                                  surah.versesCount,
-                            );
-                          },
-                        ),
-                      ),
-                    );
-
-                    await _loadProgress();
-                  },
+  await _loadProgress();
+},
                 ),
 
                 const SizedBox(height: 7),
@@ -720,50 +697,40 @@ class _QuranScreenState extends State<QuranScreen> {
 
             child: Column(
               children: [
-
                 _quranFeatureCard(
                   icon:
                       Icons.auto_awesome_rounded,
                   title:
-                      "Koshur Tafsir",
+                      "Urdu Tafsir",
                   subtitle:
-                      "Understand the Quran in Kashmiri",
+                      "Tarjuma of the Quran in Kashmiri",
                   detail:
-                      "Verse-by-verse explanation • 114 Surahs",
+                      "Verse-by-verse urdu explanation • 114 Surahs",
                   accent:
                       const Color(0xff0E5A56),
 
-                  onTap: () async {
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) =>
-                            QuranSurahBrowser(
-                          mode:
-                              QuranBrowserMode
-                                  .tafsir,
+              onTap: () async {
+  await Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => QuranSurahBrowser(
+        mode: QuranBrowserMode.tafsir,
+        readerBuilder: (surah) {
+          return KoshurTafsirReaderScreen(
+            surahNumber: surah.id,
+            englishName: surah.nameSimple,
+            arabicName: surah.nameArabic,
+            revelationType:
+                "${surah.revelationPlace[0].toUpperCase()}${surah.revelationPlace.substring(1)}",
+            verses: surah.versesCount,
+          );
+        },
+      ),
+    ),
+  );
 
-                          readerBuilder:
-                              (surah) {
-                            return KoshurTafsirReaderScreen(
-                              surahNumber:
-                                  surah.id,
-                              englishName:
-                                  surah.nameSimple,
-                              arabicName:
-                                  surah.nameArabic,
-                              revelationType:
-                                  "${surah.revelationPlace[0].toUpperCase()}${surah.revelationPlace.substring(1)}",
-                              verses:
-                                  surah.versesCount,
-                            );
-                          },
-                        ),
-                      ),
-                    );
-
-                    await _loadProgress();
-                  },
+  await _loadProgress();
+},
                 ),
 
                 const SizedBox(height: 7),
@@ -804,8 +771,7 @@ class _QuranScreenState extends State<QuranScreen> {
           ),
 
           _quranCategory(
-            icon:
-                Icons.format_list_numbered_rounded,
+            icon: Icons.format_list_numbered_rounded,
             title: "15-Line Quran",
             subtitle: "Traditional Mushaf",
             onTap: () {
@@ -880,7 +846,6 @@ class _QuranScreenState extends State<QuranScreen> {
 
           child: Stack(
             children: [
-
               // DECORATIVE GLOW
 
               Positioned(
@@ -907,14 +872,14 @@ class _QuranScreenState extends State<QuranScreen> {
 
               Padding(
                 padding:
-                    const EdgeInsets.symmetric(
+                    const EdgeInsets
+                        .symmetric(
                   horizontal: 13,
                   vertical: 10,
                 ),
 
                 child: Row(
                   children: [
-
                     // ICON
 
                     Container(
@@ -936,8 +901,9 @@ class _QuranScreenState extends State<QuranScreen> {
 
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black
-                                .withValues(
+                            color:
+                                Colors.black
+                                    .withValues(
                               alpha: .08,
                             ),
                             blurRadius: 8,
@@ -974,7 +940,6 @@ class _QuranScreenState extends State<QuranScreen> {
                                 .start,
 
                         children: [
-
                           Text(
                             title,
                             maxLines: 1,
@@ -1007,8 +972,9 @@ class _QuranScreenState extends State<QuranScreen> {
                                     .ellipsis,
 
                             style: TextStyle(
-                              color: Colors.white
-                                  .withValues(
+                              color:
+                                  Colors.white
+                                      .withValues(
                                 alpha: .82,
                               ),
                               fontSize: 11.5,
@@ -1067,9 +1033,8 @@ class _QuranScreenState extends State<QuranScreen> {
 
                         border:
                             Border.all(
-                          color:
-                              Colors.white
-                                  .withValues(
+                          color: Colors.white
+                              .withValues(
                             alpha: .12,
                           ),
                         ),
@@ -1100,7 +1065,6 @@ class _QuranScreenState extends State<QuranScreen> {
   Widget _buildSurahBrowser() {
     return Column(
       children: [
-
         // HEADER
 
         Padding(
@@ -1114,7 +1078,6 @@ class _QuranScreenState extends State<QuranScreen> {
 
           child: Row(
             children: [
-
               InkWell(
                 onTap:
                     _backToQuranHome,
@@ -1150,7 +1113,9 @@ class _QuranScreenState extends State<QuranScreen> {
                 ),
               ),
 
-              const SizedBox(width: 12),
+              const SizedBox(
+                width: 12,
+              ),
 
               const Expanded(
                 child: Text(

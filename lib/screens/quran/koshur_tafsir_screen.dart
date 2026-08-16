@@ -106,7 +106,7 @@ class _KoshurTafsirScreenState
               CrossAxisAlignment.start,
           children: [
             Text(
-              "Koshur Tafsir",
+              "Urdu Tafsir",
               style: TextStyle(
                 color: Color(0xff0E5A56),
                 fontSize: 21,
