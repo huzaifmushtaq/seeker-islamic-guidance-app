@@ -15,6 +15,7 @@ import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../widgets/daily_practice_section.dart';
 
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -45,23 +46,26 @@ class _HomeScreenState extends State<HomeScreen> {
     return "${hijri.hDay} ${hijri.longMonthName} ${hijri.hYear} AH";
   }
 
-  @override
-  void dispose() {
-    _countdownTimer?.cancel();
-    super.dispose();
-  }
+ @override
+void initState() {
+  super.initState();
 
-  @override
-  void initState() {
-    super.initState();
+  _initializeHome();
 
-    _loadPrayerTimes();
-    _checkLocationSetup();
-    _loadTodayWisdom();
-    _countdownTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (!mounted || prayerModel == null) return;
+  _loadTodayWisdom();
 
-      final remaining = prayerModel!.nextPrayerTime.difference(DateTime.now());
+  _countdownTimer =
+      Timer.periodic(
+    const Duration(seconds: 1),
+    (_) {
+      if (!mounted ||
+          prayerModel == null) {
+        return;
+      }
+
+      final remaining =
+          prayerModel!.nextPrayerTime
+              .difference(DateTime.now());
 
       setState(() {
         prayerModel = PrayerModel(
@@ -71,20 +75,36 @@ class _HomeScreenState extends State<HomeScreen> {
           asr: prayerModel!.asr,
           maghrib: prayerModel!.maghrib,
           isha: prayerModel!.isha,
-
-          currentPrayer: prayerModel!.currentPrayer,
-          nextPrayer: prayerModel!.nextPrayer,
-          nextPrayerTime: prayerModel!.nextPrayerTime,
-
-          remainingDuration: remaining,
+          currentPrayer:
+              prayerModel!.currentPrayer,
+          nextPrayer:
+              prayerModel!.nextPrayer,
+          nextPrayerTime:
+              prayerModel!.nextPrayerTime,
+          remainingDuration:
+              remaining,
         );
       });
 
       if (remaining.inSeconds <= 0) {
         _loadPrayerTimes();
       }
-    });
+    },
+  );
+}
+Future<void> _initializeHome() async {
+  final configured =
+      await _locationService.isLocationConfigured();
+
+  if (!mounted) return;
+
+  if (configured) {
+    await _loadPrayerTimes();
+    return;
   }
+
+  await _checkLocationSetup();
+}
 
   Future<void> _loadPrayerTimes() async {
     try {
@@ -188,38 +208,46 @@ class _HomeScreenState extends State<HomeScreen> {
         },
 
         onAllow: () async {
-          final navigator = Navigator.of(context);
+  final navigator =
+      Navigator.of(context);
 
-          await _locationService.setAskedLocationPermission();
-          try {
-            final position = await _locationService.getCurrentLocation();
+  await _locationService
+      .setAskedLocationPermission();
 
-            final city = await _locationService.getCityName(position);
+  try {
+    final position =
+        await _locationService
+            .getCurrentLocation();
 
-            await _locationService.saveLocation(
-              latitude: position.latitude,
-              longitude: position.longitude,
-              city: city,
-            );
+    final city =
+        await _locationService
+            .getCityName(position);
 
-            if (!mounted) return;
+    await _locationService
+        .saveLocation(
+      latitude: position.latitude,
+      longitude: position.longitude,
+      city: city,
+    );
 
-            navigator.pop();
+    if (!mounted) return;
 
-            await _loadPrayerTimes();
-          } catch (e) {
-            if (!mounted) return;
+    navigator.pop();
 
-            navigator.pop();
+    await _loadPrayerTimes();
+  } catch (e) {
+    if (!mounted) return;
 
-            setState(() {
-              isLoadingPrayer = false;
-              locationUnavailable = true;
-            });
+    navigator.pop();
 
-            debugPrint(e.toString());
-          }
-        },
+    setState(() {
+      isLoadingPrayer = false;
+      locationUnavailable = true;
+    });
+
+    debugPrint(e.toString());
+  }
+},
       ),
     );
   }
@@ -596,39 +624,75 @@ Container(
 
        const SizedBox(height: 14),
 
-/// REMAINING TIME
-Column(
-  crossAxisAlignment: CrossAxisAlignment.start,
+//// REMAINING TIME + ISLAMIC DATE
+Row(
+  crossAxisAlignment: CrossAxisAlignment.end,
   children: [
-    const Text(
-      "REMAINING TIME",
-      style: TextStyle(
-        color: Colors.white70,
-        fontSize: 9,
-        fontWeight: FontWeight.w700,
-        letterSpacing: 1.1,
+
+    /// REMAINING TIME
+    Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "REMAINING TIME",
+            style: TextStyle(
+              color: Colors.white70,
+              fontSize: 9,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 1.1,
+            ),
+          ),
+
+          const SizedBox(height: 6),
+
+          Text(
+            locationUnavailable || prayerModel == null
+                ? "--:--:--"
+                : _formatDuration(
+                    prayerModel!.remainingDuration,
+                  ),
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 22,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 1.2,
+              height: 1,
+            ),
+          ),
+        ],
       ),
     ),
 
-    const SizedBox(height: 6),
+    /// ISLAMIC DATE
+    Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        const Text(
+          "ISLAMIC DATE",
+          style: TextStyle(
+            color: Colors.white70,
+            fontSize: 9,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1.1,
+          ),
+        ),
 
-    Text(
-      locationUnavailable || prayerModel == null
-          ? "--:--:--"
-          : _formatDuration(
-              prayerModel!.remainingDuration,
-            ),
-      style: const TextStyle(
-        color: Colors.white,
-        fontSize: 22,
-        fontWeight: FontWeight.w700,
-        letterSpacing: 1.2,
-        height: 1,
-      ),
+        const SizedBox(height: 6),
+
+        Text(
+          getHijriDate(),
+          textAlign: TextAlign.right,
+          style: const TextStyle(
+            color: Color(0xffE8C76A),
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ],
     ),
   ],
 ),
-
 const SizedBox(height: 12),
 
 /// DIVIDER
@@ -780,23 +844,18 @@ const SizedBox(height: 12),
                     padding: const EdgeInsets.only(top: 24, bottom: 30),
                     child: Column(
                       children: [
-                        const PrayerTrackerCard(),
-
-                        const SizedBox(height: 10),                       
+                        const PrayerTrackerCard(),                                              
 
                         const DailyPracticeSection(),
                        
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 5),
 
-                        _essentialToolsCard(),
-
-                        const SizedBox(height: 20),
-
-                        _duaCard(),
+                         _hadithOfTheDayCard(),
 
                         const SizedBox(height: 20),
 
-                        _hadithOfTheDayCard(),
+                       _essentialToolsCard(),
+
                       ],
                     ),
                   ),
@@ -1073,90 +1132,6 @@ Widget _hadithOfTheDayCard() {
     ),
   );
 }
-  Widget _duaCard() {
-    return InkWell(
-      borderRadius: BorderRadius.circular(24),
-      onTap: () {
-        // Navigate to Dua Screen
-      },
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 20),
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xff5A3F98), Color(0xff7B58C8)],
-          ),
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xff5A3F98).withValues(alpha: .22),
-              blurRadius: 18,
-              offset: const Offset(0, 8),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Container(
-              height: 52,
-              width: 52,
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: .15),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: const Icon(
-                Icons.volunteer_activism_rounded,
-                color: Color(0xffF5D97A),
-                size: 28,
-              ),
-            ),
-
-            const SizedBox(width: 16),
-
-            const Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    "Duas",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 19,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-
-                  SizedBox(height: 4),
-
-                  Text(
-                    "Supplications for every occasion",
-                    style: TextStyle(color: Colors.white70, fontSize: 13),
-                  ),
-                ],
-              ),
-            ),
-
-            Container(
-              height: 42,
-              width: 42,
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: .18),
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: const Icon(
-                Icons.arrow_forward_rounded,
-                color: Colors.white,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _essentialToolsCard() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),

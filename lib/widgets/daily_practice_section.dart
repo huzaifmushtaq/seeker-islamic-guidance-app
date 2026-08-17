@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:seeker/widgets/hidden_deed_card.dart';
 
 import 'daily_azkaar_card.dart';
 import 'daily_amal_card.dart';
@@ -101,7 +102,12 @@ class DailyPracticeSection extends StatelessWidget {
           const SizedBox(height: 10),
 
           const DailyMuhasabahCard(),
-        ],
+
+          const SizedBox(height: 10),    
+          
+          const HiddenDeedCard(),   
+          
+           ],
       ),
     );
   }
