@@ -14,6 +14,7 @@ import 'dart:typed_data';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../widgets/daily_practice_section.dart';
+import 'package:seeker/screens/qibla_screen.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -32,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _wisdomLoading = true;
 
   PrayerModel? prayerModel;
+  // ignore: unused_field 
   Timer? _countdownTimer;
   String cityName = "Loading...";
   bool locationUnavailable = false;
@@ -1132,131 +1134,148 @@ Widget _hadithOfTheDayCard() {
     ),
   );
 }
-  Widget _essentialToolsCard() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: const Color(0xffFFFDF8),
-        borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: const Color(0xffE8DFC8)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: .05),
-            blurRadius: 18,
-            offset: const Offset(0, 10),
-          ),
-        ],
+
+Widget _essentialToolsCard() {
+  return Container(
+    margin: const EdgeInsets.symmetric(horizontal: 20),
+    padding: const EdgeInsets.all(20),
+    decoration: BoxDecoration(
+      color: const Color(0xffFFFDF8),
+      borderRadius: BorderRadius.circular(30),
+      border: Border.all(
+        color: const Color(0xffE8DFC8),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-        
-
-          Row(
-            children: [
-              Expanded(
-                child: _tool(
-                  Icons.explore_rounded,
-                  "Qibla",
-                  const Color(0xff2D6A4F),
-                ),
-              ),
-
-              const SizedBox(width: 14),
-
-              Expanded(
-                child: _tool(
-                  Icons.touch_app_rounded,
-                  "Tasbih",
-                  const Color(0xff7B58C8),
-                ),
-              ),
-
-              const SizedBox(width: 14),
-
-              Expanded(
-                child: _tool(
-                  Icons.mosque_rounded,
-                  "Mosques",
-                  const Color(0xffC58A17),
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 14),
-
-          Row(
-            children: [
-              Expanded(
-                child: _tool(
-                  Icons.calendar_month_rounded,
-                  "Hijri",
-                  const Color(0xff0E5A56),
-                ),
-              ),
-
-              const SizedBox(width: 14),
-
-              Expanded(
-                child: _tool(
-                  Icons.calculate_rounded,
-                  "Zakat",
-                  const Color(0xffE76F51),
-                ),
-              ),
-
-              const SizedBox(width: 14),
-
-              Expanded(
-                child: _tool(
-                  Icons.menu_book_rounded,
-                  "99 Names",
-                  const Color(0xff3A86FF),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _tool(IconData icon, String title, Color color) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(18),
-      onTap: () {},
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: .08),
-          borderRadius: BorderRadius.circular(18),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: .05),
+          blurRadius: 18,
+          offset: const Offset(0, 10),
         ),
-        child: Column(
+      ],
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
           children: [
-            Container(
-              height: 48,
-              width: 48,
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: .15),
-                shape: BoxShape.circle,
+            Expanded(
+              child: _tool(
+                Icons.explore_rounded,
+                "Qibla",
+                const Color(0xff2D6A4F),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          const QiblaScreen(),
+                    ),
+                  );
+                },
               ),
-              child: Icon(icon, color: color),
             ),
 
-            const SizedBox(height: 10),
+            const SizedBox(width: 14),
 
-            Text(
-              title,
-              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+            Expanded(
+              child: _tool(
+                Icons.touch_app_rounded,
+                "Tasbih",
+                const Color(0xff7B58C8),
+              ),
+            ),
+
+            const SizedBox(width: 14),
+
+            Expanded(
+              child: _tool(
+                Icons.mosque_rounded,
+                "Mosques",
+                const Color(0xffC58A17),
+              ),
             ),
           ],
         ),
+
+        const SizedBox(height: 14),
+
+        Row(
+          children: [
+            Expanded(
+              child: _tool(
+                Icons.calendar_month_rounded,
+                "Hijri",
+                const Color(0xff0E5A56),
+              ),
+            ),
+
+            const SizedBox(width: 14),
+
+            Expanded(
+              child: _tool(
+                Icons.calculate_rounded,
+                "Zakat",
+                const Color(0xffE76F51),
+              ),
+            ),
+
+            const SizedBox(width: 14),
+
+            Expanded(
+              child: _tool(
+                Icons.menu_book_rounded,
+                "99 Names",
+                const Color(0xff3A86FF),
+              ),
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
+}
+
+ Widget _tool(
+  IconData icon,
+  String title,
+  Color color, {
+  VoidCallback? onTap,
+}) {
+  return GestureDetector(
+    onTap: onTap,
+    child: Container(
+      padding: const EdgeInsets.symmetric(
+        vertical: 16,
       ),
-    );
-    
-  }
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: .07),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
+            color: color,
+            size: 25,
+          ),
+
+          const SizedBox(height: 8),
+
+          Text(
+            title,
+            style: TextStyle(
+              color: color,
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
   String _capitalizePrayer(String prayer) {
   if (prayer.isEmpty) return "";
 
