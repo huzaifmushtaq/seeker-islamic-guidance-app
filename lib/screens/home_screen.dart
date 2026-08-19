@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import '../widgets/location_permission_dialog.dart';
 import '../services/location_service.dart';
 import '../services/prayer_service.dart';
+import '../services/prayer_notification_service.dart';
 import '../models/prayer_model.dart';
 import 'dart:async';
 import 'prayer_times_screen.dart';
@@ -27,6 +29,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final LocationService _locationService = LocationService();
   final PrayerService _prayerService = PrayerService();
+  final PrayerNotificationService _notificationService =
+      PrayerNotificationService.instance;
   final WisdomService _wisdomService = WisdomService();
 
   WisdomModel? _todayWisdom;
@@ -50,6 +54,9 @@ class _HomeScreenState extends State<HomeScreen> {
 @override
 void initState() {
   super.initState();
+
+  // Initialize prayer notifications before loading prayer times.
+  _initializePrayerNotifications();
 
   // Use the proven working prayer/location startup flow.
   _loadPrayerTimes();
@@ -100,6 +107,57 @@ void initState() {
   );
 }
 
+  Future<void> _initializePrayerNotifications() async {
+    try {
+      await _notificationService.initialize();
+    } catch (e) {
+      debugPrint('Prayer notification initialization error: $e');
+    }
+  }
+
+  Future<void> _schedulePrayerNotifications(
+    Position position,
+    PrayerModel today,
+  ) async {
+    try {
+      final tomorrow =
+          _prayerService.getTomorrowPrayerModel(position);
+
+      final prefs =
+          await SharedPreferences.getInstance();
+
+      final enabledPrayers = <String>{};
+
+      if (prefs.getBool('prayer_notification_fajr') ?? true) {
+        enabledPrayers.add('fajr');
+      }
+
+      if (prefs.getBool('prayer_notification_dhuhr') ?? true) {
+        enabledPrayers.add('dhuhr');
+      }
+
+      if (prefs.getBool('prayer_notification_asr') ?? true) {
+        enabledPrayers.add('asr');
+      }
+
+      if (prefs.getBool('prayer_notification_maghrib') ?? true) {
+        enabledPrayers.add('maghrib');
+      }
+
+      if (prefs.getBool('prayer_notification_isha') ?? true) {
+        enabledPrayers.add('isha');
+      }
+
+      await _notificationService.schedulePrayerNotifications(
+        today: today,
+        tomorrow: tomorrow,
+        enabledPrayers: enabledPrayers,
+      );
+    } catch (e) {
+      debugPrint('Prayer notification scheduling error: $e');
+    }
+  }
+
   Future<void> _loadPrayerTimes() async {
     try {
       // 1. Try saved location first
@@ -115,6 +173,11 @@ void initState() {
 
         if (savedPosition != null) {
           final model = _prayerService.getPrayerModel(savedPosition);
+
+          await _schedulePrayerNotifications(
+            savedPosition,
+            model,
+          );
 
           if (mounted) {
             setState(() {
@@ -149,6 +212,11 @@ void initState() {
       );
 
       final liveModel = _prayerService.getPrayerModel(livePosition);
+
+      await _schedulePrayerNotifications(
+        livePosition,
+        liveModel,
+      );
 
       if (!mounted) return;
 
@@ -472,7 +540,7 @@ Container(
     ),
     boxShadow: [
       BoxShadow(
-        color: const Color(0xff0E5A56).withOpacity(.18),
+        color: const Color(0xff0E5A56).withValues(alpha: .18),
         blurRadius: 20,
         offset: const Offset(0, 10),
       ),
@@ -685,7 +753,7 @@ const SizedBox(height: 12),
 /// DIVIDER
 Container(
   height: 1,
-  color: Colors.white.withOpacity(.10),
+  color: Colors.white.withValues(alpha: .10),
 ),
 
 const SizedBox(height: 12),
@@ -701,7 +769,7 @@ const SizedBox(height: 12),
               width: 34,
               height: 34,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(.10),
+                color: Colors.white.withValues(alpha: .10),
                 shape: BoxShape.circle,
               ),
               child: const Icon(

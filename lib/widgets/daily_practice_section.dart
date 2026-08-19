@@ -15,14 +15,19 @@ class DailyPracticeSection extends StatelessWidget {
     return Container(
       width: double.infinity,
 
-      margin: const EdgeInsets.symmetric(
-        vertical: 8,
-      ),
+     margin:  const EdgeInsets.fromLTRB(
+  18,
+  14,
+  22,
+  28,
+),
 
-      padding: const EdgeInsets.only(
-        top: 16,
-        bottom: 8,
-      ),
+     padding: const EdgeInsets.fromLTRB(
+  18,
+  14,
+  10,
+  28,
+),
 
       decoration: BoxDecoration(
         color: const Color(0xffF8F5EC),
@@ -74,7 +79,7 @@ class DailyPracticeSection extends StatelessWidget {
             ),
 
             child: Text(
-              'Three steps closer ! IntentionaL IbadaH',
+              'Three steps closer, IntentionaL IbadaH',
               style: TextStyle(
                 color: Colors.black54,
                 fontSize: 11,

@@ -164,6 +164,7 @@ Future<void> _ensureSavedPageVisible(
 
     if (pageContext != null) {
       await Scrollable.ensureVisible(
+        // ignore: use_build_context_synchronously
         pageContext,
         duration: const Duration(
           milliseconds: 500,

@@ -1,48 +1,87 @@
 plugins {
     id("com.android.application")
+
     // START: FlutterFire Configuration
     id("com.google.gms.google-services")
     // END: FlutterFire Configuration
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+
+    // Flutter Gradle Plugin must be applied after
+    // Android and Kotlin plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
 
 android {
     namespace = "com.seeker.guidance"
+
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
+    // ============================================================
+    // JAVA / CORE LIBRARY DESUGARING
+    // Required by flutter_local_notifications
+    // ============================================================
+
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
+
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
 
+    // ============================================================
+    // DEFAULT CONFIGURATION
+    // ============================================================
+
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.seeker.guidance"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
+
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
+
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
 
+    // ============================================================
+    // BUILD TYPES
+    // ============================================================
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
+            // Using debug signing for now so that
+            // flutter run --release works during development.
             signingConfig = signingConfigs.getByName("debug")
         }
     }
 }
 
+// ================================================================
+// KOTLIN
+// ================================================================
+
 kotlin {
     compilerOptions {
-        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
+        jvmTarget =
+            org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
     }
 }
 
+// ================================================================
+// FLUTTER
+// ================================================================
+
 flutter {
     source = "../.."
+}
+
+// ================================================================
+// DEPENDENCIES
+// ================================================================
+
+dependencies {
+    // Required for flutter_local_notifications
+    // and Java 8+ API desugaring.
+    coreLibraryDesugaring(
+        "com.android.tools:desugar_jdk_libs:2.1.4"
+    )
 }

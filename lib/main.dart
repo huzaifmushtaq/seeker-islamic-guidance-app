@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 
 import 'theme/app_theme.dart';
 import 'firebase_options.dart';
+import 'services/prayer_notification_service.dart';
 import 'screens/auth/auth_wrapper.dart';
 
 Future<void> main() async {
@@ -11,7 +12,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
+await PrayerNotificationService.instance.initialize();
   runApp(const SeekerApp());
 }
 
