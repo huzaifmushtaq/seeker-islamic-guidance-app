@@ -6,69 +6,44 @@ import 'package:location/location.dart' as loc;
 class LocationService {
   final loc.Location _location = loc.Location();
 
-  // ─────────────────────────────────────────────
-  // GET CURRENT LOCATION
-  // ─────────────────────────────────────────────
-
   Future<Position> getCurrentLocation() async {
     // 1. Check app permission
-    var permission =
-        await Geolocator.checkPermission();
+    var permission = await Geolocator.checkPermission();
 
     if (permission == LocationPermission.denied) {
-      permission =
-          await Geolocator.requestPermission();
+      permission = await Geolocator.requestPermission();
 
-      if (permission ==
-          LocationPermission.denied) {
-        throw Exception(
-          "Location permission denied.",
-        );
+      if (permission == LocationPermission.denied) {
+        throw Exception("Location permission denied.");
       }
     }
 
-    if (permission ==
-        LocationPermission.deniedForever) {
-      throw Exception(
-        "Location permission permanently denied.",
-      );
+    if (permission == LocationPermission.deniedForever) {
+      throw Exception("Location permission permanently denied.");
     }
 
     // 2. Check if GPS is ON
-    bool serviceEnabled =
-        await _location.serviceEnabled();
+    bool serviceEnabled = await _location.serviceEnabled();
 
     if (!serviceEnabled) {
-      serviceEnabled =
-          await _location.requestService();
+      serviceEnabled = await _location.requestService();
 
       if (!serviceEnabled) {
-        throw Exception(
-          "Location services are disabled.",
-        );
+        throw Exception("Location services are disabled.");
       }
     }
 
-    // 3. Get coordinates
+    // 3. Finally get coordinates
     return await Geolocator.getCurrentPosition(
-      locationSettings:
-          const LocationSettings(
-        accuracy:
-            LocationAccuracy.high,
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high,
       ),
     );
   }
 
-  // ─────────────────────────────────────────────
-  // GET CITY
-  // ─────────────────────────────────────────────
-
-  Future<String> getCityName(
-    Position position,
-  ) async {
+  Future<String> getCityName(Position position) async {
     try {
-      final placemarks =
-          await placemarkFromCoordinates(
+      final placemarks = await placemarkFromCoordinates(
         position.latitude,
         position.longitude,
       );
@@ -85,127 +60,58 @@ class LocationService {
     }
   }
 
-  // ─────────────────────────────────────────────
-  // LOCATION CONFIGURATION
-  // ─────────────────────────────────────────────
-
   Future<bool> isLocationConfigured() async {
-    final prefs =
-        await SharedPreferences.getInstance();
-
-    return prefs.getBool(
-          "location_configured",
-        ) ??
-        false;
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool("location_configured") ?? false;
   }
 
   Future<void> setLocationConfigured() async {
-    final prefs =
-        await SharedPreferences.getInstance();
-
-    await prefs.setBool(
-      "location_configured",
-      true,
-    );
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool("location_configured", true);
   }
 
-  // ─────────────────────────────────────────────
-  // PERMISSION DIALOG STATE
-  // ─────────────────────────────────────────────
-
   Future<bool> hasAskedLocationPermission() async {
-    final prefs =
-        await SharedPreferences.getInstance();
-
-    return prefs.getBool(
-          "asked_location_permission",
-        ) ??
-        false;
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool("asked_location_permission") ?? false;
   }
 
   Future<void> setAskedLocationPermission() async {
-    final prefs =
-        await SharedPreferences.getInstance();
-
-    await prefs.setBool(
-      "asked_location_permission",
-      true,
-    );
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool("asked_location_permission", true);
   }
 
-  // ─────────────────────────────────────────────
-  // SAVE LOCATION
-  // ─────────────────────────────────────────────
-Future<void> saveLocation({
-  required double latitude,
-  required double longitude,
-  required String city,
-}) async {
-  final prefs =
-      await SharedPreferences.getInstance();
+  Future<void> saveLocation({
+    required double latitude,
+    required double longitude,
+    required String city,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
 
-  await prefs.setDouble(
-    "latitude",
-    latitude,
-  );
-
-  await prefs.setDouble(
-    "longitude",
-    longitude,
-  );
-
-  await prefs.setString(
-    "city",
-    city,
-  );
-
-  // Location is now fully configured.
-  await prefs.setBool(
-    "location_configured",
-    true,
-  );
-}
-  // ─────────────────────────────────────────────
-  // SAVED LOCATION
-  // ─────────────────────────────────────────────
+    await prefs.setDouble("latitude", latitude);
+    await prefs.setDouble("longitude", longitude);
+    await prefs.setString("city", city);
+  }
 
   Future<double?> getSavedLatitude() async {
-    final prefs =
-        await SharedPreferences.getInstance();
-
-    return prefs.getDouble(
-      "latitude",
-    );
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getDouble("latitude");
   }
 
   Future<double?> getSavedLongitude() async {
-    final prefs =
-        await SharedPreferences.getInstance();
-
-    return prefs.getDouble(
-      "longitude",
-    );
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getDouble("longitude");
   }
 
   Future<String?> getSavedCity() async {
-    final prefs =
-        await SharedPreferences.getInstance();
-
-    return prefs.getString(
-      "city",
-    );
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString("city");
   }
-
-  // ─────────────────────────────────────────────
-  // SAVED POSITION
-  // ─────────────────────────────────────────────
 
   Position? getSavedPosition({
     required double? latitude,
     required double? longitude,
   }) {
-    if (latitude == null ||
-        longitude == null) {
+    if (latitude == null || longitude == null) {
       return null;
     }
 

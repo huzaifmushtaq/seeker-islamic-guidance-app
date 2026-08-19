@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -21,6 +22,7 @@ class _QiblaScreenState
 
   double? qiblaBearing;
   double? heading;
+  StreamSubscription<CompassEvent>? _compassSubscription;
 
   String cityName = 'Loading...';
 
@@ -31,7 +33,43 @@ class _QiblaScreenState
   void initState() {
     super.initState();
 
+    _startCompass();
     _loadQibla();
+  }
+
+  void _startCompass() {
+    final compassEvents = FlutterCompass.events;
+
+    if (compassEvents == null) {
+      if (!mounted) return;
+
+      setState(() {
+        errorMessage =
+            'Compass sensor is not available on this device.';
+      });
+
+      return;
+    }
+
+    _compassSubscription =
+        compassEvents.listen((event) {
+      final value = event.heading;
+
+      if (!mounted || value == null) {
+        return;
+      }
+
+      setState(() {
+        heading = value;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _compassSubscription?.cancel();
+    _compassSubscription = null;
+    super.dispose();
   }
 
   // ═════════════════════════════════════════════
@@ -84,22 +122,6 @@ class _QiblaScreenState
         isLoading = false;
       });
     }
-  }
-
-  // ═════════════════════════════════════════════
-  // HEADING
-  // ═════════════════════════════════════════════
-
-  void _updateHeading(
-    double? value,
-  ) {
-    if (value == null) return;
-
-    if (!mounted) return;
-
-    setState(() {
-      heading = value;
-    });
   }
 
   // ═════════════════════════════════════════════
@@ -207,27 +229,7 @@ class _QiblaScreenState
   // ═════════════════════════════════════════════
 
   Widget _qiblaView() {
-    return StreamBuilder<CompassEvent>(
-      stream:
-          FlutterCompass.events,
-
-      builder: (
-        context,
-        snapshot,
-      ) {
-        final currentHeading =
-            snapshot.data?.heading;
-
-        WidgetsBinding.instance
-            .addPostFrameCallback((_) {
-          if (mounted) {
-            _updateHeading(
-              currentHeading,
-            );
-          }
-        });
-
-        return SingleChildScrollView(
+    return SingleChildScrollView(
           padding:
               const EdgeInsets.fromLTRB(
             20,
@@ -310,34 +312,19 @@ class _QiblaScreenState
               // ─────────────────────────────
               // INSTRUCTION
               // ─────────────────────────────
+Text(
+  _directionInstruction,
+  textAlign: TextAlign.center,
+  style: TextStyle(
+    color: _isAligned
+        ? const Color(0xff0E5A56)
+        : Colors.black54,
+    fontSize: 14,
+    fontWeight: FontWeight.w700,
+  ),
+),
 
-              AnimatedSwitcher(
-                duration:
-                    const Duration(
-                  milliseconds: 220,
-                ),
-
-                child: Text(
-                  _directionInstruction,
-                  key: ValueKey(
-                    _directionInstruction,
-                  ),
-                  textAlign:
-                      TextAlign.center,
-                  style: TextStyle(
-                    color: _isAligned
-                        ? const Color(
-                            0xff0E5A56,
-                          )
-                        : Colors.black54,
-                    fontSize: 14,
-                    fontWeight:
-                        FontWeight.w700,
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 22),
+            const SizedBox(height: 22),
 
               // ─────────────────────────────
               // LOCATION CARD
@@ -354,8 +341,6 @@ class _QiblaScreenState
               _sacredDirectionCard(),
             ],
           ),
-        );
-      },
     );
   }
 

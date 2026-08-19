@@ -61,6 +61,8 @@ dependencies:
   sqflite: ^2.4.2
   scrollable_positioned_list: ^0.3.8
   flutter_compass: ^0.8.1
+  audioplayers: ^6.8.1
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -81,6 +83,7 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/sounds/tasbih_click.wav
     - assets/images/hadith/
     - assets/icons/
     - assets/images/guidance/

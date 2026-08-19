@@ -15,7 +15,7 @@ import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../widgets/daily_practice_section.dart';
 import 'package:seeker/screens/qibla_screen.dart';
-
+import 'package:seeker/screens/tasbih_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -47,12 +47,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return "${hijri.hDay} ${hijri.longMonthName} ${hijri.hYear} AH";
   }
-
- @override
+@override
 void initState() {
   super.initState();
 
-  _initializeHome();
+  // Use the proven working prayer/location startup flow.
+  _loadPrayerTimes();
+  _checkLocationSetup();
 
   _loadTodayWisdom();
 
@@ -77,12 +78,16 @@ void initState() {
           asr: prayerModel!.asr,
           maghrib: prayerModel!.maghrib,
           isha: prayerModel!.isha,
+
           currentPrayer:
               prayerModel!.currentPrayer,
+
           nextPrayer:
               prayerModel!.nextPrayer,
+
           nextPrayerTime:
               prayerModel!.nextPrayerTime,
+
           remainingDuration:
               remaining,
         );
@@ -93,19 +98,6 @@ void initState() {
       }
     },
   );
-}
-Future<void> _initializeHome() async {
-  final configured =
-      await _locationService.isLocationConfigured();
-
-  if (!mounted) return;
-
-  if (configured) {
-    await _loadPrayerTimes();
-    return;
-  }
-
-  await _checkLocationSetup();
 }
 
   Future<void> _loadPrayerTimes() async {
@@ -210,49 +202,42 @@ Future<void> _initializeHome() async {
         },
 
         onAllow: () async {
-  final navigator =
-      Navigator.of(context);
+          final navigator = Navigator.of(context);
 
-  await _locationService
-      .setAskedLocationPermission();
+          await _locationService.setAskedLocationPermission();
+          try {
+            final position = await _locationService.getCurrentLocation();
 
-  try {
-    final position =
-        await _locationService
-            .getCurrentLocation();
+            final city = await _locationService.getCityName(position);
 
-    final city =
-        await _locationService
-            .getCityName(position);
+            await _locationService.saveLocation(
+              latitude: position.latitude,
+              longitude: position.longitude,
+              city: city,
+            );
 
-    await _locationService
-        .saveLocation(
-      latitude: position.latitude,
-      longitude: position.longitude,
-      city: city,
-    );
+            if (!mounted) return;
 
-    if (!mounted) return;
+            navigator.pop();
 
-    navigator.pop();
+            await _loadPrayerTimes();
+          } catch (e) {
+            if (!mounted) return;
 
-    await _loadPrayerTimes();
-  } catch (e) {
-    if (!mounted) return;
+            navigator.pop();
 
-    navigator.pop();
+            setState(() {
+              isLoadingPrayer = false;
+              locationUnavailable = true;
+            });
 
-    setState(() {
-      isLoadingPrayer = false;
-      locationUnavailable = true;
-    });
-
-    debugPrint(e.toString());
-  }
-},
+            debugPrint(e.toString());
+          }
+        },
       ),
     );
   }
+
 
   Future<void> _requestLocationAgain() async {
     // Allow the permission flow to run again
@@ -1178,12 +1163,20 @@ Widget _essentialToolsCard() {
             const SizedBox(width: 14),
 
             Expanded(
-              child: _tool(
-                Icons.touch_app_rounded,
-                "Tasbih",
-                const Color(0xff7B58C8),
-              ),
-            ),
+              child:_tool(
+  Icons.touch_app_rounded,
+  "Tasbih",
+  const Color(0xff7B58C8),
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const TasbihScreen(),
+      ),
+    );
+  },
+),
+ ),
 
             const SizedBox(width: 14),
 
