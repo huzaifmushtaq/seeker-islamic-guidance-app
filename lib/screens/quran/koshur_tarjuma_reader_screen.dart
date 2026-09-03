@@ -427,7 +427,7 @@ class _KoshurTarjumaReaderScreenState
                   const TextStyle(
                 color:
                     Color(0xff0E5A56),
-                fontFamily: 'Amiri',
+                fontFamily: 'NotoNaskhArabic',
                 fontSize: 22,
                 fontWeight:
                     FontWeight.w700,
@@ -666,7 +666,7 @@ class _KoshurTarjumaReaderScreenState
                       const TextStyle(
                     color:
                         Color(0xffB28A2E),
-                    fontFamily: 'Amiri',
+                    fontFamily: 'NotoNaskhArabic',
                     fontSize: 13,
                     fontWeight:
                         FontWeight.w600,
@@ -703,7 +703,7 @@ class _KoshurTarjumaReaderScreenState
                   const TextStyle(
                 color:
                     Color(0xff182C2A),
-                fontFamily: 'Amiri',
+                fontFamily: 'NotoNaskhArabic',
                 fontSize: 24,
                 height: 1.9,
                 fontWeight:

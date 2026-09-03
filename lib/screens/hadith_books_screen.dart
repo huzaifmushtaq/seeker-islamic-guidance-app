@@ -105,7 +105,7 @@ class _HadithBooksScreenState extends State<HadithBooksScreen> {
                         textDirection: TextDirection.rtl,
                         style: const TextStyle(
                           fontSize: 18,
-                          fontFamily: 'Amiri',
+                          fontFamily: 'NotoNaskhArabic',
                         ),
                       ),
                     ),

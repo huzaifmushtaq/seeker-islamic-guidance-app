@@ -127,7 +127,7 @@ class SurahTile extends StatelessWidget {
                   style: const TextStyle(
                     color: Color(0xffB28A2E),
                     fontSize: 25,
-                    fontFamily: 'Amiri',
+                    fontFamily: 'NotoNaskhArabic',
                     fontWeight: FontWeight.w500,
                     height: 1.2,
                   ),

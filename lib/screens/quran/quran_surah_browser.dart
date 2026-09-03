@@ -685,7 +685,7 @@ class _QuranSurahBrowserState
                     const TextStyle(
                   color:
                       Color(0xffB28A2E),
-                  fontFamily: 'Amiri',
+                  fontFamily: 'NotoNaskhArabic',
                   fontSize: 20,
                   height: 1,
                 ),

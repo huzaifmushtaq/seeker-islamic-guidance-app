@@ -296,7 +296,7 @@ class _QuranAyahReaderScreenState
                   const TextStyle(
                 color:
                     Colors.black54,
-                fontFamily: 'Amiri',
+                fontFamily: 'NotoNaskhArabic',
                 fontSize: 14,
               ),
             ),
@@ -575,7 +575,7 @@ class _QuranAyahReaderScreenState
             style:
                 const TextStyle(
               fontFamily:
-                  'QPCHafs',
+                  'NotoNaskhArabic',
 
               fontSize: 28,
 

@@ -18,6 +18,9 @@ import 'package:share_plus/share_plus.dart';
 import '../../widgets/daily_practice_section.dart';
 import 'package:seeker/screens/qibla_screen.dart';
 import 'package:seeker/screens/tasbih_screen.dart';
+import 'package:seeker/screens/asma_ul_husna_screen.dart';
+import 'package:seeker/screens/mosque_screen.dart';
+import 'package:seeker/screens/zakat_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -1253,6 +1256,14 @@ Widget _essentialToolsCard() {
                 Icons.mosque_rounded,
                 "Mosques",
                 const Color(0xffC58A17),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const MosquesScreen(),
+                    ),
+                  );
+                },
               ),
             ),
           ],
@@ -1277,6 +1288,14 @@ Widget _essentialToolsCard() {
                 Icons.calculate_rounded,
                 "Zakat",
                 const Color(0xffE76F51),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const ZakatScreen(),
+                    ),
+                  );
+                },
               ),
             ),
 
@@ -1287,6 +1306,14 @@ Widget _essentialToolsCard() {
                 Icons.menu_book_rounded,
                 "99 Names",
                 const Color(0xff3A86FF),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const AsmaUlHusnaScreen(),
+                    ),
+                  );
+                },
               ),
             ),
           ],

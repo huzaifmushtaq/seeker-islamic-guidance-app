@@ -15,18 +15,16 @@ class HadithPdfService {
     required String chapter,
     required int hadithNumber,
   }) async {
-    arabic = arabic.replaceAll("ﷺ", "صلى الله عليه وسلم");
-    english = english.replaceAll("ﷺ", "peace be upon him");
-
+ 
     final arabicFont = pw.Font.ttf(
-      await rootBundle.load("assets/fonts/Amiri-Regular.ttf"),
+      await rootBundle.load("assets/fonts/NotoNaskhArabic-Regular.ttf"),
     );
     final englishFont = pw.Font.ttf(
-      await rootBundle.load("assets/fonts/NotoSans-Regular.ttf"),
+      await rootBundle.load("assets/fonts/NotoNaskhArabic-Regular.ttf"),
     );
 
     final englishBold = pw.Font.ttf(
-      await rootBundle.load("assets/fonts/NotoSans-Bold.ttf"),
+      await rootBundle.load("assets/fonts/NotoNaskhArabic-Regular.ttf"),
     );
     final pdf = pw.Document();
 
