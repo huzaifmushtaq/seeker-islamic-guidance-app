@@ -129,12 +129,24 @@ class _ZakatScreenState extends State<ZakatScreen> {
     if (gold == null || silver == null) return;
     final parsed = DateTime.tryParse(timestamp ?? '');
     if (parsed == null) return;
+
+    final goldMap = <String, double>{'24K': gold};
+    for (final purity in const ['22K', '21K', '20K', '18K', '16K', '14K', '10K']) {
+      final value = prefs.getDouble('${prefix}gold_$purity');
+      if (value != null && value > 0) goldMap[purity] = value;
+    }
+    final silverMap = <String, double>{'999': silver};
+    for (final purity in const ['925', '900', '800']) {
+      final value = prefs.getDouble('${prefix}silver_$purity');
+      if (value != null && value > 0) silverMap[purity] = value;
+    }
+
     _prices = MetalPrices(
-      goldPerGram: gold,
-      silverPerGram: silver,
+      goldPricesByPurity: goldMap,
+      silverPricesByPurity: silverMap,
       updatedAt: parsed,
       currency: _currencyCode,
-      source: MetalPriceService.sourceName,
+      source: 'Cached price',
     );
   }
 
@@ -155,6 +167,12 @@ class _ZakatScreenState extends State<ZakatScreen> {
       final prefix = 'zakat_price_${_currencyCode}_';
       await prefs.setDouble('${prefix}gold', prices.goldPerGram);
       await prefs.setDouble('${prefix}silver', prices.silverPerGram);
+      for (final entry in prices.goldPricesByPurity.entries) {
+        await prefs.setDouble('${prefix}gold_${entry.key}', entry.value);
+      }
+      for (final entry in prices.silverPricesByPurity.entries) {
+        await prefs.setDouble('${prefix}silver_${entry.key}', entry.value);
+      }
       await prefs.setString('${prefix}updated', prices.updatedAt.toIso8601String());
     }
   }
@@ -179,7 +197,7 @@ class _ZakatScreenState extends State<ZakatScreen> {
       if (!mounted) return;
       setState(() {
         _loadingPrices = false;
-        _priceError = 'Live prices could not be refreshed. ${_prices == null ? 'Please try again.' : 'Using the last saved price.'}';
+        _priceError = 'Live prices could not be refreshed. ${_prices == null ? 'Please try again.' : 'Using the last saved price.'}\nDetails: $e';
         _recalculate();
       });
     }
@@ -192,16 +210,26 @@ class _ZakatScreenState extends State<ZakatScreen> {
 
   double _number(String key) => double.tryParse(_controllers[key]?.text.trim() ?? '') ?? 0;
 
+  double _goldPriceForPurity(String purity) {
+    final prices = _prices;
+    if (prices == null) return 0;
+    return prices.goldPrice(purity);
+  }
+
+  double _silverPriceForPurity(String purity) {
+    final prices = _prices;
+    if (prices == null) return 0;
+    return prices.silverPrice(purity);
+  }
+
   double get _goldValue {
     if (_goldUseResaleValue) return _number('goldResale');
-    final price = _prices?.goldPerGram ?? 0;
-    return _number('goldGrams') * price * (_purityFactors[_goldPurity] ?? 1);
+    return _number('goldGrams') * _goldPriceForPurity(_goldPurity);
   }
 
   double get _silverValue {
     if (_silverUseResaleValue) return _number('silverResale');
-    final price = _prices?.silverPerGram ?? 0;
-    return _number('silverGrams') * price * (_silverPurityFactors[_silverPurity] ?? 0.999);
+    return _number('silverGrams') * _silverPriceForPurity(_silverPurity);
   }
 
   void _recalculate() {
@@ -424,20 +452,20 @@ class _ZakatScreenState extends State<ZakatScreen> {
             ),
           ]),
           const SizedBox(height: 10),
-          _livePriceRow('Gold', _prices?.goldPerGram, Icons.circle, _gold),
+          _livePriceRow('Gold 24K', _prices?.goldPrice('24K'), Icons.circle, _gold),
           const SizedBox(height: 8),
-          _livePriceRow('Silver', _prices?.silverPerGram, Icons.circle, Colors.white70),
+          _livePriceRow('Silver 999', _prices?.silverPrice('999'), Icons.circle, Colors.white70),
           if (_priceError != null) ...[
             const SizedBox(height: 9),
             Align(alignment: Alignment.centerLeft, child: Text(_priceError!, style: const TextStyle(color: Colors.orangeAccent, fontSize: 12, height: 1.4))),
           ],
           const SizedBox(height: 5),
-          Align(alignment: Alignment.centerLeft, child: Text('$_updatedLabel • Indicative spot-market prices • Source: ${MetalPriceService.sourceName}', style: const TextStyle(color: Colors.white38, fontSize: 11, height: 1.4))),
+          Align(alignment: Alignment.centerLeft, child: Text('$_updatedLabel • Indicative spot-market prices • Source: ${_prices?.source ?? 'not available'}', style: const TextStyle(color: Colors.white38, fontSize: 11, height: 1.4))),
           const SizedBox(height: 10),
           Row(children: [
             const Icon(Icons.info_outline_rounded, color: Colors.white38, size: 16),
             const SizedBox(width: 7),
-            Expanded(child: Text(_nisabBasis == 'Gold' ? 'Gold Nisab = 87.48 g × current 24K gold price' : 'Silver Nisab = 612.36 g × current silver price', style: const TextStyle(color: Colors.white54, fontSize: 12))),
+            Expanded(child: Text(_nisabBasis == 'Gold' ? 'Gold Nisab = 87.48 g × current 24K gold reference price' : 'Silver Nisab = 612.36 g × current 999 silver reference price', style: const TextStyle(color: Colors.white54, fontSize: 12))),
           ]),
           if (_result != null) ...[
             const SizedBox(height: 6),
@@ -513,9 +541,10 @@ class _ZakatScreenState extends State<ZakatScreen> {
     required String resaleHelp,
     required String unitLabel,
   }) {
-    final price = title == 'Gold' ? _prices?.goldPerGram : _prices?.silverPerGram;
-    final factor = title == 'Gold' ? (_purityFactors[purity] ?? 1) : (_silverPurityFactors[purity] ?? 0.999);
-    final calculatedValue = _number(gramsKey) * (price ?? 0) * factor;
+    final price = title == 'Gold'
+        ? _goldPriceForPurity(purity)
+        : _silverPriceForPurity(purity);
+    final calculatedValue = _number(gramsKey) * price;
     return Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(color: _card, borderRadius: BorderRadius.circular(18)),
@@ -525,7 +554,7 @@ class _ZakatScreenState extends State<ZakatScreen> {
           const SizedBox(width: 9),
           Text(title, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700)),
           const Spacer(),
-          Text(price == null ? 'Price unavailable' : '${_money(price)}/g', style: const TextStyle(color: Colors.white54, fontSize: 12)),
+          Text(price <= 0 ? 'Price unavailable' : '${_money(price)}/g', style: const TextStyle(color: Colors.white54, fontSize: 12)),
         ]),
         const SizedBox(height: 10),
         Row(children: [
