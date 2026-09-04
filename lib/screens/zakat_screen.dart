@@ -40,6 +40,7 @@ class _ZakatScreenState extends State<ZakatScreen> {
   MetalPrices? _prices;
   ZakatCalculation? _result;
   Timer? _refreshTimer;
+  static const Duration _priceRefreshInterval = Duration(hours: 6);
 
   final _moneyFields = const [
     ('cash', 'Cash', 'Cash you currently keep at home or elsewhere', Icons.payments_outlined),
@@ -72,12 +73,26 @@ class _ZakatScreenState extends State<ZakatScreen> {
     super.initState();
     _createControllers();
     _initialize();
-    _refreshTimer = Timer.periodic(const Duration(minutes: 30), (_) => _refreshPrices());
+    // Prices are benchmark/reference data, so avoid hitting the public API on every
+    // app open. The cached value remains immediately available offline.
+    _refreshTimer = Timer.periodic(_priceRefreshInterval, (_) => _refreshPrices());
   }
 
   Future<void> _initialize() async {
     await _loadSaved();
-    if (mounted) await _refreshPrices();
+    if (!mounted) return;
+
+    // Use the saved price when it is still reasonably fresh. This prevents
+    // repeated app launches from exhausting anonymous API rate limits.
+    if (_prices == null || _isPriceCacheStale()) {
+      await _refreshPrices();
+    }
+  }
+
+  bool _isPriceCacheStale() {
+    final updated = _prices?.updatedAt;
+    if (updated == null) return true;
+    return DateTime.now().difference(updated.toLocal()) >= _priceRefreshInterval;
   }
 
   void _createControllers() {
@@ -146,7 +161,7 @@ class _ZakatScreenState extends State<ZakatScreen> {
       silverPricesByPurity: silverMap,
       updatedAt: parsed,
       currency: _currencyCode,
-      source: 'Cached price',
+      source: prefs.getString('${prefix}source') ?? 'Cached price',
     );
   }
 
@@ -174,6 +189,7 @@ class _ZakatScreenState extends State<ZakatScreen> {
         await prefs.setDouble('${prefix}silver_${entry.key}', entry.value);
       }
       await prefs.setString('${prefix}updated', prices.updatedAt.toIso8601String());
+      await prefs.setString('${prefix}source', prices.source);
     }
   }
 
@@ -197,7 +213,9 @@ class _ZakatScreenState extends State<ZakatScreen> {
       if (!mounted) return;
       setState(() {
         _loadingPrices = false;
-        _priceError = 'Live prices could not be refreshed. ${_prices == null ? 'Please try again.' : 'Using the last saved price.'}\nDetails: $e';
+        _priceError = _prices == null
+            ? 'Current reference prices could not be loaded. Please try again.'
+            : 'Could not refresh current prices. Using the saved reference price from ${(_updatedLabel().startsWith('Updated ') ? _updatedLabel().substring(8) : _updatedLabel())}.';
         _recalculate();
       });
     }
@@ -460,7 +478,7 @@ class _ZakatScreenState extends State<ZakatScreen> {
             Align(alignment: Alignment.centerLeft, child: Text(_priceError!, style: const TextStyle(color: Colors.orangeAccent, fontSize: 12, height: 1.4))),
           ],
           const SizedBox(height: 5),
-          Align(alignment: Alignment.centerLeft, child: Text('$_updatedLabel • Indicative spot-market prices • Source: ${_prices?.source ?? 'not available'}', style: const TextStyle(color: Colors.white38, fontSize: 11, height: 1.4))),
+          Align(alignment: Alignment.centerLeft, child: Text('$_updatedLabel • Indicative reference-market prices • Source: ${_prices?.source ?? 'not available'}', style: const TextStyle(color: Colors.white38, fontSize: 11, height: 1.4))),
           const SizedBox(height: 10),
           Row(children: [
             const Icon(Icons.info_outline_rounded, color: Colors.white38, size: 16),
