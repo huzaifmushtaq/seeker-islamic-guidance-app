@@ -416,6 +416,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  gal:
+    dependency: "direct main"
+    description:
+      name: gal
+      sha256: f71e79840fe023a21f2f949771375444b6efcd34b9e625d5f4f5504971380a77
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.3.3"
   geoclue:
     dependency: transitive
     description:
@@ -688,6 +696,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+  nuget:
+    dependency: "direct main"
+    description:
+      name: nuget
+      sha256: "94f736dc97b20e7153610bc0d78be12c6be77f96e31b5e2da97a66d400a4ebb2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.1"
   objective_c:
     dependency: transitive
     description:
@@ -1213,6 +1229,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.0"
+  version:
+    dependency: transitive
+    description:
+      name: version
+      sha256: "3d4140128e6ea10d83da32fef2fa4003fccbf6852217bb854845802f04191f94"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.2"
   visibility_detector:
     dependency: "direct main"
     description:

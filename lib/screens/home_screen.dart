@@ -21,6 +21,9 @@ import 'package:seeker/screens/tasbih_screen.dart';
 import 'package:seeker/screens/asma_ul_husna_screen.dart';
 import 'package:seeker/screens/mosque_screen.dart';
 import 'package:seeker/screens/zakat_screen.dart';
+import 'package:seeker/screens/knowledge_card_screen.dart';
+import 'package:seeker/models/knowledge_card_model.dart';
+import 'package:seeker/services/knowledge_card_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -35,10 +38,12 @@ class _HomeScreenState extends State<HomeScreen> {
   final PrayerNotificationService _notificationService =
       PrayerNotificationService.instance;
   final WisdomService _wisdomService = WisdomService();
+  
 
   WisdomModel? _todayWisdom;
   bool _wisdomLoading = true;
-
+ KnowledgeCardModel? _todayKnowledgeCard;
+bool _knowledgeCardLoading = true;
   PrayerModel? prayerModel;
   // ignore: unused_field 
   Timer? _countdownTimer;
@@ -66,7 +71,7 @@ void initState() {
   _checkLocationSetup();
 
   _loadTodayWisdom();
-
+  _loadKnowledgeCard();
   _countdownTimer =
       Timer.periodic(
     const Duration(seconds: 1),
@@ -101,6 +106,7 @@ void initState() {
           remainingDuration:
               remaining,
         );
+        
       });
 
       if (remaining.inSeconds <= 0) {
@@ -360,6 +366,26 @@ void initState() {
       });
     }
   }
+
+  Future<void> _loadKnowledgeCard() async {
+  try {
+    final card = await KnowledgeCardService().getCardOfTheDay();
+
+    if (!mounted) return;
+
+    setState(() {
+      _todayKnowledgeCard = card;
+      _knowledgeCardLoading = false;
+    });
+  } catch (e) {
+    if (!mounted) return;
+
+    setState(() {
+      _todayKnowledgeCard = null;
+      _knowledgeCardLoading = false;
+    });
+  }
+}
 
   Future<void> _shareWisdom() async {
     if (_todayWisdom == null) return;
@@ -914,6 +940,8 @@ const SizedBox(height: 12),
 
                        _essentialToolsCard(),
 
+                       _knowledgeCardOfTheDay(),
+
                       ],
                     ),
                   ),
@@ -1187,6 +1215,127 @@ Widget _hadithOfTheDayCard() {
           ),
         ),
       ],
+    ),
+  );
+}
+
+Widget _knowledgeCardOfTheDay() {
+  if (_wisdomLoading) {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(20, 14, 20, 0),
+      height: 76,
+      decoration: BoxDecoration(
+        color: const Color(0xffF4F8F7),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: const Color(0xffDDEAE7),
+        ),
+      ),
+      child: const Center(
+        child: SizedBox(
+          width: 18,
+          height: 18,
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            color: Color(0xff0E5A56),
+          ),
+        ),
+      ),
+    );
+  }
+
+  if (_todayWisdom == null) {
+    return const SizedBox.shrink();
+  }
+
+  final wisdom = _todayWisdom!;
+  final isQuran = wisdom.type.toLowerCase() == 'quran';
+  final isDua = wisdom.type.toLowerCase() == 'dua';
+
+  return GestureDetector(
+ onTap: () {
+  final card = _todayKnowledgeCard;
+
+  if (card == null) return;
+
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => KnowledgeCardScreen(
+        card: card,
+      ),
+    ),
+  );
+},
+    child: Container(
+      margin: const EdgeInsets.fromLTRB(20, 14, 20, 0),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: const Color(0xff0E5A56),
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xff0E5A56).withValues(alpha: .12),
+            blurRadius: 14,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              color: const Color(0xffE8C76A).withValues(alpha: .14),
+              borderRadius: BorderRadius.circular(13),
+            ),
+            child: Icon(
+              isQuran
+                  ? Icons.menu_book_rounded
+                  : isDua
+                      ? Icons.volunteer_activism_rounded
+                      : Icons.auto_stories_rounded,
+              color: const Color(0xffE8C76A),
+              size: 21,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Knowledge Card of the Day',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  isQuran
+                      ? 'A verse to reflect upon'
+                      : isDua
+                          ? 'A dua to keep close to the heart'
+                          : 'A hadith to learn from',
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Icon(
+            Icons.arrow_forward_ios_rounded,
+            color: Color(0xffE8C76A),
+            size: 15,
+          ),
+        ],
+      ),
     ),
   );
 }

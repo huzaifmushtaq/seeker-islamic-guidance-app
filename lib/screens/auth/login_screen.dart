@@ -137,127 +137,103 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         const SizedBox(height: 24),
 
-                        Container(
-                          height: 56,
+                       Container(
+  height: 56,
+  decoration: BoxDecoration(
+    color: const Color(0xFF123C3C),
+    borderRadius: BorderRadius.circular(16),
+    border: Border.all(
+      color: const Color(0x33F4D17D),
+    ),
+  ),
+  child: LayoutBuilder(
+    builder: (context, constraints) {
+      return Stack(
+        children: [
+          AnimatedAlign(
+            duration: const Duration(milliseconds: 280),
+            curve: Curves.easeInOut,
+            alignment: isLogin
+                ? Alignment.centerLeft
+                : Alignment.centerRight,
+            child: Container(
+              width: (constraints.maxWidth - 8) / 2,
+              margin: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [
+                    Color(0xFFF7E2A5),
+                    Color(0xFFE6C36A),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(14),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x55F4D17D),
+                    blurRadius: 12,
+                    offset: Offset(0, 4),
+                  ),
+                ],
+              ),
+            ),
+          ),
 
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF123C3C),
+          Row(
+            children: [
+              Expanded(
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(16),
+                  onTap: () {
+                    setState(() {
+                      isLogin = true;
+                    });
+                  },
+                  child: Center(
+                    child: AnimatedDefaultTextStyle(
+                      duration: const Duration(milliseconds: 250),
+                      style: TextStyle(
+                        color: isLogin
+                            ? const Color(0xFF0B4B4B)
+                            : Colors.white70,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      child: const Text("Login"),
+                    ),
+                  ),
+                ),
+              ),
 
-                            borderRadius: BorderRadius.circular(16),
-
-                            border: Border.all(color: const Color(0x33F4D17D)),
-                          ),
-
-                          child: Stack(
-                            children: [
-                              AnimatedAlign(
-                                duration: const Duration(milliseconds: 280),
-
-                                curve: Curves.easeInOut,
-
-                                alignment: isLogin
-                                    ? Alignment.centerLeft
-                                    : Alignment.centerRight,
-
-                                child: Container(
-                                  width:
-                                      (MediaQuery.of(context).size.width - 72) /
-                                      2,
-
-                                  margin: const EdgeInsets.all(4),
-
-                                  decoration: BoxDecoration(
-                                    gradient: const LinearGradient(
-                                      colors: [
-                                        Color(0xFFF7E2A5),
-
-                                        Color(0xFFE6C36A),
-                                      ],
-                                    ),
-
-                                    borderRadius: BorderRadius.circular(14),
-
-                                    boxShadow: const [
-                                      BoxShadow(
-                                        color: Color(0x55F4D17D),
-                                        blurRadius: 12,
-                                        offset: Offset(0, 4),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: InkWell(
-                                      borderRadius: BorderRadius.circular(16),
-
-                                      onTap: () {
-                                        setState(() {
-                                          isLogin = true;
-                                        });
-                                      },
-
-                                      child: Center(
-                                        child: AnimatedDefaultTextStyle(
-                                          duration: const Duration(
-                                            milliseconds: 250,
-                                          ),
-
-                                          style: TextStyle(
-                                            color: isLogin
-                                                ? const Color(0xFF0B4B4B)
-                                                : Colors.white70,
-
-                                            fontSize: 16,
-
-                                            fontWeight: FontWeight.bold,
-                                          ),
-
-                                          child: const Text("Login"),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-
-                                  Expanded(
-                                    child: InkWell(
-                                      borderRadius: BorderRadius.circular(16),
-
-                                      onTap: () {
-                                        setState(() {
-                                          isLogin = false;
-                                        });
-                                      },
-
-                                      child: Center(
-                                        child: AnimatedDefaultTextStyle(
-                                          duration: const Duration(
-                                            milliseconds: 250,
-                                          ),
-
-                                          style: TextStyle(
-                                            color: !isLogin
-                                                ? const Color(0xFF0B4B4B)
-                                                : Colors.white70,
-
-                                            fontSize: 16,
-
-                                            fontWeight: FontWeight.bold,
-                                          ),
-
-                                          child: const Text("Register"),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
+              Expanded(
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(16),
+                  onTap: () {
+                    setState(() {
+                      isLogin = false;
+                    });
+                  },
+                  child: Center(
+                    child: AnimatedDefaultTextStyle(
+                      duration: const Duration(milliseconds: 250),
+                      style: TextStyle(
+                        color: !isLogin
+                            ? const Color(0xFF0B4B4B)
+                            : Colors.white70,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      child: const Text("Register"),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      );
+    },
+  ),
+),
 
                         const SizedBox(height: 20),
 
