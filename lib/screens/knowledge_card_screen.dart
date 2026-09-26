@@ -21,13 +21,219 @@ class KnowledgeCardScreen extends StatefulWidget {
   State<KnowledgeCardScreen> createState() => _KnowledgeCardScreenState();
 }
 
+
+class _CardCorner extends StatelessWidget {
+  final bool isLeft;
+  final bool isTop;
+
+  const _CardCorner({
+    required this.isLeft,
+    required this.isTop,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 92,
+      height: 92,
+      child: CustomPaint(
+        painter: _CornerPainter(
+          isLeft: isLeft,
+          isTop: isTop,
+        ),
+      ),
+    );
+  }
+}
+
+class _CornerPainter extends CustomPainter {
+  final bool isLeft;
+  final bool isTop;
+
+  const _CornerPainter({
+    required this.isLeft,
+    required this.isTop,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final teal = Paint()
+      ..color = const Color(0xFF164D45)
+      ..style = PaintingStyle.fill;
+
+    final gold = Paint()
+      ..color = const Color(0xFFD2B36A)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.4;
+
+    final path = Path();
+
+    if (isLeft && isTop) {
+      path
+        ..moveTo(0, 0)
+        ..lineTo(92, 0)
+        ..quadraticBezierTo(70, 9, 64, 30)
+        ..quadraticBezierTo(57, 49, 33, 59)
+        ..quadraticBezierTo(13, 68, 0, 92)
+        ..close();
+    } else if (!isLeft && isTop) {
+      path
+        ..moveTo(92, 0)
+        ..lineTo(0, 0)
+        ..quadraticBezierTo(22, 9, 28, 30)
+        ..quadraticBezierTo(35, 49, 59, 59)
+        ..quadraticBezierTo(79, 68, 92, 92)
+        ..close();
+    } else if (isLeft && !isTop) {
+      path
+        ..moveTo(0, 92)
+        ..lineTo(92, 92)
+        ..quadraticBezierTo(70, 83, 64, 62)
+        ..quadraticBezierTo(57, 43, 33, 33)
+        ..quadraticBezierTo(13, 24, 0, 0)
+        ..close();
+    } else {
+      path
+        ..moveTo(92, 92)
+        ..lineTo(0, 92)
+        ..quadraticBezierTo(22, 83, 28, 62)
+        ..quadraticBezierTo(35, 43, 59, 33)
+        ..quadraticBezierTo(79, 24, 92, 0)
+        ..close();
+    }
+
+    canvas.drawPath(path, teal);
+    canvas.drawPath(path, gold);
+
+    final detail = Paint()
+      ..color = const Color(0xFFD2B36A).withValues(alpha: 0.55)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1;
+
+    final inner = Path();
+
+    if (isLeft && isTop) {
+      inner
+        ..moveTo(8, 8)
+        ..quadraticBezierTo(28, 14, 38, 34)
+        ..quadraticBezierTo(48, 51, 76, 76);
+    } else if (!isLeft && isTop) {
+      inner
+        ..moveTo(84, 8)
+        ..quadraticBezierTo(64, 14, 54, 34)
+        ..quadraticBezierTo(44, 51, 16, 76);
+    } else if (isLeft && !isTop) {
+      inner
+        ..moveTo(8, 84)
+        ..quadraticBezierTo(28, 78, 38, 58)
+        ..quadraticBezierTo(48, 41, 76, 16);
+    } else {
+      inner
+        ..moveTo(84, 84)
+        ..quadraticBezierTo(64, 78, 54, 58)
+        ..quadraticBezierTo(44, 41, 16, 16);
+    }
+
+    canvas.drawPath(inner, detail);
+  }
+
+  @override
+  bool shouldRepaint(covariant _CornerPainter oldDelegate) => false;
+}
+
+class _MiniLantern extends StatelessWidget {
+  const _MiniLantern();
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 34,
+      height: 70,
+      child: CustomPaint(
+        painter: _LanternPainter(),
+      ),
+    );
+  }
+}
+
+class _LanternPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final gold = Paint()
+      ..color = const Color(0xFFD2B36A)
+      ..style = PaintingStyle.fill;
+
+    final outline = Paint()
+      ..color = const Color(0xFF9B772E)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1;
+
+    canvas.drawRect(
+      const Rect.fromLTWH(16, 0, 2, 13),
+      gold,
+    );
+    canvas.drawCircle(
+      const Offset(17, 15),
+      2.5,
+      gold,
+    );
+
+    final body = Path()
+      ..moveTo(10, 20)
+      ..lineTo(24, 20)
+      ..lineTo(27, 29)
+      ..lineTo(24, 43)
+      ..lineTo(10, 43)
+      ..lineTo(7, 29)
+      ..close();
+
+    canvas.drawPath(body, gold);
+    canvas.drawPath(body, outline);
+
+    final glass = Paint()
+      ..color = const Color(0xFFF3E4B5)
+      ..style = PaintingStyle.fill;
+
+    canvas.drawRect(
+      const Rect.fromLTWH(11, 25, 12, 13),
+      glass,
+    );
+
+    final flame = Paint()
+      ..color = const Color(0xFF164D45)
+      ..style = PaintingStyle.fill;
+
+    final flamePath = Path()
+      ..moveTo(17, 27)
+      ..quadraticBezierTo(12.5, 33, 17, 36)
+      ..quadraticBezierTo(21.5, 33, 17, 27)
+      ..close();
+
+    canvas.drawPath(flamePath, flame);
+
+    canvas.drawLine(
+      const Offset(8, 29),
+      const Offset(26, 29),
+      outline,
+    );
+    canvas.drawLine(
+      const Offset(11, 43),
+      const Offset(23, 43),
+      outline,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _LanternPainter oldDelegate) => false;
+}
+
 class _KnowledgeCardScreenState extends State<KnowledgeCardScreen> {
-  static const Color teal = Color(0xFF0E5A56);
-  static const Color darkTeal = Color(0xFF123F3D);
-  static const Color gold = Color(0xFFC9A44A);
-  static const Color cream = Color(0xFFF8F4E9);
-  static const Color softGold = Color(0xFFE9D9A8);
-  static const Color ivory = Color(0xFFFDFBF5);
+  static const Color teal = Color(0xFF164D45);
+  static const Color darkTeal = Color(0xFF0B302B);
+  static const Color gold = Color(0xFFD2B36A);
+  static const Color cream = Color(0xFFF0E9D6);
+  static const Color softGold = Color(0xFFD9C895);
+  static const Color ivory = Color(0xFFF7F1DF);
 
   final GlobalKey _cardKey = GlobalKey();
 
@@ -139,8 +345,8 @@ Future<void> _shareCard() async {
 
     await Share.shareXFiles(
       [file],
-      text: 'Hadith of the Day • Seeker',
-      subject: 'Hadith of the Day • Seeker',
+      text: 'Wisdom of the Day ',
+      subject: 'Wisdom of the Day ',
       fileNameOverrides: [fileName],
     );
   } catch (e) {
@@ -209,9 +415,9 @@ Future<void> _shareCard() async {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF292929),
+      backgroundColor: const Color(0xFFE2D8BF),
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF7F2EA),
+        backgroundColor: const Color(0xFFF0E9D6),
         elevation: 0,
         centerTitle: false,
         foregroundColor: darkTeal,
@@ -265,8 +471,8 @@ Future<void> _shareCard() async {
           decoration: BoxDecoration(
             color: cream,
             border: Border.all(
-              color: gold.withValues(alpha: 0.65),
-              width: 1.3,
+              color: gold.withValues(alpha: 0.82),
+              width: 1.4,
             ),
             boxShadow: const [
               BoxShadow(
@@ -276,39 +482,75 @@ Future<void> _shareCard() async {
               ),
             ],
           ),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(
-              18,
-              22,
-              18,
-              20,
-            ),
-            child: Column(
-              children: [
-                const SizedBox(height: 5),
-                _buildBrandHeader(),
+          child: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  18,
+                  22,
+                  18,
+                  20,
+                ),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 5),
+                    _buildBrandHeader(),
 
-                const SizedBox(height: 15),
+                    const SizedBox(height: 15),
 
-                _buildGoldOrnament(),
+                    _buildGoldOrnament(),
 
-                const SizedBox(height: 17),
+                    const SizedBox(height: 17),
 
-                _buildBismillah(),
+                    _buildBismillah(),
 
-                const SizedBox(height: 17),
+                    const SizedBox(height: 17),
 
-                _buildDatePanel(),
+                    _buildDatePanel(),
 
-                const SizedBox(height: 20),
+                    const SizedBox(height: 20),
 
-                _buildKnowledgeContent(),
+                    _buildKnowledgeContent(),
 
-                const SizedBox(height: 18),
+                    const SizedBox(height: 18),
 
-                _buildCardFooter(),
-              ],
-            ),
+                    _buildCardFooter(),
+                  ],
+                ),
+              ),
+
+              // Decorative elements are overlays only.
+              const Positioned(
+                left: 0,
+                top: 0,
+                child: _CardCorner(isLeft: true, isTop: true),
+              ),
+              const Positioned(
+                right: 0,
+                top: 0,
+                child: _CardCorner(isLeft: false, isTop: true),
+              ),
+              const Positioned(
+                left: 0,
+                bottom: 0,
+                child: _CardCorner(isLeft: true, isTop: false),
+              ),
+              const Positioned(
+                right: 0,
+                bottom: 0,
+                child: _CardCorner(isLeft: false, isTop: false),
+              ),
+              const Positioned(
+                left: 11,
+                top: 0,
+                child: _MiniLantern(),
+              ),
+              const Positioned(
+                right: 11,
+                top: 0,
+                child: _MiniLantern(),
+              ),
+            ],
           ),
         );
       },
@@ -336,7 +578,7 @@ Future<void> _shareCard() async {
           ),
           child: const Icon(
             Icons.auto_awesome,
-            color: Color(0xFFF4D98C),
+            color: Color(0xFFE4C978),
             size: 15,
           ),
         ),
@@ -476,7 +718,7 @@ Future<void> _shareCard() async {
             title,
             textAlign: TextAlign.center,
             style: const TextStyle(
-              color: Color(0xFF806F45),
+              color: Color(0xFF8A6A32),
               fontSize: 9.5,
               fontWeight: FontWeight.w700,
               letterSpacing: 0.35,
@@ -489,7 +731,7 @@ Future<void> _shareCard() async {
             width: 37,
             height: 37,
             decoration: const BoxDecoration(
-              color: Color(0xFFEAF0ED),
+              color: Color(0xFFDDE8DF),
               shape: BoxShape.circle,
             ),
             child: Icon(
@@ -615,7 +857,7 @@ Future<void> _shareCard() async {
               widget.card.translationUrdu,
               textAlign: TextAlign.center,
               style: const TextStyle(
-                color: Color(0xFF173F3C),
+                color: Color(0xFF17453F),
                 fontFamily: 'NotoNaskhArabic',
                 fontSize: 20,
                 height: 1.9,
@@ -646,11 +888,11 @@ Future<void> _shareCard() async {
       decoration: const BoxDecoration(
         border: Border(
           top: BorderSide(
-            color: Color(0xFFE2D5B2),
+            color: Color(0xFFD7C69B),
             width: 1,
           ),
           bottom: BorderSide(
-            color: Color(0xFFE2D5B2),
+            color: Color(0xFFD7C69B),
             width: 1,
           ),
         ),
@@ -691,7 +933,7 @@ Future<void> _shareCard() async {
             maxLines: label == 'راوی' ? 3 : 2,
             softWrap: true,
             style: const TextStyle(
-              color: Color(0xFF173F3C),
+              color: Color(0xFF17453F),
               fontFamily: 'NotoNaskhArabic',
               fontSize: 12.5,
               height: 1.4,
@@ -706,7 +948,7 @@ Future<void> _shareCard() async {
           label,
           textDirection: TextDirection.rtl,
           style: const TextStyle(
-            color: Color(0xFF806F45),
+            color: Color(0xFF8A6A32),
             fontFamily: 'NotoNaskhArabic',
             fontSize: 12.5,
             fontWeight: FontWeight.w700,
@@ -719,7 +961,7 @@ Future<void> _shareCard() async {
           width: 30,
           height: 30,
           decoration: const BoxDecoration(
-            color: Color(0xFFEAF0ED),
+            color: Color(0xFFDDE8DF),
             shape: BoxShape.circle,
           ),
           child: Icon(
@@ -754,7 +996,7 @@ Future<void> _shareCard() async {
         const Text(
           'SEEKER  •  KNOWLEDGE • FAITH • LIFE',
           style: TextStyle(
-            color: Color(0xFF806F45),
+            color: Color(0xFF8A6A32),
             fontSize: 8.5,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.05,
@@ -788,10 +1030,10 @@ Future<void> _shareCard() async {
         12,
       ),
       decoration: const BoxDecoration(
-        color: Color(0xFFF7F2EA),
+        color: Color(0xFFF0E9D6),
         border: Border(
           top: BorderSide(
-            color: Color(0xFFE1D6C3),
+            color: Color(0xFFD8C9A8),
             width: 1,
           ),
         ),
@@ -853,8 +1095,8 @@ Future<void> _shareCard() async {
         ),
         style: ElevatedButton.styleFrom(
           elevation: 0,
-          backgroundColor: filled ? teal : ivory,
-          foregroundColor: filled ? Colors.white : teal,
+          backgroundColor: filled ? teal : const Color(0xFFF7F1DF),
+          foregroundColor: filled ? const Color(0xFFF7F1DF) : teal,
           disabledBackgroundColor:
               filled ? teal.withValues(alpha: 0.45) : ivory,
           disabledForegroundColor:
